@@ -1,12 +1,15 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Image, TouchableOpacity, ScrollView } from "react-native";
 import React from "react";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { CameraIcon } from "react-native-heroicons/outline";
 import { profileData } from "@/constant";
 import DarkModeSwitch from "@/components/darkModeOption/switch";
+import { Button } from "@/components/ui/button";
+import { router, Tabs } from "expo-router";
+import { Pen } from "@/lib/icons";
+import { Text } from "@/components/ui/text";
 
 export default function ProfileScreen() {
   const data = profileData[0];
@@ -15,26 +18,19 @@ export default function ProfileScreen() {
       className="relative flex-1"
       contentContainerStyle={{
         paddingBottom: hp(5),
+        alignItems: "center",
       }}
     >
       {/* Image */}
-      <View>
-        <Image
-          source={data.imgUrl}
-          style={{
-            width: wp(100),
-            height: hp(60),
-            borderBottomLeftRadius: 30,
-            borderBottomRightRadius: 30,
-          }}
-        />
-      </View>
-
-      {/* Header */}
-      <View className="w-full absolute flex-row justify-end items-center pt-10">
-        <View className="p-2 rounded-full bg-black/40 mr-5 justify-center items-center">
-          <CameraIcon size={hp(3.5)} color="white" strokeWidth={1.5} />
-        </View>
+      <View className="relative m-3">
+        <Image source={{ uri: data.imgUrl }} className="rounded-full size-40" />
+        <Button
+          className="rounded-full absolute -bottom-2 -right-2 p-6"
+          variant="secondary"
+          size="icon"
+        >
+          <Pen className="text-zinc-500 dark:text-zinc-100" strokeWidth={1.5} />
+        </Button>
       </View>
 
       {/* Bio */}
@@ -51,7 +47,9 @@ export default function ProfileScreen() {
             </Text>
           </View>
 
-          <Text>Edit</Text>
+          <Button size="icon" onPress={() => router.push("/editProfile")}>
+            <Text>Edit</Text>
+          </Button>
         </View>
 
         {/* User hobbies */}

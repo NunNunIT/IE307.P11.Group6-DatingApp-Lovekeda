@@ -6,7 +6,7 @@ export const userData = [
     hobbies: ["Concerts", "Festivals", "Photography"],
     bio: "Hey there! My name is Peggie. I'm a passionate fashion photographer with a love for capturing the beauty in everyday life. When I'm not behind the lens, you'll find me immersing myself in the energy of live music at concerts and festivals. Exploring new cultures and cuisines is my idea of a perfect adventure. Let's share stories over a cup of coffee and see where our shared passions take us!",
     distance: "3 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const userData = [
     hobbies: ["Hiking", "Cooking", "Music"],
     bio: "Hi there! I'm Diana, a nature lover who finds joy in the kitchen and the magic of music. Let's go on a hike and then cook up a storm together. Seeking someone to share adventures and good food with.",
     distance: "10 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const userData = [
     hobbies: ["Painting", "Yoga", "Traveling"],
     bio: "Greetings! I'm Sophie, a free-spirited artist who finds inspiration in the colors of life. Yoga keeps me grounded, and painting allows my imagination to soar. Let's embark on a journey of self-discovery together, exploring the world and creating masterpieces along the way.",
     distance: "2 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const userData = [
     hobbies: ["Soccer", "Cooking", "Movies"],
     bio: "Hi there! I'm Betty, a soccer lover who finds joy in the kitchen and the magic of movies. Let's kick a ball around and then cook up a storm together. Seeking someone to share adventures and good food with.",
     distance: "5 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const userData = [
     hobbies: ["Dancing", "Reading", "Hiking"],
     bio: "Hola! I'm Lily, a dance lover who finds joy in the rhythm of life. Books are my escape, and hiking fuels my spirit. Let's dance under the stars and get lost in stories over a cup of coffee. Eager to meet someone to share life's dance with.",
     distance: "7 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 6,
@@ -51,7 +51,7 @@ export const userData = [
     hobbies: ["Singing", "Writing", "Sailing"],
     bio: "Ciao! I'm Chiara, a melody-maker who finds solace in writing and the serenity of sailing. Let's harmonize our voices and create music together. A poetic soul searching for someone to sail through life's highs and lows.",
     distance: "4 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 7,
@@ -60,7 +60,7 @@ export const userData = [
     hobbies: ["Singing", "Writing", "Sailing"],
     bio: "Hi there! I'm Emma, a melody-maker who finds solace in writing and the serenity of sailing. Let's harmonize our voices and create music together. A poetic soul searching for someone to sail through life's highs and lows.",
     distance: "4 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ export const userData = [
     hobbies: ["Surfing", "Gardening", "Painting"],
     bio: "Hi there! I'm Sarah, a surfer who finds joy in the garden and the magic of painting. Let's ride the waves and then paint up a storm together. Seeking someone to share adventures and good food with.",
     distance: "8 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const userData = [
     hobbies: ["Yoga", "Hiking", "Photography"],
     bio: "Hello, I'm Olivia, a yoga enthusiast who finds peace in the serenity of nature and expression through photography. Let's go on a hike and then strike a pose together. Looking for someone to share adventures and good food with.",
     distance: "9 miles away",
-    imgPath: "https://placehold.co/400",
+    imgPath: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
   },
 ];
 
@@ -86,7 +86,7 @@ export const chatData = [
   {
     id: 1,
     name: "Betty",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 32,
     isOnline: true,
     lastMessage:
@@ -129,7 +129,7 @@ export const chatData = [
   {
     id: 2,
     name: "Basquit",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 28,
     isOnline: false,
     lastMessage: "Sure, let's do that. When are you free?",
@@ -186,7 +186,7 @@ export const chatData = [
   {
     id: 3,
     name: "Oliver",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 30,
     isOnline: true,
     lastMessage: "Sounds like a plan! Let's make it happen.",
@@ -239,7 +239,7 @@ export const chatData = [
   {
     id: 4,
     name: "Sophie",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 27,
     isOnline: true,
     lastMessage: "Definitely! Looking forward to it.",
@@ -290,7 +290,7 @@ export const chatData = [
   {
     id: 5,
     name: "William",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 29,
     isOnline: false,
     lastMessage: "Let me check my schedule and get back to you.",
@@ -312,7 +312,7 @@ export const chatData = [
   {
     id: 6,
     name: "Jack",
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 30,
     isOnline: true,
     lastMessage: "Sounds like a great idea. Let's make it happen.",
@@ -336,7 +336,7 @@ export const chatData = [
 export const datesData = [
   {
     id: 1,
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Dianna",
     lastName: "Jones",
     age: 25,
@@ -345,7 +345,7 @@ export const datesData = [
   },
   {
     id: 2,
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Jane",
     lastName: "Smith",
     age: 28,
@@ -354,7 +354,7 @@ export const datesData = [
   },
   {
     id: 3,
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Chiara",
     lastName: "Doe",
     age: 26,
@@ -363,7 +363,7 @@ export const datesData = [
   },
   {
     id: 4,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Ella",
     lastName: "Williams",
     age: 29,
@@ -372,7 +372,7 @@ export const datesData = [
   },
   {
     id: 5,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Jullie",
     lastName: "Brown",
     age: 30,
@@ -381,7 +381,7 @@ export const datesData = [
   },
   {
     id: 6,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Olivia",
     lastName: "Miller",
     age: 27,
@@ -390,7 +390,7 @@ export const datesData = [
   },
   {
     id: 7,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "William",
     lastName: "Wilson",
     age: 31,
@@ -399,7 +399,7 @@ export const datesData = [
   },
   {
     id: 8,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Sophia",
     lastName: "Moore",
     age: 29,
@@ -408,7 +408,7 @@ export const datesData = [
   },
   {
     id: 9,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Diana",
     lastName: "Taylor",
     age: 32,
@@ -417,7 +417,7 @@ export const datesData = [
   },
   {
     id: 10,
-    imgUrl:"https://placehold.co/400",
+    imgUrl:"https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     name: "Alex",
     lastName: "Anderson",
     age: 30,
@@ -430,7 +430,7 @@ export const profileData = [
   {
     name: "Jacob Jones",
     age: 30,
-    imgUrl: "https://placehold.co/400",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     hobbies: ["Hiking", "Photography", "Cooking"],
     bio: "I'm an adventurous person who loves exploring new places, trying out different cuisines, capturing moments through photography, and spending time in nature. I enjoy hiking on weekends and experimenting with new recipes in the kitchen. Traveling and experiencing different cultures are some of my greatest passions, and I'm always looking for my next adventure.",
   },

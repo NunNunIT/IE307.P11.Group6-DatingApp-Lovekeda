@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { Button } from '../ui/button';
 
-import { Moon, Sun } from '@/lib/icons/IconList';
+import { Moon, Sun } from '@/lib/icons';
 
 const DarkModeButton = () => {
   const { colorScheme, toggleColorScheme } = useColorScheme();

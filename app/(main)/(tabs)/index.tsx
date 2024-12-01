@@ -124,7 +124,7 @@ const Tinder = () => {
           variant="secondary"
           onPress={() => swipe("left")}
         >
-          <XMarkIcon size={32} color={"#d64141"} />
+          <XMarkIcon size={32} color={"#fe183c"} />
         </Button>
         {/* <Button className="rounded-full" size="icon" onPress={() => goBack()}>
           <Text>Undo</Text>
@@ -134,7 +134,7 @@ const Tinder = () => {
           // size="icon"
           onPress={() => swipe("right")}
         >
-          <HeartIcon size={32} color={"#d64141"} />
+          <HeartIcon size={32} color={"#fe183c"} />
         </Button>
       </View>
     </SafeAreaView>

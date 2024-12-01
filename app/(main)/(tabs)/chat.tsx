@@ -14,7 +14,7 @@ import { chatData } from "@/constant";
 import { useNavigation } from "@react-navigation/native";
 import Matches from "@/components/card/matches";
 import { Input } from "@/components/ui/input";
-import { Search } from "@/lib/icons/IconList";
+import { Search } from "@/lib/icons";
 
 // const android = Platform.OS === "android";
 
