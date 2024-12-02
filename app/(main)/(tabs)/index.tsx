@@ -99,7 +99,7 @@ const Tinder = () => {
     await childRefs[newIndex].current?.restoreCard();
   };
   return (
-    <SafeAreaView className="flex-1 items-center justify-start w-full">
+    <SafeAreaView className="flex-1 flex flex-col items-center justify-between w-full h-full">
       {/* Tinder Cards */}
       <View className="relative flex-1 w-full">
         {db.map((character, index) => (
@@ -132,6 +132,8 @@ const Tinder = () => {
         <Button
           className="w-1/2 rounded-full"
           // size="icon"
+          variant="secondary"
+
           onPress={() => swipe("right")}
         >
           <HeartIcon size={32} color={"#fe183c"} />

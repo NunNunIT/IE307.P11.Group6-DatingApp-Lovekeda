@@ -12,10 +12,12 @@ export default function NotesLayoutScreen() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="settings" options={{ title: "Settings" }} />
-      <Stack.Screen name="noti" options={{ title: "Noti" }} />
-      <Stack.Screen name="filter" options={{ title: "Filter" }} />
-      <Stack.Screen name="editProfile" options={{ title: "Edit Profile" }} />
+      <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />
+      <Stack.Screen name="noti" options={{ title: "Thông báo" }} />
+      <Stack.Screen name="notiDetail/[id]" options={{ title: "" }} />
+      <Stack.Screen name="profileDetail/[id]" options={{ title: "" }} />
+      <Stack.Screen name="filter" options={{ title: "" }} />
+      <Stack.Screen name="editProfile" options={{ title: "Sửa hồ sơ" }} />
     </Stack>
   );
 }

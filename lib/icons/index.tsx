@@ -19,7 +19,8 @@ import {
   Check,
   ChevronsUpDown,
   Calendar,
-  Pen
+  Pen,
+  Smile,
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -42,6 +43,7 @@ iconWithClassName(Check);
 iconWithClassName(ChevronsUpDown);
 iconWithClassName(Calendar);
 iconWithClassName(Pen);
+iconWithClassName(Smile);
 export {
   X,
   Mail,
@@ -63,5 +65,6 @@ export {
   Check,
   ChevronsUpDown,
   Calendar,
-  Pen
+  Pen,
+  Smile,
 };

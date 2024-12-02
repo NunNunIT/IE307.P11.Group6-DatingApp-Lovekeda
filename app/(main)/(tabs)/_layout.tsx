@@ -25,9 +25,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        // tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: true,
+        tabBarShowLabel: false,
         tabBarButton: HapticTab,
+        tabBarActiveTintColor: "#fe183c",
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
@@ -50,7 +52,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color }) => (
-            <Home className="ml-1 size-6 text-zinc-500" />
+            <Home color={color} />
           ),
           headerRight: () => (
             <View className="flex flex-row gap-3 mr-2">
@@ -80,7 +82,7 @@ export default function TabLayout() {
         name="matches"
         options={{
           tabBarIcon: ({ color }) => (
-            <Heart className="ml-1 size-6 text-zinc-500" />
+            <Heart color={color} />
           ),
         }}
       />
@@ -88,7 +90,7 @@ export default function TabLayout() {
         name="chat"
         options={{
           tabBarIcon: ({ color }) => (
-            <MessageCircle className="ml-1 size-6 text-zinc-500" />
+            <MessageCircle color={color} />
           ),
         }}
       />
@@ -96,7 +98,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color }) => (
-            <User className="ml-1 size-6 text-zinc-500" />
+            <User color={color} />
           ),
           headerRight: () => (
             <View className="flex flex-row gap-3">
