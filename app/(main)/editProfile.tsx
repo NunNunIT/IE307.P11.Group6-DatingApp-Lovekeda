@@ -24,7 +24,7 @@ const schema = z.object({
   address: z.string().optional(),
 });
 
-export default function LogicScreen() {
+export default function EditProfileScreen() {
   const router = useRouter(); // Using router if needed for navigation
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

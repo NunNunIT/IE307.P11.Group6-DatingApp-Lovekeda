@@ -24,7 +24,7 @@ export default function ProfileScreen() {
       {/* Image */}
       <View className="relative m-3">
         <Image source={{ uri: data.imgUrl }} className="rounded-full size-40" />
-        <Button size="icon" onPress={() => router.push("/profileDetail")}>
+        <Button size="icon" onPress={() => router.push("/profileDetail/1")}>
           <Text>Edit</Text>
         </Button>
         <Button

@@ -1,52 +1,30 @@
-// import * as React from "react";
-// import { Dimensions, Text, View } from "react-native";
-// import Carousel from "react-native-reanimated-carousel";
+import Carousel from "@/components/carousel/type1";
+import React, { useState } from "react";
+import { Dimensions, Image, View } from "react-native";
 
-// function Index() {
-//   const width = Dimensions.get("window").width;
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <Carousel
-//         // loop
-//         width={width}
-//         height={width / 2}
-//         // autoPlay={true}
-//         data={[...new Array(6).keys()]}
-//         scrollAnimationDuration={1000}
-//         onSnapToItem={(index) => console.log("current index:", index)}
-//         pagingEnabled
-//         renderItem={({ index }) => (
-//           <View
-//             style={{
-//               flex: 1,
-//               borderWidth: 1,
-//               justifyContent: "center",
-//             }}
-//             className="bg-pri-color"
-//           >
-//             <Text style={{ textAlign: "center", fontSize: 30 }}>{index}</Text>
-//           </View>
-//         )}
-//       />
-//       <View className="flex flex-row gap-2">
-//       [...new Array(6).keys()].map(index) => {
-//         <Pressable onPress={setRenderItem} className={`flex-1 h-3 rounded-full bg-white/50 ${index == renderItem ? "bg-white": "bg-white/50"}`}>
-//         </Pressable>
-//       }
-//       </View>
-//     </View>
-//   );
-// }
+const { width } = Dimensions.get("window");
 
-// export default Index;
+const IMAGES = [
+  "https://images.pexels.com/photos/2529159/pexels-photo-2529159.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+  "https://images.pexels.com/photos/2529158/pexels-photo-2529158.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=600",
+  "https://images.pexels.com/photos/2529146/pexels-photo-2529146.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+  "https://images.pexels.com/photos/2529158/pexels-photo-2529158.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+];
 
-import React from "react";
-import { Text, View } from "react-native";
-
-export default function SettingsScreen() {
+const profileDetailScreen = () => {
   return (
-    <View className="flex flex-1 flex-col justify-center gap-4 p-4">
-      <Text>Noti</Text>
+    <View>
+      <Carousel data={IMAGES} containerStyle="h-fit aspect-[3/4]">
+        {(item) => (
+          <Image
+            source={{ uri: item }}
+            style={{ width: width }}
+            className="h-full object-cover"
+          />
+        )}
+      </Carousel>
     </View>
   );
-}
+};
+
+export default profileDetailScreen;

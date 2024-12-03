@@ -66,7 +66,7 @@ const mockData = [
   },
 ];
 
-export default function SettingsScreen() {
+export default function NotiScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
 

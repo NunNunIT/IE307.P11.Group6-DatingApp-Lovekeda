@@ -16,6 +16,7 @@ export default function NotesLayoutScreen() {
       <Stack.Screen name="noti" options={{ title: "Thông báo" }} />
       <Stack.Screen name="notiDetail/[id]" options={{ title: "" }} />
       <Stack.Screen name="profileDetail/[id]" options={{ title: "" }} />
+      <Stack.Screen name="chatDetail/[id]" options={{ title: "" }} />
       <Stack.Screen name="filter" options={{ title: "" }} />
       <Stack.Screen name="editProfile" options={{ title: "Sửa hồ sơ" }} />
     </Stack>
