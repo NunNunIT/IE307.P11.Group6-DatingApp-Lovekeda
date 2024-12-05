@@ -1,5 +1,11 @@
-import { View, Image, TouchableOpacity, ScrollView } from "react-native";
-import React from "react";
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import React, { useState } from "react";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -10,9 +16,14 @@ import { Button } from "@/components/ui/button";
 import { router, Tabs } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
+import ImageUploadType1 from "@/components/imageUpload/type1";
+
+var { width, height } = Dimensions.get("window");
 
 export default function ProfileScreen() {
   const data = profileData[0];
+  const [imgs, setImgs] = useState<string[]>([]);
+
   return (
     <ScrollView
       className="relative flex-1"
@@ -81,6 +92,35 @@ export default function ProfileScreen() {
 
         {/*  */}
       </View>
+
+      <ImageUploadType1
+        imgs={imgs}
+        setImgs={setImgs}
+        triggerContent={
+          <Button>
+            <Text>Click</Text>
+          </Button>
+        }
+      />
+
+      {imgs.length > 0 && (
+        <View className="flex flex-row">
+          {imgs.map((img, index) => (
+            <React.Fragment key={index}>
+              <Image
+                key={img} // Sử dụng img hoặc index làm key
+                source={{ uri: img }}
+                style={{
+                  width: width * 0.4,
+                  height: height * 0.4,
+                }}
+                className="mt-3"
+                resizeMode="cover"
+              />
+            </React.Fragment>
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 }

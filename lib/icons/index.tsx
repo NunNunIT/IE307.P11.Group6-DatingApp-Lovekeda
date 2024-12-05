@@ -21,6 +21,19 @@ import {
   Calendar,
   Pen,
   Smile,
+  AlertCircle,
+  Aperture,
+  Camera,
+  CircleX,
+  Construction,
+  Fullscreen,
+  GalleryThumbnails,
+  ImageOff,
+  ScanQrCode,
+  Squircle,
+  SwitchCamera,
+  Zap,
+  ZapOff,
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -44,6 +57,19 @@ iconWithClassName(ChevronsUpDown);
 iconWithClassName(Calendar);
 iconWithClassName(Pen);
 iconWithClassName(Smile);
+iconWithClassName(GalleryThumbnails);
+iconWithClassName(Squircle);
+iconWithClassName(SwitchCamera);
+iconWithClassName(Aperture);
+iconWithClassName(Zap);
+iconWithClassName(ZapOff);
+iconWithClassName(Camera);
+iconWithClassName(ScanQrCode);
+iconWithClassName(Fullscreen);
+iconWithClassName(CircleX);
+iconWithClassName(Construction);
+iconWithClassName(AlertCircle);
+iconWithClassName(ImageOff);
 export {
   X,
   Mail,
@@ -67,4 +93,17 @@ export {
   Calendar,
   Pen,
   Smile,
+  AlertCircle,
+  Aperture,
+  Camera,
+  CircleX,
+  Construction,
+  Fullscreen,
+  GalleryThumbnails,
+  ImageOff,
+  ScanQrCode,
+  Squircle,
+  SwitchCamera,
+  Zap,
+  ZapOff,
 };

@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   Dimensions,
@@ -89,6 +90,18 @@ const Carousel = ({
           <Text className="opacity-0">Next</Text>
         </TouchableOpacity>
       </View>
+
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.15)"]}
+        style={{
+          position: "absolute",
+          top: 0,
+          width: "100%",
+          height: "5%",
+        }}
+        start={{ x: 0.5, y: 1 }}
+        end={{ x: 0.5, y: 0.5 }}
+      />
 
       {/* Pagination */}
       <View className="absolute z-10 top-2 flex flex-row gap-2 justify-center px-3">
