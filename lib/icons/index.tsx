@@ -18,6 +18,7 @@ import {
   Bell,
   Check,
   ChevronsUpDown,
+  ChevronDown,
   Calendar,
   Pen,
   Smile,
@@ -34,6 +35,7 @@ import {
   SwitchCamera,
   Zap,
   ZapOff,
+  Plus
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -54,6 +56,7 @@ iconWithClassName(Settings2);
 iconWithClassName(Bell);
 iconWithClassName(Check);
 iconWithClassName(ChevronsUpDown);
+iconWithClassName(ChevronDown);
 iconWithClassName(Calendar);
 iconWithClassName(Pen);
 iconWithClassName(Smile);
@@ -70,6 +73,7 @@ iconWithClassName(CircleX);
 iconWithClassName(Construction);
 iconWithClassName(AlertCircle);
 iconWithClassName(ImageOff);
+iconWithClassName(Plus);
 export {
   X,
   Mail,
@@ -90,6 +94,7 @@ export {
   Bell,
   Check,
   ChevronsUpDown,
+  ChevronDown,
   Calendar,
   Pen,
   Smile,
@@ -106,4 +111,5 @@ export {
   SwitchCamera,
   Zap,
   ZapOff,
+  Plus
 };

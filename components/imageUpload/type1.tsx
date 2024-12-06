@@ -107,7 +107,7 @@ export default function ImageUploadType1({
   // };
 
   return (
-    <View className="flex-1 p-16">
+    <View className="flex-1 justify-center items-center">
       <Dialog>
         <DialogTrigger asChild>{renderTriggers()}</DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

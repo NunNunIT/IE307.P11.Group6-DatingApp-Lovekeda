@@ -33,6 +33,7 @@
     "@rn-primitives/select": "^1.1.0",
     "@rn-primitives/slot": "^1.1.0",
     "@rn-primitives/switch": "^1.1.0",
+    "@rn-primitives/tabs": "^1.1.0",
     "@rn-primitives/types": "^1.1.0",
     "@rneui/themed": "^4.0.0-rc.8",
     "@sharcoux/slider": "^8.0.6",

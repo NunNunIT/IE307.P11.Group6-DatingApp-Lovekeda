@@ -13,17 +13,46 @@ import {
 import { profileData } from "@/constant";
 import DarkModeSwitch from "@/components/darkModeOption/switch";
 import { Button } from "@/components/ui/button";
-import { router, Tabs } from "expo-router";
+import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
 import ImageUploadType1 from "@/components/imageUpload/type1";
-
+import Carousel from "@/components/carousel/type1";
+import { Plus } from "@/lib/icons";
+import MultiChoicePicker from "@/components/select/multiChoice";
+import SingleChoicePicker from "@/components/select/oneChoice";
 var { width, height } = Dimensions.get("window");
+
+const options = [
+  { label: "JavaScript", value: "js" },
+  { label: "Java", value: "java" },
+  { label: "Python1", value: "python1" },
+  { label: "Python2", value: "python2" },
+  { label: "Python3", value: "python3" },
+  { label: "Python4", value: "python4" },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "Perl1", value: "perl1" },
+  { label: "Perl4", value: "perl4" },
+  { label: "Perl3", value: "perl3" },
+  { label: "Perl2", value: "perl2" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+];
 
 export default function ProfileScreen() {
   const data = profileData[0];
-  const [imgs, setImgs] = useState<string[]>([]);
-
+  const [values, setValues] = useState<string[]>(["perl2"]);
+  const [value, setValue] = useState<string>();
   return (
     <ScrollView
       className="relative flex-1"
@@ -93,34 +122,24 @@ export default function ProfileScreen() {
         {/*  */}
       </View>
 
-      <ImageUploadType1
-        imgs={imgs}
-        setImgs={setImgs}
-        triggerContent={
-          <Button>
-            <Text>Click</Text>
-          </Button>
-        }
+      <MultiChoicePicker
+        values={values}
+        onChange={setValues} // Ensure this matches the correct type
+        title="Chọn nhiều"
+        placeholder="Chọn nhiều giá trị"
+        options={options}
+        showSearch
+        // useDialogDefault
       />
 
-      {imgs.length > 0 && (
-        <View className="flex flex-row">
-          {imgs.map((img, index) => (
-            <React.Fragment key={index}>
-              <Image
-                key={img} // Sử dụng img hoặc index làm key
-                source={{ uri: img }}
-                style={{
-                  width: width * 0.4,
-                  height: height * 0.4,
-                }}
-                className="mt-3"
-                resizeMode="cover"
-              />
-            </React.Fragment>
-          ))}
-        </View>
-      )}
+      <SingleChoicePicker
+        value={value}
+        onChange={setValue} // Ensure this matches the correct type
+        title="Chọn một"
+        placeholder="Chọn một giá trị"
+        options={options}
+        showSearch
+      />
     </ScrollView>
   );
 }
