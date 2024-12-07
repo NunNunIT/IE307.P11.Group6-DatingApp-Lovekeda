@@ -2,38 +2,29 @@ import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { datesData, matchesData } from "@/constant";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { router } from "expo-router";
 
 export default function Matches() {
   return (
-    <View className="mt-4">
+    <View className="">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        className="space-x-4"
-        contentContainerStyle={{
-          paddingLeft: hp(2),
-          paddingRight: hp(2),
-        }}
       >
         {datesData?.map((matches, index) => {
           return (
             <TouchableOpacity
               key={index}
-              className="flex items-center space-y-1 min-w-24"
+              className="flex items-center max-w-24 px-3"
+              onPress={() => router.push("/chatDetail/1")}
             >
-              <View className="rounded-full">
-                <Image
-                  source={{uri: matches.imgUrl}}
-                  style={{
-                    width: hp(6),
-                    height: hp(6),
-                  }}
-                  resizeMode="cover"
-                  className="rounded-full aspect-square"
-                />
-              </View>
+              <Image
+                source={{ uri: matches.imgUrl }}
+                resizeMode="cover"
+                className="rounded-full w-full aspect-square size-16"
+              />
               <Text
-                className="text-zinc-800 dark:text-zinc-200 font-medium text-base"
+                className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base"
                 style={{
                   fontSize: hp(1.6),
                 }}

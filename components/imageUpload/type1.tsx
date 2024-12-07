@@ -62,7 +62,7 @@ export default function ImageUploadType1({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       allowsMultipleSelection: multiUpload,
-      // aspect: [4, 3],
+      aspect: [3, 4],
       quality: 1,
     });
 

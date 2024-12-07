@@ -331,6 +331,28 @@ export const chatData = [
       },
     ],
   },
+  {
+    id: 7,
+    name: "Jack",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+    age: 30,
+    isOnline: true,
+    lastMessage: "Sounds like a great idea. Let's make it happen.",
+    date: "2023-10-07",
+    timeSent: "45 mins",
+    chat: [
+      {
+        sender: "me",
+        message: "Hey Jack, how's your week been?",
+        timestamp: "6:00 PM",
+      },
+      {
+        sender: "Jack",
+        message: "It's been busy but good. How about you?",
+        timestamp: "6:05 PM",
+      },
+    ],
+  },
 ];
 
 export const datesData = [

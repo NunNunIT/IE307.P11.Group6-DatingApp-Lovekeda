@@ -134,16 +134,25 @@ export default function SingleChoicePicker({
           </View>
         );
       }}
+      // renderInput={(_value?: any, label?: string) => {
+      //   return (
+      //     <View className="w-full flex flex-row justify-between items-center py-4">
+      //       <View className="w-2/5">
+      //         <Text className="text-wrap">{title}</Text>
+      //       </View>
+      //       <View className="w-2/5 flex flex-row justify-end items-center">
+      //         <Text className="line-clamp-1">{label}</Text>
+      //         <ChevronDown className="size-8 text-black dark:text-white" />
+      //       </View>
+      //     </View>
+      //   );
+      // }}
+
       renderInput={(_value?: any, label?: string) => {
         return (
-          <View className="w-full flex flex-row justify-between items-center py-4">
-            <View className="w-2/5">
-              <Text className="text-wrap">{title}</Text>
-            </View>
-            <View className="w-2/5 flex flex-row justify-end items-center">
-              <Text className="line-clamp-1">{label}</Text>
-              <ChevronDown className="size-8 text-black dark:text-white" />
-            </View>
+          <View className="flex flex-row justify-end items-center">
+            <Text className="line-clamp-1">{label}</Text>
+            <ChevronDown className="size-8 text-black dark:text-white" />
           </View>
         );
       }}
