@@ -1,4 +1,4 @@
-import { router, Tabs } from "expo-router";
+import { Redirect, router, Tabs } from "expo-router";
 import React from "react";
 import { Image, Platform, View } from "react-native";
 
@@ -18,9 +18,14 @@ import {
 import DarkModeText from "@/components/darkModeOption/text";
 import { Button } from "@/components/ui/button";
 import { BadgePlus } from "lucide-react-native";
+import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { location, permissionStatus } = useLocation();
+  if (permissionStatus === "denied") {
+    return <Redirect href="/(screen)/(main)/permissionError" />;
+  }
 
   return (
     <Tabs
@@ -51,9 +56,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Home color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Home color={color} />,
           headerRight: () => (
             <View className="flex flex-row gap-3 mr-2">
               <Button
@@ -81,25 +84,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name="matches"
         options={{
-          tabBarIcon: ({ color }) => (
-            <Heart color={color} />
-          ),
+          tabBarIcon: ({ color }) => <Heart color={color} />,
         }}
       />
       <Tabs.Screen
         name="chat"
         options={{
-          tabBarIcon: ({ color }) => (
-            <MessageCircle color={color} />
-          ),
+          tabBarIcon: ({ color }) => <MessageCircle color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color }) => (
-            <User color={color} />
-          ),
+          tabBarIcon: ({ color }) => <User color={color} />,
           headerRight: () => (
             <View className="flex flex-row gap-3">
               <Button

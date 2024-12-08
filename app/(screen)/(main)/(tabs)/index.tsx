@@ -13,6 +13,7 @@ import {
 } from "react-native-heroicons/solid";
 import Loading1 from "@/components/loading";
 import { Image } from "react-native";
+import { Redirect } from "expo-router";
 
 const db = [
   {
@@ -150,7 +151,6 @@ const Tinder = () => {
               className="rounded-full size-28"
             />
           </View>
-
         </View>
       ) : (
         <>
