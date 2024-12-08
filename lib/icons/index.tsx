@@ -36,7 +36,9 @@ import {
   Zap,
   ZapOff,
   Plus,
-  IdCard
+  IdCard,
+  CameraIcon,
+  ImageIcon
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -76,6 +78,8 @@ iconWithClassName(AlertCircle);
 iconWithClassName(ImageOff);
 iconWithClassName(Plus);
 iconWithClassName(IdCard);
+iconWithClassName(CameraIcon);
+iconWithClassName(ImageIcon);
 export {
   X,
   Mail,
@@ -114,5 +118,7 @@ export {
   Zap,
   ZapOff,
   Plus,
-  IdCard
+  IdCard,
+  CameraIcon,
+  ImageIcon
 };

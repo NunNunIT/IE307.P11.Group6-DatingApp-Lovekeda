@@ -28,6 +28,7 @@ export default function NotesLayoutScreen() {
       />
       <Stack.Screen name="filter" options={{ title: "" }} />
       <Stack.Screen name="editProfile" options={{ title: "Sửa hồ sơ" }} />
+      <Stack.Screen name="permissionError" options={{ headerShown: false }} />
     </Stack>
   );
 }

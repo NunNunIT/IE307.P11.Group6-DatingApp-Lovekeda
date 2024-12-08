@@ -150,7 +150,7 @@ export default function SingleChoicePicker({
 
       renderInput={(_value?: any, label?: string) => {
         return (
-          <View className="flex flex-row justify-end items-center">
+          <View className="w-full flex flex-row justify-between items-center">
             <Text className="line-clamp-1">{label}</Text>
             <ChevronDown className="size-8 text-black dark:text-white" />
           </View>

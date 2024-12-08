@@ -10,7 +10,14 @@ import {
 import { View, Image, StyleSheet, Dimensions, Modal } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { SwitchCamera, X, Zap, ZapOff } from "@/lib/icons";
+import {
+  SwitchCamera,
+  X,
+  Zap,
+  ZapOff,
+  ImageIcon,
+  CameraIcon,
+} from "@/lib/icons";
 import {
   Dialog,
   DialogClose,
@@ -23,8 +30,6 @@ import {
 } from "~/components/ui/dialog";
 
 const { width, height } = Dimensions.get("window");
-
-
 
 interface ImageUploadType1Props {
   multiUpload?: boolean;
@@ -40,9 +45,9 @@ export default function ImageUploadType1({
   imgs = [],
   setImgs,
   triggerContent,
-  // imagePreview,
-  // renderImgs,
-}: ImageUploadType1Props) {
+}: // imagePreview,
+// renderImgs,
+ImageUploadType1Props) {
   const [cameraVisible, setCameraVisible] = useState(false);
   const cameraRef = useRef<CameraView | null>(null);
   const [facing, setFacing] = useState<CameraType>("back");
@@ -95,10 +100,12 @@ export default function ImageUploadType1({
   }
 
   const renderTriggers = () => {
-    return triggerContent || (
-      <Button variant="outline">
-        <Text>Upload Image</Text>
-      </Button>
+    return (
+      triggerContent || (
+        <Button variant="outline">
+          <Text>Upload Image</Text>
+        </Button>
+      )
     );
   };
 
@@ -110,28 +117,24 @@ export default function ImageUploadType1({
     <View className="flex-1 justify-center items-center">
       <Dialog>
         <DialogTrigger asChild>{renderTriggers()}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent style={{ width: width * 0.5 }}>
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
-            <View className="flex flex-row gap-2">
-              <Button onPress={pickImage}>
-                <Text>Chọn Ảnh</Text>
+            <DialogTitle>Đăng tải hình ảnh</DialogTitle>
+            <View className="flex flex-col justify-center items-center gap-6 mt-6">
+              <Button variant="secondary" className="w-full" onPress={pickImage}>
+                <View className="flex flex-row gap-2">
+                  <ImageIcon className="text-black dark:text-white size-6" />
+                  <Text className="">Chọn Ảnh</Text>
+                </View>
               </Button>
-              <Button onPress={() => setCameraVisible(true)}>
-                <Text>Mở Camera</Text>
+              <Button variant="secondary" className="w-full" onPress={() => setCameraVisible(true)}>
+                <View className="flex flex-row gap-2">
+                  <CameraIcon className="text-black dark:text-white size-6" />
+                  <Text className="">Mở camera</Text>
+                </View>
               </Button>
             </View>
           </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button>
-                <Text>OK</Text>
-              </Button>
-            </DialogClose>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 

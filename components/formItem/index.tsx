@@ -17,7 +17,7 @@ export const FormItem = ({
   error?: string;
   children: any;
 }) => (
-  <View className="relative mb-5">
+  <View className="relative mb-5 w-full">
     {label && (
       <Label
         htmlFor={name || ''}

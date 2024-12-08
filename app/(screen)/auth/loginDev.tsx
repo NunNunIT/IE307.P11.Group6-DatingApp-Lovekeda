@@ -1,4 +1,5 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
+import Loading1 from "@/components/loading";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, Link, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -60,7 +61,7 @@ export default function LoginDevScreen() {
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <Spinner visible={isSubmitting} />
-      <View className="flex-1 justify-center items-center bg-white px-6 py-3 dark:bg-black">
+      <View className="w-full flex-1 justify-center items-center bg-white px-6 py-3 dark:bg-black">
         <FormItem
           name="email"
           label="Email"

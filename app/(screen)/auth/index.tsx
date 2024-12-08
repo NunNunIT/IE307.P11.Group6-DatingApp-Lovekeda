@@ -1,27 +1,13 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, Link, useRouter, router } from "expo-router";
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { Alert, Dimensions, View } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
-import { z } from "zod";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
-import { FormItem } from "~/components/formItem";
-import SocialLogin from "~/components/socialLogin";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Mail, Lock, Eye, EyeClosed } from "~/lib/icons";
-import { supabase } from "~/utils/supabase";
-import {
-  Constants,
-  Spacings,
-  Carousel,
-  Image,
-  Colors,
-} from "react-native-ui-lib";
+import { Carousel, Image } from "react-native-ui-lib";
 import { LinearGradient } from "expo-linear-gradient";
 
 var { width, height } = Dimensions.get("window");
@@ -36,7 +22,10 @@ const decorate = [
 ];
 
 const handleLoginGoogle = () => {
+  // Nếu như user mới thì chuyển về createProfile
+  // còn user cũ thì (main)/(tabs)/index
   console.log("Login with Google");
+  <Redirect href="/(screen)/auth/createProfile" />;
 };
 
 export default function Login() {
@@ -110,7 +99,8 @@ export default function Login() {
         <Button
           variant="none"
           className="w-full rounded-full mb-4 bg-white dark:bg-white active:bg-black "
-          onPress={handleLoginGoogle}
+          // onPress={handleLoginGoogle}
+          onPress={() => router.push("/auth/createProfile")}
         >
           <View className="flex flex-row gap-3">
             <Image

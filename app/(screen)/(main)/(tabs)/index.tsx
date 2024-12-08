@@ -11,6 +11,8 @@ import {
   LockClosedIcon,
   XMarkIcon,
 } from "react-native-heroicons/solid";
+import Loading1 from "@/components/loading";
+import { Image } from "react-native";
 
 const db = [
   {
@@ -83,7 +85,7 @@ const Tinder = () => {
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
   const [loading, setLoading] = useState(true);
-  
+
   const childRefs = useMemo(
     () =>
       Array(db.length)
@@ -138,7 +140,18 @@ const Tinder = () => {
     // <SafeAreaView className="relative flex-1 flex flex-col items-center justify-between w-full h-full">
     <SafeAreaView className="relative flex-1 w-full h-full">
       {loading ? (
-        <></>
+        <View className="w-full h-full flex justify-center items-center">
+          <Loading1 />
+          <View className="absolute items-center justify-center">
+            <Image
+              source={{
+                uri: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+              }}
+              className="rounded-full size-28"
+            />
+          </View>
+
+        </View>
       ) : (
         <>
           {/* Tinder Cards */}
