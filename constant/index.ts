@@ -453,7 +453,7 @@ export const profileData = [
     name: "Jacob Jones",
     age: 30,
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
-    hobbies: ["Hiking", "Photography", "Cooking"],
+    hobbies: ["Hiking", "Photography", "Cooking", "Hiking1", "Photography1", "Cooking1"],
     bio: "I'm an adventurous person who loves exploring new places, trying out different cuisines, capturing moments through photography, and spending time in nature. I enjoy hiking on weekends and experimenting with new recipes in the kitchen. Traveling and experiencing different cultures are some of my greatest passions, and I'm always looking for my next adventure.",
   },
 ];

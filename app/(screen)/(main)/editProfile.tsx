@@ -13,10 +13,12 @@ import {
   Colors,
   SegmentedControl,
   SegmentedControlItemProps,
+  TextField,
 } from "react-native-ui-lib";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
+import { useColorScheme } from "nativewind";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,23 +29,27 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
 const optionsGender = [
   { label: "Nam", value: "male" },
   { label: "Nữ", value: "female" },
-  { label: "Khác", value: "Other" },
+  { label: "Khác", value: "other" },
 ];
 
 export default function FilterScreen() {
+  const { colorScheme, toggleColorScheme } = useColorScheme();
   const [rangeAge, setRangeAge] = React.useState<[number, number]>([18, 100]);
   const [valueDistance, setValueDistance] = React.useState<number>(10);
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("male");
+  const [age, setAge] = useState(null);
+  const [bio, setBio] = useState("");
+  const [genderFind, setGenderFind] = useState("male");
   const [purposeValue, setPurposeValue] = React.useState<string>("friends");
-  const [genderValue, setGenderValue] = React.useState<string>("all");
-  const [value, setValue] = useState(0);
-  const [gender, setGender] = useState("female");
   const [imgs, setImgs] = useState<string[]>([]);
+  const [tab, setTab] = useState(0);
 
   const onChangeIndex = useCallback((index: number) => {
     console.warn(
       "Index " + index + " of the second segmentedControl was pressed"
     );
-    setValue(index);
+    setTab(index);
   }, []);
   const [screenPreset, setScreenPreset] = useState(
     SegmentedControl.presets.DEFAULT
@@ -51,10 +57,11 @@ export default function FilterScreen() {
 
   const submitHandler = () => {
     const data = {
-      ageRange: rangeAge,
-      distance: valueDistance,
-      gender: genderValue,
-      purpose: purposeValue,
+      name: name,
+      age: age,
+      bio: bio,
+      gender: gender,
+      imgs: imgs,
     };
     console.log("Data submitted:", data);
   };
@@ -76,62 +83,192 @@ export default function FilterScreen() {
   return (
     <ScrollView className="flex-1">
       <View className="h-full p-4 gap-4 flex flex-col mb-16">
-        <View className="relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-3">
-          <Text className="text-lg font-bold">Tên</Text>
-          <Input
-            autoCapitalize="characters"
-            className=""
-            placeholder="Nhập tên của bạn"
-          />
-        </View>
+        <TextField
+          label="Tên của bạn"
+          labelStyle={{
+            fontSize: 16,
+            color: colorScheme === "dark" ? "white" : "black",
+            fontWeight: 800,
+            paddingVertical: 3,
+            paddingHorizontal: 12,
+          }}
+          placeholder={"Nhập tên của bạn"}
+          placeholderTextColor="gray"
+          floatingPlaceholderStyle={{
+            fontSize: 16,
+            color: colorScheme === "dark" ? "white" : "black",
+            fontWeight: 800,
+            paddingBottom: 2,
+          }}
+          color={colorScheme === "dark" ? "white" : "black"}
+          // floatingPlaceholder
+          // floatOnFocus
+          enableErrors
+          validateOnChange
+          validate={["required"]}
+          validationMessage={["Tên không được để trống"]}
+          validationMessageStyle={{
+            fontSize: 12,
+            paddingVertical: 3,
+            paddingHorizontal: 12,
+          }}
+          // showCharCounter
+          maxLength={30}
+          containerStyle={{
+            width: "100%",
+          }}
+          fieldStyle={{
+            backgroundColor: colorScheme === "dark" ? "#18181b" : "#f4f4f5",
+            paddingVertical: 16,
+            paddingHorizontal: 16,
+            borderRadius: 999,
+            borderWidth: 2,
+            borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
+          }}
+          value={name}
+          onChangeText={setName}
+        />
 
-        <View className="relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-3">
-          <Text className="text-lg font-bold">Mô tả</Text>
-          <Textarea
-            placeholder="Để lại lời giới thiệu cho mọi người..."
-            // value={value}
-            // onChangeText={setValue}
-            aria-labelledby="textareaLabel"
-          />
-        </View>
-
-        <View className="flex flex-row gap-2">
-          <View className="flex-1 relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-3">
-            <Text className="text-lg font-bold">Tuổi</Text>
-            <Input
-              autoCapitalize="characters"
-              keyboardType="numeric"
-              className=""
-              placeholder="Nhập tuổi"
-            />
-          </View>
-          {/* Giới tính */}
-          <View className="flex-1 relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-3">
-            <Text className="text-lg font-bold">Giới tính</Text>
-            <View className="flex flex-row gap-2 bg-zinc-50 dark:bg-zinc-900">
+        <View className="flex flex-row gap-6">
+          <View className="flex-1 ">
+            <Text className="pl-4 text-black dark:text-white font-bold text-lg mb-1">
+              Giới tính
+            </Text>
+            <View className="px-6 py-4 flex justify-start items-start bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full">
               <SingleChoicePicker
                 value={gender}
                 onChange={setGender} // Ensure this matches the correct type
-                // title="Giới tính"
-                placeholder="Chọn giới tính"
+                title="Chọn một"
+                placeholder="Chọn một giá trị"
                 options={optionsGender}
-                showSearch
                 useDialogDefault
               />
             </View>
           </View>
+
+          <TextField
+            keyboardType="numeric"
+            label="Tuổi"
+            labelStyle={{
+              fontSize: 16,
+              color: colorScheme === "dark" ? "white" : "black",
+              fontWeight: 800,
+              paddingVertical: 3,
+              paddingHorizontal: 12,
+            }}
+            placeholder={"Tuổi"}
+            placeholderTextColor="gray"
+            floatingPlaceholderStyle={{
+              fontSize: 16,
+              color: colorScheme === "dark" ? "white" : "black",
+              fontWeight: 800,
+              paddingBottom: 2,
+            }}
+            color={colorScheme === "dark" ? "white" : "black"}
+            // floatingPlaceholder
+            // floatOnFocus
+            value={age}
+            onChangeText={setAge}
+            enableErrors
+            validateOnChange
+            validate={[
+              "required",
+              (value) => value >= 18,
+              (value) => value <= 100,
+            ]}
+            validationMessage={[
+              "Tuổi không được để trống",
+              "Tuổi phải lớn hơn 18",
+              "Tuổi phải nhỏ hơn 100",
+            ]}
+            validationMessageStyle={{
+              fontSize: 12,
+              paddingVertical: 3,
+              paddingHorizontal: 12,
+            }}
+            // showCharCounter
+            maxLength={30}
+            containerStyle={{
+              flex: 1,
+            }}
+            fieldStyle={{
+              backgroundColor: colorScheme === "dark" ? "#18181b" : "#f4f4f5",
+              paddingVertical: 16,
+              paddingHorizontal: 16,
+              borderRadius: 999,
+              borderWidth: 2,
+              borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
+            }}
+          />
         </View>
 
+        <TextField
+          multiline
+          numberOfLines={6}
+          textAlignVertical="top"
+          label="Giới thiệu bạn với mọi người"
+          labelStyle={{
+            fontSize: 16,
+            color: colorScheme === "dark" ? "white" : "black",
+            fontWeight: 800,
+            paddingVertical: 3,
+            paddingHorizontal: 12,
+          }}
+          placeholder={"Viết gì đó giới thiệu bạn với mọi người"}
+          placeholderTextColor="gray"
+          floatingPlaceholderStyle={{
+            fontSize: 16,
+            color: colorScheme === "dark" ? "white" : "black",
+            fontWeight: 800,
+            paddingBottom: 2,
+          }}
+          color={colorScheme === "dark" ? "white" : "black"}
+          // floatingPlaceholder
+          // floatOnFocus
+          onChangeText={(text) => console.log(text)}
+          enableErrors
+          validateOnChange
+          // validate={["required"]}
+          // validationMessage={["Tên không được để trống"]}
+          validationMessageStyle={{
+            fontSize: 12,
+            paddingVertical: 3,
+            paddingHorizontal: 12,
+          }}
+          showCharCounter
+          charCounterStyle={{
+            paddingHorizontal: 12,
+          }}
+          maxLength={200}
+          containerStyle={{
+            width: "100%",
+          }}
+          fieldStyle={{
+            height: 100,
+            backgroundColor: colorScheme === "dark" ? "#18181b" : "#f4f4f5",
+            paddingVertical: 16,
+            paddingHorizontal: 12,
+            borderRadius: 16,
+            borderWidth: 2,
+            borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
+          }}
+        />
+
         <SegmentedControl
-          containerStyle={{}}
+          style={{
+            borderColor: colorScheme === "dark" ? "#27272a" : "#d4d4d8",
+          }}
+          inactiveColor="gray"
+          backgroundColor={colorScheme === "dark" ? "black" : "#e4e4e7"}
           activeColor={Colors.$textDangerLight}
+          activeBackgroundColor={colorScheme === "dark" ? "#18181b" : "white"}
           outlineColor={Colors.$textDangerLight}
           segments={segments.first}
           preset={screenPreset}
           onChangeIndex={onChangeIndex}
         />
 
-        {value === 0 ? (
+        {tab === 0 ? (
           <View className="flex flex-row flex-wrap gap-2 justify-between items-center">
             {Array(9)
               .fill(0)
@@ -189,34 +326,10 @@ export default function FilterScreen() {
           </Carousel>
         )}
 
-        {/* Mục đích tìm kiếm */}
-        <View className="relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-3">
-          <Text className="text-lg font-bold">Mục đích tìm kiếm</Text>
-          <View className="flex flex-row gap-2">
-            {["friends", "dating"].map((purpose) => (
-              <Pressable
-                key={purpose}
-                className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${
-                  purposeValue === purpose
-                    ? "border-pri-color bg-white dark:bg-zinc-950"
-                    : "border-zinc-200 dark:border-zinc-800"
-                }`}
-                onPress={() => setPurposeValue(purpose)}
-              >
-                <Text className="text-2xl">
-                  {purpose === "friends" ? "👋" : "❤️"}
-                </Text>
-                <Text className="">
-                  {purpose === "friends" ? "Tìm bạn" : "Tìm người yêu"}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
         {/* Nút Submit */}
-        <Button onPress={submitHandler} className="mt-4">
-          <Text>Submit</Text>
+
+        <Button onPress={submitHandler} className="mt-4 rounded-full">
+          <Text>Lưu</Text>
         </Button>
       </View>
     </ScrollView>

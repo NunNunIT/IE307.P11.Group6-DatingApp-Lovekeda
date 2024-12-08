@@ -206,16 +206,16 @@ export default function ChatDetailsScreen() {
           <View className="w-1/5 flex-row justify-end items-center gap-2">
             <ImageUploadType1
               triggerContent={
-                <Button variant="ghost" size="icon" className="pl-2">
+                <Button variant="ghost" size="icon">
                   <PhotoIcon size={hp(3)} color={"gray"} strokeWidth={2} />
                 </Button>
               }
             />
-            <Button variant="ghost" size="icon" className="pl-2">
+            <Button variant="ghost" size="icon">
               <FaceSmileIcon size={hp(3)} color={"gray"} strokeWidth={2} />
             </Button>
-            <Button variant="ghost" size="icon" className="pl-2">
-              <MicrophoneIcon size={hp(2.5)} color={"gray"} strokeWidth={2} />
+            <Button variant="ghost" size="icon">
+              <MicrophoneIcon size={hp(3)} color={"gray"} strokeWidth={2} />
             </Button>
           </View>
         </View>

@@ -68,55 +68,49 @@ export default function ProfileScreen() {
           className="rounded-full absolute -bottom-2 -right-2 p-6"
           variant="secondary"
           size="icon"
+          onPress={() => router.push("/editProfile")}
         >
           <Pen className="text-zinc-500 dark:text-zinc-100" strokeWidth={1.5} />
         </Button>
       </View>
 
-      {/* Bio */}
+      <View className="w-full justify-center items-center flex-row">
+        <Text className="text-black dark:text-white text-center font-bold text-xl">
+          {data.name}
+          {", "}
+        </Text>
+        <Text className="text-black dark:text-white text-center font-bold text-xl ">
+          {data.age}
+        </Text>
+      </View>
+
       <View className="w-full justify-start items-start px-6 space-y-4 mt-6">
-        {/* User name and age */}
-        <View className="flex-row space-x-2 justify-between w-full items-center">
-          <View className="flex-row ">
-            <Text className="text-black dark:text-white text-center font-bold text-xl">
-              {data.name}
-              {", "}
-            </Text>
-            <Text className="text-black dark:text-white text-center font-bold text-xl ">
-              {data.age}
-            </Text>
-          </View>
-
-          <Button size="icon" onPress={() => router.push("/editProfile")}>
-            <Text>Edit</Text>
-          </Button>
-        </View>
-
-        {/* User hobbies */}
-        <View>
-          <View className="flex-row">
-            {data.hobbies?.map((hobby, index) => (
-              <View key={index} className="bg-rose-500 rounded-3xl p-2 mr-2">
-                <Text className="text-black dark:text-white ">{hobby}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
         {/* User Bio */}
         <View>
-          <Text className="uppercase font-semibold text-neutral-500 tracking-wider mb-2 ">
-            BIO
-          </Text>
-
-          <Text className="text-black dark:text-white/80 text-left font-medium text-sm">
+          <Text className="text-black dark:text-white text-left font-medium text-sm">
             {data.bio}
           </Text>
         </View>
 
-        <DarkModeSwitch />
+        {/* User location */}
+        <View className="flex flex-col mt-6">
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">Nơi sống</Text>
+          <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
+            {"Phường Linh Trung, Đông Hòa, ...."}
+          </Text>
+        </View>
 
-        {/*  */}
+        {/* User hobbies */}
+        <View className="flex flex-col mt-6">
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">Sở thích</Text>
+          <View className="flex-row mt-3 flex-wrap gap-2">
+            {data.hobbies?.map((hobby, index) => (
+              <View key={index} className="bg-pri-color rounded-3xl p-2">
+                <Text className="text-white dark:text-white">{hobby}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
       </View>
 
       {/* <MultiChoicePicker
