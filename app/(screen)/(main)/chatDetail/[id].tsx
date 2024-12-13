@@ -21,15 +21,20 @@ import {
 import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import ImageUploadType1 from "@/components/imageUpload/type1";
-import { router } from "expo-router";
 import { Button } from "@/components/ui/button";
+import { Audio } from "expo-av";
+import { router } from "expo-router";
 
 const android = Platform.OS === "android";
 
 export default function ChatDetailsScreen() {
-  const [message, setMessage] = useState(""); // Lưu trữ tin nhắn trong TextInput
-  const [chatList, setChatList] = useState([]); // Danh sách tin nhắn
-  const [loading, setLoading] = useState(true); // Trạng thái tải dữ liệu
+  const [message, setMessage] = useState("");
+  const [chatList, setChatList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [recording, setRecording] = useState(null);
+  const [audioUri, setAudioUri] = useState(null);
+  const [playingSound, setPlayingSound] = useState(null);
+  const [imgs, setImgs] = useState([]); // Mảng hình ảnh
 
   const chatData = {
     id: 1,
@@ -39,11 +44,9 @@ export default function ChatDetailsScreen() {
     age: 32,
   };
 
-  // Mô phỏng tải dữ liệu
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      // Giả lập gọi API với thời gian chờ
       setTimeout(() => {
         setChatList([
           {
@@ -57,20 +60,21 @@ export default function ChatDetailsScreen() {
             timestamp: "10:05 AM",
           },
         ]);
-        setLoading(false); // Dữ liệu đã tải xong
+        setLoading(false);
       }, 2000);
     };
 
     fetchData();
   }, []);
 
-  // Hàm gửi tin nhắn
   const sendMess = () => {
-    if (message.trim() === "") return;
+    if (message.trim() === "" && imgs.length === 0 && !audioUri) return;
 
     const newMessage = {
       sender: "me",
       message: message.trim(),
+      images: imgs,
+      audio: audioUri,
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -79,6 +83,64 @@ export default function ChatDetailsScreen() {
 
     setChatList((prev) => [...prev, newMessage]);
     setMessage("");
+    setImgs([]);
+    setAudioUri(null);
+  };
+
+  const startRecording = async () => {
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) {
+        alert("Permission to access microphone is required!");
+        return;
+      }
+
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(
+        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      );
+      await recording.startAsync();
+      setRecording(recording);
+    } catch (error) {
+      console.error("Failed to start recording:", error);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setAudioUri(uri);
+      setRecording(null);
+    } catch (error) {
+      console.error("Failed to stop recording:", error);
+    }
+  };
+
+  const playAudio = async (uri) => {
+    if (playingSound) {
+      await playingSound.stopAsync();
+      await playingSound.unloadAsync();
+      setPlayingSound(null);
+    }
+
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: true }
+      );
+
+      setPlayingSound(sound);
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+          setPlayingSound(null);
+          sound.unloadAsync();
+        }
+      });
+    } catch (error) {
+      console.error("Failed to play audio:", error);
+    }
   };
 
   return (
@@ -88,7 +150,6 @@ export default function ChatDetailsScreen() {
         paddingTop: android ? hp(4) : 0,
       }}
     >
-      {/* Header */}
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
         <View className="w-2/3 flex flex-row justify-start items-center">
           <TouchableOpacity onPress={() => router.back()}>
@@ -119,7 +180,7 @@ export default function ChatDetailsScreen() {
           </TouchableOpacity>
         </View>
 
-        <View className="w-1/3 items-end ">
+        <View className="w-1/3 items-end">
           <Button variant="secondary" size="icon" className="rounded-full p-1">
             <EllipsisHorizontalIcon
               size={hp(3)}
@@ -130,7 +191,6 @@ export default function ChatDetailsScreen() {
         </View>
       </View>
 
-      {/* Chat Details */}
       <View className="w-full h-full">
         {loading ? (
           <View className="flex-1 justify-center items-center">
@@ -143,9 +203,7 @@ export default function ChatDetailsScreen() {
           <FlatList
             data={chatList}
             keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{
-              paddingBottom: hp(15),
-            }}
+            contentContainerStyle={{ paddingBottom: hp(15) }}
             renderItem={({ item }) => (
               <View
                 style={{
@@ -154,26 +212,39 @@ export default function ChatDetailsScreen() {
                   paddingVertical: item.sender === "me" ? 13 : 3,
                 }}
               >
-                <View
-                  style={{
-                    maxWidth: "70%",
-                  }}
-                >
+                <View style={{ maxWidth: "70%" }}>
                   <View
                     style={{
                       borderBottomRightRadius: item.sender === "me" ? 0 : 10,
                       borderBottomLeftRadius: item.sender === "me" ? 10 : 0,
-                      backgroundColor:
-                        item.sender === "me" ? "#212121" : "#fe183c",
+                      backgroundColor: item.sender === "me" ? "#212121" : "#fe183c",
                       padding: 10,
                       borderRadius: 10,
                     }}
                   >
-                    <Text className="text-white text-base leading-5">
-                      {item.message}
-                    </Text>
+                    {item.message ? (
+                      <Text className="text-white text-base leading-5">
+                        {item.message}
+                      </Text>
+                    ) : null}
+                    {item.images?.length > 0 &&
+                      item.images.map((img, index) => (
+                        <Image
+                          key={index}
+                          source={{ uri: img }}
+                          style={{ width: 100, height: 100, marginTop: 5 }}
+                        />
+                      ))}
+                    {item.audio && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onPress={() => playAudio(item.audio)}
+                      >
+                        <Text className="text-white">Play Audio</Text>
+                      </Button>
+                    )}
                   </View>
-
                   <Text
                     className={`text-xs font-semibold text-neutral-500 ${
                       item.sender === "me" ? "text-right" : "text-left"
@@ -188,7 +259,7 @@ export default function ChatDetailsScreen() {
         )}
       </View>
 
-      {/* Text Input */}
+              {/* Text Input */}
       <View className="absolute max-h-[8rem] flex-row justify-between items-center w-full px-4 pb-12 pt-2 bg-white dark:bg-zinc-900 bottom-0">
         <View className="flex-row items-center rounded-2xl bg-neutral-200 dark:bg-zinc-800 px-3 py-3 w-[85%]">
           <TextInput
@@ -202,29 +273,29 @@ export default function ChatDetailsScreen() {
             }}
             className="flex-1 text-base mb-1 pl-1 tracking-wider text-black dark:text-white"
           />
-
           <View className="w-1/5 flex-row justify-end items-center gap-2">
             <ImageUploadType1
+              imgs={imgs}
+              setImgs={setImgs}
               triggerContent={
                 <Button variant="ghost" size="icon">
                   <PhotoIcon size={hp(3)} color={"gray"} strokeWidth={2} />
                 </Button>
               }
             />
-            <Button variant="ghost" size="icon">
-              <FaceSmileIcon size={hp(3)} color={"gray"} strokeWidth={2} />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <MicrophoneIcon size={hp(3)} color={"gray"} strokeWidth={2} />
-            </Button>
+            {recording ? (
+              <Button variant="ghost" size="icon" onPress={stopRecording}>
+                <MicrophoneIcon size={hp(3)} color="red" strokeWidth={2} />
+              </Button>
+            ) : (
+              <Button variant="ghost" size="icon" onPress={startRecording}>
+                <MicrophoneIcon size={hp(3)} color={"gray"} strokeWidth={2} />
+              </Button>
+            )}
           </View>
         </View>
-
-        <Pressable
-          onPress={sendMess}
-          className="bg-pri-color h-full rounded-2xl py-3 w-[13%] justify-center items-center"
-        >
-          <PaperAirplaneIcon color={"white"} />
+        <Pressable onPress={sendMess} className="w-[12%] justify-center">
+          <PaperAirplaneIcon size={hp(3.2)} color={"gray"} strokeWidth={2} />
         </Pressable>
       </View>
     </SafeAreaView>
