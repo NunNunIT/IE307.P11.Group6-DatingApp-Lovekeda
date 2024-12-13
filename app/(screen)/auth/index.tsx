@@ -1,14 +1,18 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-import { Redirect, Link, useRouter, router } from "expo-router";
-import React, { useState } from "react";
-import { Alert, Dimensions, View } from "react-native";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+
+import { Carousel, Image } from "react-native-ui-lib";
+import { Dimensions, View } from "react-native";
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin'
 
 import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
-import { Mail, Lock, Eye, EyeClosed } from "~/lib/icons";
-import { Carousel, Image } from "react-native-ui-lib";
 import { LinearGradient } from "expo-linear-gradient";
+import { Text } from "~/components/ui/text";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { router } from "expo-router";
+import { supabase } from '~/utils/supabase'
 
 var { width, height } = Dimensions.get("window");
 
@@ -21,14 +25,51 @@ const decorate = [
   { img: require("~/assets/images/decorate/7.png") },
 ];
 
-const handleLoginGoogle = () => {
+const handleLoginGoogle = async () => {
   // Nếu như user mới thì chuyển về createProfile
   // còn user cũ thì (main)/(tabs)/index
-  console.log("Login with Google");
-  <Redirect href="/(screen)/auth/createProfile" />;
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    if (userInfo?.data?.idToken) {
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: userInfo.data.idToken,
+      });
+
+      if (error) {
+        console.error(error);
+      } else {
+        const { user } = data;
+        const isNewUser = !user?.last_sign_in_at;
+        if (isNewUser) {
+          router.push("/(screen)/auth/createProfile")
+        } else {
+          router.push("/(screen)/(main)/(tabs)")
+        }
+      }
+    } else {
+      throw new Error('No ID token present!');
+    }
+  } catch (error: any) {
+    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+      // user cancelled the login flow
+    } else if (error.code === statusCodes.IN_PROGRESS) {
+      // operation (e.g. sign in) is in progress already
+    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      // play services not available or outdated
+    } else {
+      console.error('Sign-in error:', error);
+    }
+  }
 };
 
 export default function Login() {
+  GoogleSignin.configure({
+    scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,
+  })
+
   return (
     <View
       className="flex-1 relative"
@@ -99,8 +140,7 @@ export default function Login() {
         <Button
           variant="none"
           className="w-full rounded-full mb-4 bg-white dark:bg-white active:bg-black "
-          // onPress={handleLoginGoogle}
-          onPress={() => router.push("/auth/createProfile")}
+          onPress={handleLoginGoogle}
         >
           <View className="flex flex-row gap-3">
             <Image
