@@ -1,7 +1,7 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-import Loading1 from "@/components/loading";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect, Link, useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Alert, View } from "react-native";
@@ -10,7 +10,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { FormItem } from "~/components/formItem";
-import SocialLogin from "~/components/socialLogin";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
@@ -105,13 +104,14 @@ export default function LoginDevScreen() {
                 startIcon={<Lock className="ml-1 size-6 text-zinc-500" />}
                 endIcon={
                   <Button
-                    variant="none"
+                    variant="ghost"
+                    size="icon"
                     onPress={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeClosed className="ml-1 size-6 text-zinc-500" />
+                      <EyeClosed className="mr-1 size-6" />
                     ) : (
-                      <Eye className="ml-1 size-6 text-zinc-500" />
+                      <Eye className="mr-1 size-6" />
                     )}
                   </Button>
                 }
