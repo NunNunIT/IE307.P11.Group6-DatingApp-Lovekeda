@@ -6,7 +6,6 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin'
-
 import { Button } from "~/components/ui/button";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "~/components/ui/text";
@@ -64,12 +63,12 @@ const handleLoginGoogle = async () => {
   }
 };
 
-export default function Login() {
-  GoogleSignin.configure({
-    scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID,
-  })
+GoogleSignin.configure({
+  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+  webClientId: process.env.EXPO_PUBLIC_ANDROID_GOOGLE_CLIENT_ID,
+})
 
+export default function Login() {
   return (
     <View
       className="flex-1 relative"
@@ -90,6 +89,7 @@ export default function Login() {
       >
         {decorate.map((item, index) => (
           <Image
+            key={index}
             source={item.img}
             className="w-full h-full object-cover"
             resizeMode="cover"

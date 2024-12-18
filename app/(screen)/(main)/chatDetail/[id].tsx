@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
   FlatList,
-  TextInput,
   Image,
-  TouchableOpacity,
   Platform,
   Pressable,
-  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
   ChevronLeftIcon,
-  FaceSmileIcon,
   MicrophoneIcon,
   PaperAirplaneIcon,
   PhotoIcon,
 } from "react-native-heroicons/outline";
-import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
-import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import ImageUploadType1 from "@/components/imageUpload/type1";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+
 import { Audio } from "expo-av";
+import { Button } from "@/components/ui/button";
+import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
+import ImageUploadType1 from "@/components/imageUpload/type1";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
 
 const android = Platform.OS === "android";
 
 export default function ChatDetailsScreen() {
   const [message, setMessage] = useState("");
-  const [chatList, setChatList] = useState([]);
+  const [chatList, setChatList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [recording, setRecording] = useState(null);
-  const [audioUri, setAudioUri] = useState(null);
-  const [playingSound, setPlayingSound] = useState(null);
-  const [imgs, setImgs] = useState([]); // Mảng hình ảnh
+  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
+  const [audioUri, setAudioUri] = useState<string | null>(null);
+  const [playingSound, setPlayingSound] = useState<Audio.Sound | null>(null);
+  const [imgs, setImgs] = useState<string[]>([]); // Mảng hình ảnh
 
   const chatData = {
     id: 1,
@@ -108,21 +108,19 @@ export default function ChatDetailsScreen() {
 
   const stopRecording = async () => {
     try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
+      await recording?.stopAndUnloadAsync();
+      const uri = recording?.getURI() ?? null;
       setAudioUri(uri);
-      setRecording(null);
+      setRecording(undefined);
     } catch (error) {
       console.error("Failed to stop recording:", error);
     }
   };
 
-  const playAudio = async (uri) => {
-    if (playingSound) {
-      await playingSound.stopAsync();
-      await playingSound.unloadAsync();
-      setPlayingSound(null);
-    }
+  const playAudio = async (uri: string) => {
+    await playingSound?.stopAsync();
+    await playingSound?.unloadAsync();
+    setPlayingSound(null);
 
     try {
       const { sound } = await Audio.Sound.createAsync(
@@ -133,7 +131,7 @@ export default function ChatDetailsScreen() {
       setPlayingSound(sound);
 
       sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.didJustFinish) {
+        if ("didJustFinish" in status && status.didJustFinish) {
           setPlayingSound(null);
           sound.unloadAsync();
         }
@@ -228,7 +226,7 @@ export default function ChatDetailsScreen() {
                       </Text>
                     ) : null}
                     {item.images?.length > 0 &&
-                      item.images.map((img, index) => (
+                      item.images.map((img: string, index: number) => (
                         <Image
                           key={index}
                           source={{ uri: img }}
@@ -246,9 +244,8 @@ export default function ChatDetailsScreen() {
                     )}
                   </View>
                   <Text
-                    className={`text-xs font-semibold text-neutral-500 ${
-                      item.sender === "me" ? "text-right" : "text-left"
-                    }`}
+                    className={`text-xs font-semibold text-neutral-500 ${item.sender === "me" ? "text-right" : "text-left"
+                      }`}
                   >
                     {"Đã gửi " + item.timestamp}
                   </Text>
@@ -259,7 +256,7 @@ export default function ChatDetailsScreen() {
         )}
       </View>
 
-              {/* Text Input */}
+      {/* Text Input */}
       <View className="absolute max-h-[8rem] flex-row justify-between items-center w-full px-4 pb-12 pt-2 bg-white dark:bg-zinc-900 bottom-0">
         <View className="flex-row items-center rounded-2xl bg-neutral-200 dark:bg-zinc-800 px-3 py-3 w-[85%]">
           <TextInput
