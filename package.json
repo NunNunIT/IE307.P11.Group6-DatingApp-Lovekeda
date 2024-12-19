@@ -60,6 +60,7 @@
     "expo-web-browser": "~14.0.1",
     "lottie-react-native": "^7.1.0",
     "lucide-react-native": "^0.460.0",
+    "mongoose": "^8.8.4",
     "my-app": "file:",
     "nativewind": "^4.1.23",
     "react": "18.3.1",
