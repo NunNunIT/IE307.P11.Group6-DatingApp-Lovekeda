@@ -38,7 +38,8 @@ import {
   Plus,
   IdCard,
   CameraIcon,
-  ImageIcon
+  ImageIcon,
+  EyeOff
 } from "lucide-react-native";
 
 import { iconWithClassName } from "./iconWithClassName";
@@ -80,6 +81,7 @@ iconWithClassName(Plus);
 iconWithClassName(IdCard);
 iconWithClassName(CameraIcon);
 iconWithClassName(ImageIcon);
+iconWithClassName(EyeOff);
 export {
   X,
   Mail,
@@ -120,5 +122,6 @@ export {
   Plus,
   IdCard,
   CameraIcon,
-  ImageIcon
+  ImageIcon,
+  EyeOff
 };

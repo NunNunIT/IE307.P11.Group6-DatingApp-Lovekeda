@@ -1,19 +1,11 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-
 import { Carousel, Image } from "react-native-ui-lib";
 import { Dimensions, SafeAreaView, View } from "react-native";
-// import {
-//   GoogleSignin,
-//   statusCodes,
-// } from '@react-native-google-signin/google-signin'
 import { Button } from "~/components/ui/button";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "~/components/ui/text";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { Redirect, router } from "expo-router";
-import { supabase } from '~/utils/supabase'
-// import { isNewUser } from "@/lib/utils";
-import { useAuth } from "@/provider/AuthProvider";
+import { router } from "expo-router";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -56,15 +48,6 @@ const handleLoginGoogle = async () => {
 // })
 
 export default function Login() {
-  const { session, profile } = useAuth();
-  if (session?.user) {
-    if (profile?.is_complete_profile) {
-      return <Redirect href="/(screen)/(main)/(tabs)" />;
-    } else {
-      return <Redirect href="/(screen)/auth/createProfile" />;
-    }
-  }
-
   return (
     <View className="flex-1 relative w-screen h-screen">
       <Carousel
@@ -99,7 +82,7 @@ export default function Login() {
         end={{ x: 0.5, y: 1 }}
       />
 
-      <SafeAreaView className="flex-1 items-center justify-between py-16">
+      <SafeAreaView className="flex-1 items-center justify-between py-16 z-50">
         <Image
           source={require("~/assets/images/logo2.png")}
           className="h-16 w-full object-contain"
@@ -126,29 +109,39 @@ export default function Login() {
             thật dễ dàng
           </Text>
 
-          <Button
-            variant="none"
-            className="w-full rounded-full mb-4 bg-white dark:bg-white active:bg-black"
-            onPress={handleLoginGoogle}
-          >
-            <View className="flex flex-row gap-3 justify-center items-center">
-              <Image
-                source={require("~/assets/images/google.png")}
-                className="aspect-square size-8 overflow-hidden rounded-full"
-              />
-              <Text className="text-sm text-zinc-900 group-active:text-white">
-                Đăng nhập bằng Google
-              </Text>
-            </View>
-          </Button>
+          <View className="flex flex-col gap-4">
+            <Button
+              variant="none"
+              className="w-full rounded-full bg-white dark:bg-white active:bg-black"
+              onPress={handleLoginGoogle}
+            >
+              <View className="flex flex-row gap-3 justify-center items-center">
+                <Image
+                  source={require("~/assets/images/google.png")}
+                  className="aspect-square size-8 overflow-hidden rounded-full"
+                />
+                <Text className="text-sm text-zinc-900 group-active:text-white">
+                  Đăng nhập bằng Google
+                </Text>
+              </View>
+            </Button>
 
-          <Button
-            variant="none"
-            className="w-full rounded-full items-center bg-zinc-600/90 active:bg-zinc-800"
-            onPress={() => router.push("/auth/loginDev")}
-          >
-            <Text className="text-white dark:text-white">Đăng nhập Dev</Text>
-          </Button>
+            <Button
+              variant="none"
+              className="w-full rounded-full items-center bg-zinc-600/90 active:bg-zinc-800"
+              onPress={() => router.push("/auth/login")}
+            >
+              <Text className="text-white dark:text-white">Đăng nhập</Text>
+            </Button>
+
+            <Button
+              variant="secondary"
+              className="w-full rounded-full items-center bg-zinc-600/90 active:bg-zinc-800"
+              onPress={() => router.push("/auth/register")}
+            >
+              <Text className="text-white dark:text-white">Đăng ký ngay</Text>
+            </Button>
+          </View>
         </View>
       </SafeAreaView>
     </View>

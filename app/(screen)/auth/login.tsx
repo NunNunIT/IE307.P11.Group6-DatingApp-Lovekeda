@@ -1,5 +1,6 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
 
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
@@ -25,16 +26,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginDevScreen() {
-  const { session, profile } = useAuth();
-  if (session?.user) {
-    if (profile?.is_complete_profile) {
-      return <Redirect href="/(screen)/(main)/(tabs)" />;
-    } else {
-      return <Redirect href="/(screen)/auth/createProfile" />;
-    }
-  }
-
+export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
@@ -70,7 +62,7 @@ export default function LoginDevScreen() {
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <Spinner visible={isSubmitting} />
-      <View className="w-full flex-1 justify-center items-center bg-white px-6 py-3 dark:bg-black">
+      <View className="w-full flex-1 gap-2 justify-center items-center bg-white px-6 py-3 dark:bg-black">
         <FormItem
           name="email"
           label="Email"
@@ -129,12 +121,26 @@ export default function LoginDevScreen() {
             )}
           />
         </FormItem>
+
         <Button
-          variant="none"
+          variant="red"
           onPress={handleSubmit(onSubmit)}
-          className="w-full mt-3 rounded-full bg-pri-color active:bg-pri-color/60"
         >
-          <Text className="text-lg font-semibold text-white">Sign in</Text>
+          <Text className="text-lg font-semibold text-white">Đăng nhập</Text>
+        </Button>
+
+        <View className="mx-4 flex flex-row items-center py-4">
+          <Separator className="w-full" />
+          <Text className="mx-4 text-lg font-bold">OR</Text>
+          <Separator className="w-full" />
+        </View>
+
+        <Button
+          variant="ghost"
+          className="flex flex-row"
+          onPress={() => router.replace('/(screen)/auth/register')}>
+          <Text>Chưa có tài khoản rồi? </Text>
+          <Text className="font-bold underline">Đăng ký ngay</Text>
         </Button>
       </View>
     </SafeAreaView>

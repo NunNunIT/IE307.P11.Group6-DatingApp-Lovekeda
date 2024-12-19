@@ -1,11 +1,12 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
 // import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { Session, User } from '@supabase/supabase-js';
+import { Session } from '@supabase/supabase-js';
 import { SplashScreen } from 'expo-router';
-import React, {
+import {
   useState, useEffect,
   createContext, PropsWithChildren,
-  useCallback
+  useCallback,
+  useContext
 } from 'react';
 
 import { supabase } from '~/utils/supabase';
@@ -28,7 +29,7 @@ export const AuthContext = createContext<Partial<AuthProps>>({});
 
 // Custom hook to read the context values
 export function useAuth() {
-  return React.useContext(AuthContext);
+  return useContext(AuthContext);
 }
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
