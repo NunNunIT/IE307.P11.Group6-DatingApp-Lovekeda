@@ -9,6 +9,7 @@ import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextField } from "react-native-ui-lib";
 import { useAuth } from "@/provider/AuthProvider";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const OPTIONS = [
   { label: "Nam", value: "male" },
@@ -25,7 +26,9 @@ export default function ExampleOne() {
   const [genderFind, setGenderFind] = useState("male");
   const [purposeValue, setPurposeValue] = React.useState<string>("friends");
   const [imgs, setImgs] = useState<string[]>([]);
-  const { setProfile } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { profile, setProfile } = useAuth();
 
   const defaultScrollViewProps = {
     keyboardShouldPersistTaps: "handled",
@@ -49,9 +52,12 @@ export default function ExampleOne() {
     console.log("called previous step");
   };
 
-  const onSubmitSteps = () => {
-    console.log("called on submit step.");
-    setProfile({ is_complete_profile: true });
+  const onSubmitSteps = async () => {
+    setIsSubmitting(true);
+    setProfile({ ...profile, is_complete_profile: true });
+    setIsSubmitting(false);
+    console.log("🚀 ~ onSubmitSteps ~ true:", true)
+    router.replace("/(screen)/(main)/(tabs)");
   };
 
   const progressStepsStyle = {
@@ -76,6 +82,7 @@ export default function ExampleOne() {
       className="relative bg-white dark:bg-black"
       style={{ flex: 1 }}
     >
+      <Spinner visible={isSubmitting} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <ProgressSteps {...progressStepsStyle}>
           <ProgressStep

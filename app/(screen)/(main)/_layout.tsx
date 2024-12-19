@@ -4,9 +4,13 @@ import { useAuth } from "~/provider/AuthProvider";
 import { LocationProvider, useLocation } from "@/provider/LocationProvider";
 
 export default function NotesLayoutScreen() {
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   if (!session) {
     return <Redirect href="/(screen)/auth" />;
+  }
+
+  if (!profile?.is_complete_profile) {
+    return <Redirect href="/(screen)/(set-up-profile)" />;
   }
 
   return (

@@ -1,7 +1,6 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
 
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
 import { useState } from "react";
@@ -32,6 +31,7 @@ export default function LoginScreen() {
 
   const {
     control,
+    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
@@ -51,6 +51,12 @@ export default function LoginScreen() {
     });
 
     if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        setError('email', { type: 'manual', message: 'Invalid email or password' });
+        setError('password', { type: 'manual', message: 'Invalid email or password' });
+        return;
+      }
+
       Alert.alert("Login Failed", error.message, [
         { text: "OK", onPress: () => console.log("OK Pressed") },
       ]);

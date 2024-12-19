@@ -135,7 +135,7 @@ export default function Login() {
             </Button>
 
             <Button
-              variant="secondary"
+              variant="none"
               className="w-full rounded-full items-center bg-zinc-600/90 active:bg-zinc-800"
               onPress={() => router.push("/auth/register")}
             >

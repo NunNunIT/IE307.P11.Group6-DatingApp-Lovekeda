@@ -4,7 +4,7 @@ import { Redirect, Stack } from "expo-router";
 export default function MainLayoutScreen() {
   const { session } = useAuth();
   if (session?.user) {
-    return <Redirect href="/(screen)/(set-up-profile)" />;
+    return <Redirect href="/(screen)/(main)/(tabs)" />;
   }
 
   return (

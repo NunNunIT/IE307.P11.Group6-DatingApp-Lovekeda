@@ -27,9 +27,10 @@ type AuthProps = {
 
 export const AuthContext = createContext<Partial<AuthProps>>({});
 
-// Custom hook to read the context values
 export function useAuth() {
-  return useContext(AuthContext);
+  const context =  useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
 }
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {

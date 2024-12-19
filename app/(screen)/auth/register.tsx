@@ -3,9 +3,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Keyboard, Platform, View } from 'react-native';
+import { Alert, Keyboard, Platform, View } from 'react-native';
 import { z } from 'zod';
-import { toast } from 'sonner-native';
 
 // Import components
 import { Form, FormController } from '@/components/customize-ui/form';
@@ -24,7 +23,6 @@ import { cn } from '@/lib/utils';
 import DarkModeButton from '@/components/darkModeOption/button';
 
 export default function RegisterScreen() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof registerFormSchema>>({
     defaultValues: DEFAULT_REGISTER_FORM_VALUES,
     resolver: zodResolver(registerFormSchema),
@@ -43,20 +41,15 @@ export default function RegisterScreen() {
       });
 
       if (error) throw error;
-
-      toast.success('Register Successful!!!');
-    } catch (error) {
-      if (!(error instanceof Error)) {
-        toast.error('An unexpected error occurred');
-        return;
-      }
-
+      router.replace('/(screen)/auth/login');
+      Alert.alert('Success', 'Register successfully');
+    } catch (error: any) {
       if (error.message.includes('User already registered')) {
         form.setError('email', { type: 'manual', message: 'This email already used' });
         return;
       }
 
-      toast.error(error.message);
+      Alert.alert('Error', error.message);
     }
   }, []);
 
@@ -72,7 +65,7 @@ export default function RegisterScreen() {
               <Input
                 childLeft={<User className="ml-1 size-6 text-zinc-500" />}
                 autoCapitalize="words"
-                placeholder="Enter your name"
+                placeholder="Nhập tên của bạn"
                 {...field}
               />
             )}
@@ -84,8 +77,9 @@ export default function RegisterScreen() {
             render={({ field }) => (
               <Input
                 childLeft={<Mail className="ml-1 size-6 text-zinc-500" />}
+                keyboardType="email-address"
                 autoCapitalize="none"
-                placeholder="Enter your email"
+                placeholder="Nhập email của bạn"
                 {...field}
               />
             )}
@@ -98,7 +92,7 @@ export default function RegisterScreen() {
               <PasswordInput
                 childLeft={<Lock className="ml-1 size-6 text-zinc-500" />}
                 autoCapitalize="none"
-                placeholder="Enter your password"
+                placeholder="Nhâp mật khẩu của bạn"
                 {...field}
               />
             )}
@@ -111,7 +105,7 @@ export default function RegisterScreen() {
               <PasswordInput
                 childLeft={<Lock className="ml-1 size-6 text-zinc-500" />}
                 autoCapitalize="none"
-                placeholder="Repeat your password"
+                placeholder="Nhập lại mật khẩu"
                 {...field}
               />
             )}
