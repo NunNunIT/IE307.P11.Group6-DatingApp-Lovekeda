@@ -1,9 +1,9 @@
 // import libs
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Keyboard, View } from 'react-native';
+import { Keyboard, Platform, View } from 'react-native';
 import { z } from 'zod';
 import { toast } from 'sonner-native';
 
@@ -19,8 +19,12 @@ import { Lock, Mail, User } from '@/lib/icons';
 import { DEFAULT_REGISTER_FORM_VALUES, registerFormSchema } from '@/utils/form/register';
 import { supabase } from '@/utils/supabase';
 import { SafeAreaView } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { cn } from '@/lib/utils';
+import DarkModeButton from '@/components/darkModeOption/button';
 
 export default function RegisterScreen() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm<z.infer<typeof registerFormSchema>>({
     defaultValues: DEFAULT_REGISTER_FORM_VALUES,
     resolver: zodResolver(registerFormSchema),
@@ -57,7 +61,8 @@ export default function RegisterScreen() {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className={cn(Platform.OS === 'android' ? 'pt-16' : 'pt-0', 'flex-1')}>
+      <Spinner visible={form.formState.isSubmitting} />
       <View className='px-6'>
         <Form {...form}>
           <FormController
@@ -135,6 +140,8 @@ export default function RegisterScreen() {
           <Text>Đã tài khoản rồi? </Text>
           <Text className="font-bold underline">Đăng nhập ngay</Text>
         </Button>
+
+        <DarkModeButton />
       </View>
     </SafeAreaView>
   );

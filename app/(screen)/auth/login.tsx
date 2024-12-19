@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Alert, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -62,7 +62,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <Spinner visible={isSubmitting} />
-      <View className="w-full flex-1 gap-2 justify-center items-center bg-white px-6 py-3 dark:bg-black">
+      <View className="w-full flex-1 gap-2 justify-center items-center px-6 py-3">
         <FormItem
           name="email"
           label="Email"
@@ -137,7 +137,7 @@ export default function LoginScreen() {
 
         <Button
           variant="ghost"
-          className="flex flex-row"
+          className="flex flex-row w-full"
           onPress={() => router.replace('/(screen)/auth/register')}>
           <Text>Chưa có tài khoản rồi? </Text>
           <Text className="font-bold underline">Đăng ký ngay</Text>

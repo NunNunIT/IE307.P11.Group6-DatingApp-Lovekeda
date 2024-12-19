@@ -55,7 +55,7 @@ const buttonTextVariants = cva(
         ghost: 'group-active:text-accent-foreground',
         link: 'text-primary group-active:underline',
         none: '',
-        red: ''
+        red: 'text-white',
       },
       size: {
         default: '',
