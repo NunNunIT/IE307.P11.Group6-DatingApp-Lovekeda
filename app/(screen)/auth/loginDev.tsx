@@ -1,5 +1,6 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
 
+import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -25,6 +26,15 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginDevScreen() {
+  const { session, profile } = useAuth();
+  if (session?.user) {
+    if (profile?.is_complete_profile) {
+      return <Redirect href="/(screen)/(main)/(tabs)" />;
+    } else {
+      return <Redirect href="/(screen)/auth/createProfile" />;
+    }
+  }
+
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 

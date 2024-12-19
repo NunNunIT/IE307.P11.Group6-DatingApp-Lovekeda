@@ -138,8 +138,7 @@ const Tinder = () => {
   }, []);
 
   return (
-    // <SafeAreaView className="relative flex-1 flex flex-col items-center justify-between w-full h-full">
-    <SafeAreaView className="relative flex-1 w-full h-full">
+    <View className="relative flex-1 w-full h-full">
       {loading ? (
         <View className="w-full h-full flex justify-center items-center">
           <Loading1 />
@@ -194,7 +193,7 @@ const Tinder = () => {
           </View>
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

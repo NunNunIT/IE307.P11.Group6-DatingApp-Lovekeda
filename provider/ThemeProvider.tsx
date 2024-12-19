@@ -86,9 +86,7 @@ const ThemeProvider = (props: Props) => {
       }
 
       setIsColorSchemeLoaded(true);
-    })().finally(() => {
-      SplashScreen.hideAsync();
-    });
+    })();
   }, []);
 
   // Save theme to AsyncStorage whenever it changes

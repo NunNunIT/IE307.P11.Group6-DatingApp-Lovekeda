@@ -1,34 +1,31 @@
-import DarkModeButton from "@/components/darkModeOption/button";
-import ImageUploadType1 from "@/components/imageUpload/type1";
 import ImageUploadType2 from "@/components/imageUpload/type2";
 import SingleChoicePicker from "@/components/select/oneChoice";
-import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { ScrollView } from "react-native";
-import { KeyboardAvoidingView } from "react-native";
-import { View, Text, Pressable, Image, Platform } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
-import { opacity } from "react-native-reanimated/lib/typescript/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TextField, Colors, ChipsInput } from "react-native-ui-lib";
+import { TextField } from "react-native-ui-lib";
+import { useAuth } from "@/provider/AuthProvider";
 
-const options = [
+const OPTIONS = [
   { label: "Nam", value: "male" },
   { label: "Nữ", value: "female" },
   { label: "Khác", value: "other" },
-];
+] as const;
 
 export default function ExampleOne() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const [name, setName] = useState("");
-  const [gender, setGender] = useState("male");
-  const [age, setAge] = useState(null);
+  const [gender, setGender] = useState<string>("male");
+  const [age, setAge] = useState<string | undefined>(undefined);
   const [bio, setBio] = useState("");
   const [genderFind, setGenderFind] = useState("male");
   const [purposeValue, setPurposeValue] = React.useState<string>("friends");
   const [imgs, setImgs] = useState<string[]>([]);
+  const { setProfile } = useAuth();
 
   const defaultScrollViewProps = {
     keyboardShouldPersistTaps: "handled",
@@ -53,8 +50,8 @@ export default function ExampleOne() {
   };
 
   const onSubmitSteps = () => {
-    // Kiểm tra đủ 1 hình ảnh
     console.log("called on submit step.");
+    setProfile({ is_complete_profile: true });
   };
 
   const progressStepsStyle = {
@@ -85,7 +82,7 @@ export default function ExampleOne() {
             label="Thông tin"
             onNext={onNextStep1}
             nextBtnDisabled={
-              name === "" || age === null || age < 18 || age > 100
+              name === "" || typeof age === "undefined" || Number(age!) < 18 || Number(age!) > 100
             }
             onPrevious={() => router.back()}
             scrollViewProps={defaultScrollViewProps}
@@ -150,10 +147,10 @@ export default function ExampleOne() {
                   <View className="px-6 py-4 flex justify-start items-start bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full">
                     <SingleChoicePicker
                       value={gender}
-                      onChange={setGender} // Ensure this matches the correct type
+                      onChange={(value) => setGender(value as string)}
                       title="Chọn một"
                       placeholder="Chọn một giá trị"
-                      options={options}
+                      options={[...OPTIONS]}
                       useDialogDefault
                     />
                   </View>
@@ -186,8 +183,8 @@ export default function ExampleOne() {
                   validateOnChange
                   validate={[
                     "required",
-                    (value) => value >= 18,
-                    (value) => value <= 100,
+                    (value) => Number(value) >= 18,
+                    (value) => Number(value) <= 100,
                   ]}
                   validationMessage={[
                     "Tuổi không được để trống",
@@ -288,10 +285,10 @@ export default function ExampleOne() {
                 <View className="px-6 py-4 flex justify-start items-start bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full">
                   <SingleChoicePicker
                     value={genderFind}
-                    onChange={setGenderFind} // Ensure this matches the correct type
+                    onChange={(value) => setGenderFind(value as string)}
                     title="Chọn một"
                     placeholder="Chọn một giá trị"
-                    options={options}
+                    options={[...OPTIONS]}
                     useDialogDefault
                   />
                 </View>
@@ -305,11 +302,10 @@ export default function ExampleOne() {
                   {["friends", "dating"].map((purpose) => (
                     <Pressable
                       key={purpose}
-                      className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${
-                        purposeValue === purpose
-                          ? "border-pri-color bg-white dark:bg-zinc-900"
-                          : "border-zinc-200 dark:border-zinc-800"
-                      }`}
+                      className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${purposeValue === purpose
+                        ? "border-pri-color bg-white dark:bg-zinc-900"
+                        : "border-zinc-200 dark:border-zinc-800"
+                        }`}
                       onPress={() => setPurposeValue(purpose)}
                     >
                       <Text className="text-2xl">
