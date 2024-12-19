@@ -79,7 +79,7 @@ export default function MatchesScreen1() {
             onPress={() => router.push("/chatDetail/1")}
             className="w-[48%] aspect-[3/4] overflow-hidden rounded-lg"
           >
-            <HumanCard2 key={index} item={item} />
+            <HumanCard2 key={index} item={item} handleClick={undefined} />
           </Pressable>
         ))}
       </View>

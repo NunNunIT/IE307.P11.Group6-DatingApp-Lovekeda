@@ -27,7 +27,7 @@ export default function ChatScreen() {
     return () => clearTimeout(timeout); // Xóa timeout khi component unmount
   }, []);
 
-  const ChatItem = ({ item, onPress }) => (
+  const ChatItem = ({ item, onPress }: { item: any, onPress: any }) => (
     <TouchableOpacity
       onPress={onPress}
       className="w-full py-3 items-center flex-row border-b border-zinc-300 dark:border-zinc-600"
@@ -81,7 +81,7 @@ export default function ChatScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-black px-2">
+    <View className="flex-1 bg-white dark:bg-black py-4">
       {/* Matches Component */}
       <Matches />
 
@@ -126,6 +126,6 @@ export default function ChatScreen() {
           </View>
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

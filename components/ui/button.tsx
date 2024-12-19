@@ -9,6 +9,10 @@ const buttonVariants = cva(
   'group flex items-center justify-center rounded-md web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
   {
     variants: {
+      rounded: {
+        default: 'rounded-full ',
+        rounded: '',
+      },
       variant: {
         default: 'bg-primary web:hover:opacity-90 active:opacity-90',
         destructive: 'bg-destructive web:hover:opacity-90 active:opacity-90',
@@ -18,6 +22,7 @@ const buttonVariants = cva(
         ghost: 'web:hover:bg-accent web:hover:text-accent-foreground active:bg-accent',
         link: 'web:underline-offset-4 web:hover:underline web:focus:underline ',
         none: '',
+        red: 'w-full bg-pri-color active:bg-pri-color/60',
       },
       size: {
         default: 'h-12 px-4 py-2 native:h-12 native:px-5 native:py-2',
@@ -27,6 +32,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
+      rounded: 'default',
       variant: 'default',
       size: 'default',
     },
@@ -37,6 +43,10 @@ const buttonTextVariants = cva(
   'web:whitespace-nowrap text-sm native:text-base font-medium text-foreground web:transition-colors',
   {
     variants: {
+      rounded: {
+        default: '',
+        rounded: '',
+      },
       variant: {
         default: 'text-primary-foreground',
         destructive: 'text-destructive-foreground',
@@ -45,6 +55,7 @@ const buttonTextVariants = cva(
         ghost: 'group-active:text-accent-foreground',
         link: 'text-primary group-active:underline',
         none: '',
+        red: 'text-white',
       },
       size: {
         default: '',

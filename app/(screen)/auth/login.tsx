@@ -1,8 +1,9 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-import Loading1 from "@/components/loading";
+
+import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect, Link, useRouter } from "expo-router";
-import React, { useState } from "react";
+import { Redirect, useRouter } from "expo-router";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Alert, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -10,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
 
 import { FormItem } from "~/components/formItem";
-import SocialLogin from "~/components/socialLogin";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
@@ -25,12 +25,13 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginDevScreen() {
+export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const {
     control,
+    setError,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
@@ -50,6 +51,12 @@ export default function LoginDevScreen() {
     });
 
     if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        setError('email', { type: 'manual', message: 'Invalid email or password' });
+        setError('password', { type: 'manual', message: 'Invalid email or password' });
+        return;
+      }
+
       Alert.alert("Login Failed", error.message, [
         { text: "OK", onPress: () => console.log("OK Pressed") },
       ]);
@@ -61,7 +68,7 @@ export default function LoginDevScreen() {
   return (
     <SafeAreaView className="flex-1 justify-center items-center">
       <Spinner visible={isSubmitting} />
-      <View className="w-full flex-1 justify-center items-center bg-white px-6 py-3 dark:bg-black">
+      <View className="w-full flex-1 gap-2 justify-center items-center px-6 py-3">
         <FormItem
           name="email"
           label="Email"
@@ -105,13 +112,14 @@ export default function LoginDevScreen() {
                 startIcon={<Lock className="ml-1 size-6 text-zinc-500" />}
                 endIcon={
                   <Button
-                    variant="none"
+                    variant="ghost"
+                    size="icon"
                     onPress={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeClosed className="ml-1 size-6 text-zinc-500" />
+                      <EyeClosed className="mr-1 size-6" />
                     ) : (
-                      <Eye className="ml-1 size-6 text-zinc-500" />
+                      <Eye className="mr-1 size-6" />
                     )}
                   </Button>
                 }
@@ -119,12 +127,26 @@ export default function LoginDevScreen() {
             )}
           />
         </FormItem>
+
         <Button
-          variant="none"
+          variant="red"
           onPress={handleSubmit(onSubmit)}
-          className="w-full mt-3 rounded-full bg-pri-color active:bg-pri-color/60"
         >
-          <Text className="text-lg font-semibold text-white">Sign in</Text>
+          <Text className="text-lg font-semibold text-white">Đăng nhập</Text>
+        </Button>
+
+        <View className="mx-4 flex flex-row items-center py-4">
+          <Separator className="w-full" />
+          <Text className="mx-4 text-lg font-bold">OR</Text>
+          <Separator className="w-full" />
+        </View>
+
+        <Button
+          variant="ghost"
+          className="flex flex-row w-full"
+          onPress={() => router.replace('/(screen)/auth/register')}>
+          <Text>Chưa có tài khoản rồi? </Text>
+          <Text className="font-bold underline">Đăng ký ngay</Text>
         </Button>
       </View>
     </SafeAreaView>
