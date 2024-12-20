@@ -1,23 +1,15 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_STORAGE_BUCKET} from "@env"
-// Optionally import the services that you want to use
-// import {...} from "firebase/auth";
-// import {...} from "firebase/database";
-// import {...} from "firebase/firestore";
-// import {...} from "firebase/functions";
-import {getStorage} from "firebase/storage";
-
-console.log(FIREBASE_API_KEY)
+import { getStorage } from "firebase/storage";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: FIREBASE_API_KEY,
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   // authDomain: 'project-id.firebaseapp.com',
   // databaseURL: 'https://project-id.firebaseio.com',
   // projectId: 'project-id',
-  storageBucket: FIREBASE_STORAGE_BUCKET,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
   // messagingSenderId: 'sender-id',
-  appId: FIREBASE_APP_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
   measurementId: 'G-measurement-id',
 };
 
@@ -30,6 +22,3 @@ const fbStorage = getStorage();
 export {
   fbApp, fbStorage
 }
-
-// For more information on how to access Firebase in your project,
-// see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase
