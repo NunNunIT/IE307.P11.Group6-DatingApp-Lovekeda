@@ -70,27 +70,6 @@ const Carousel = ({
         className="flex-grow-0 z-0 w-full h-full"
       />
 
-      {/* Navigation Buttons */}
-      <View className="absolute top-6 left-0 z-5 w-1/6 h-full ">
-        <TouchableOpacity
-          onPress={handlePrev}
-          disabled={currentIndex === 0}
-          className="z-5 h-full opacity-0"
-        >
-          <Text className="opacity-0">Prev</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View className="absolute top-6 right-0 z-5 w-1/6 h-full">
-        <TouchableOpacity
-          onPress={handleNext}
-          disabled={currentIndex === data.length - 1}
-          className="relative z-5 h-full opacity-0"
-        >
-          <Text className="opacity-0">Next</Text>
-        </TouchableOpacity>
-      </View>
-
       <LinearGradient
         colors={["transparent", "rgba(0,0,0,0.15)"]}
         style={{
@@ -103,18 +82,43 @@ const Carousel = ({
         end={{ x: 0.5, y: 0.5 }}
       />
 
-      {/* Pagination */}
-      <View className="absolute z-10 top-2 flex flex-row gap-2 justify-center px-3">
-        {data.map((_: any, index: number) => (
-          <TouchableOpacity
-            key={index}
-            className={`flex-1 h-3 rounded-full ${
-              currentIndex === index ? "bg-white" : "bg-white/50"
-            }`}
-            onPress={() => handleDotPress(index)}
-          />
-        ))}
-      </View>
+      {/* Navigation Buttons */}
+      {data.length > 1 && (
+        <>
+          <View className="absolute top-6 left-0 z-5 w-1/6 h-full ">
+            <TouchableOpacity
+              onPress={handlePrev}
+              disabled={currentIndex === 0}
+              className="z-5 h-full opacity-0"
+            >
+              <Text className="opacity-0">Prev</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="absolute top-6 right-0 z-5 w-1/6 h-full">
+            <TouchableOpacity
+              onPress={handleNext}
+              disabled={currentIndex === data.length - 1}
+              className="relative z-5 h-full opacity-0"
+            >
+              <Text className="opacity-0">Next</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Pagination */}
+          <View className="absolute z-10 top-2 flex flex-row gap-2 justify-center px-3">
+            {data.map((_: any, index: number) => (
+              <TouchableOpacity
+                key={index}
+                className={`flex-1 h-3 rounded-full ${
+                  currentIndex === index ? "bg-white" : "bg-white/50"
+                }`}
+                onPress={() => handleDotPress(index)}
+              />
+            ))}
+          </View>
+        </>
+      )}
     </View>
   );
 };

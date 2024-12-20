@@ -85,7 +85,9 @@ const Tinder = () => {
           <View className="absolute items-center justify-center">
             <Image
               source={{
-                uri: profile?.imgs?.[0] ?? "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+                uri:
+                  profile?.imgs?.[0] ??
+                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
               }}
               className="rounded-full size-28"
             />
