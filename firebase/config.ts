@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_STORAGE_BUCKET} from "@env"
+import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_STORAGE_BUCKET, FIREBASE_PROJECT_ID, FIREBASE_AUTH_DOMAIN} from "@env"
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
 // import {...} from "firebase/database";
@@ -13,13 +13,13 @@ import { UploadTask } from 'expo-file-system';
 // Initialize Firebase
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
-  authDomain: 'project-id.firebaseapp.com',
+  authDomain: FIREBASE_AUTH_DOMAIN,
   // databaseURL: 'https://project-id.firebaseio.com',
-  projectId: 'project-id',
+  projectId: FIREBASE_PROJECT_ID,
   storageBucket: FIREBASE_STORAGE_BUCKET,
   // messagingSenderId: 'sender-id',
   appId: FIREBASE_APP_ID,
-  measurementId: 'G-measurement-id',
+  // measurementId: 'G-measurement-id',
 };
 
 if (getApps().length === 0) {
@@ -59,6 +59,3 @@ const uploadToFireBase = async (uri, name, onProgress) => {
 export {
   fbApp, fbStorage, uploadToFireBase
 }
-
-// For more information on how to access Firebase in your project,
-// see the Firebase documentation: https://firebase.google.com/docs/web/setup#access-firebase

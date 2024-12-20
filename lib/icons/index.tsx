@@ -82,6 +82,7 @@ iconWithClassName(IdCard);
 iconWithClassName(CameraIcon);
 iconWithClassName(ImageIcon);
 iconWithClassName(EyeOff);
+iconWithClassName(Eye);
 export {
   X,
   Mail,

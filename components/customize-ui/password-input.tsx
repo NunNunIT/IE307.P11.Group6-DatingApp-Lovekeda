@@ -24,7 +24,7 @@ const PasswordInput = React.forwardRef<
       ref={ref}
       childRight={
         <Button size="icon" variant="ghost" onPress={toggleShowPassword}>
-          <Icon className="size-6 text-zinc-500" />
+          <Icon className="size-6 text-zinc-500 dark:text-zinc-500" />
         </Button>
       }
       secureTextEntry={!showPassword}

@@ -1,5 +1,5 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Database } from '@/database.types';
 import { Session } from '@supabase/supabase-js';
 import { SplashScreen } from 'expo-router';
 import {
@@ -14,12 +14,21 @@ import { supabase } from '~/utils/supabase';
 type AuthProps = {
   session: Session | null;
   profile: {
-    created_at: string;
-    id: string;
-    is_complete_profile: boolean | null;
+    age: number | null
+    bio: string | null
+    created_at: string
+    gender: string | null
+    genderFind: string | null
+    id: number
+    imgs: string[] | null
+    is_complete_profile: boolean | null
+    name: string | null
+    purposeValue: string | null
+    user_id: string | null
   } | null;
   getProfile?: any;
   setProfile?: any;
+  isFetching?: boolean;
   initialized?: boolean;
   signOut?: () => Promise<void>;
   setSession?: any;
@@ -28,32 +37,46 @@ type AuthProps = {
 export const AuthContext = createContext<Partial<AuthProps>>({});
 
 export function useAuth() {
-  const context =  useContext(AuthContext);
+  const context = useContext(AuthContext);
   if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [isFetching, setIsFetching] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<{
-    created_at: string;
-    id: string;
-    is_complete_profile: boolean | null;
+    age: number | null
+    bio: string | null
+    created_at: string
+    gender: string | null
+    genderFind: string | null
+    id: number
+    imgs: string[] | null
+    is_complete_profile: boolean | null
+    name: string | null
+    purposeValue: string | null
+    user_id: string | null
   } | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
   const getProfile = useCallback(async () => {
-    const { user } = session ?? {};
-    if (!user) return;
-    const { data, error } = await supabase
-      .from('profiles')
-      .select()
-      .eq('id', user.id)
+    setIsFetching(true);
+    try {
+      const { user } = session ?? {};
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select()
+        .eq('user_id', user.id)
+        .single()
 
-    if (error) throw error;
-    console.log("🚀 ~ getProfile ~ data:", data)
-    setProfile(data[0]);
-  }, []);
+      if (error) throw error;
+      setProfile(data);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [setIsFetching, session, setProfile]);
 
   useEffect(() => {
     // Listen for changes to authentication state
@@ -82,6 +105,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const value = {
     session,
     initialized,
+    isFetching,
     signOut,
     setSession,
     setProfile,

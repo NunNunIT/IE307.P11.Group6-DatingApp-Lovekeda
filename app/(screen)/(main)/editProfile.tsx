@@ -1,12 +1,8 @@
-import React, { useCallback, useState } from "react";
-import * as FileSystem from "expo-file-system";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, View } from "react-native";
-import { Slider, RangeSlider } from "@sharcoux/slider";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { Pressable } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Smile, X } from "@/lib/icons";
+import { X } from "@/lib/icons";
 import Carousel from "@/components/carousel/type1";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { Plus } from "@/lib/icons";
@@ -16,15 +12,20 @@ import {
   SegmentedControlItemProps,
   TextField,
 } from "react-native-ui-lib";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
+import { useAuth } from "@/provider/AuthProvider";
+import { supabase } from "@/utils/supabase";
+import { router } from "expo-router";
+import Spinner from "react-native-loading-spinner-overlay";
+import { bindAll } from "lodash";
 import { fbApp, uploadToFireBase } from "@/firebase/config";
 
-// console.log(fbApp);
+// console.log(fbApp)
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
@@ -38,12 +39,37 @@ const optionsGender = [
 
 export default function FilterScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("male");
-  const [age, setAge] = useState(null);
-  const [bio, setBio] = useState("");
+  const { session, profile, getProfile } = useAuth();
+  const [name, setName] = useState<string>(profile?.name ?? "");
+  const [gender, setGender] = useState<string>(profile?.gender ?? "other");
+  const [age, setAge] = useState<string>(profile?.age?.toString() ?? "");
+  const [bio, setBio] = useState<string>(profile?.bio ?? "");
   const [imgs, setImgs] = useState<string[]>([]);
   const [tab, setTab] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDirtyFields, setIsDirtyFields] = useState(false);
+
+  useEffect(() => {
+    const isDirty =
+      JSON.stringify({ name, gender, age, bio, imgs })
+      !== JSON.stringify({
+        name: profile?.name,
+        gender: profile?.gender,
+        age: profile?.age?.toString(),
+        bio: profile?.bio,
+        imgs: profile?.imgs,
+      });
+    setIsDirtyFields(isDirty);
+  }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
+
+  useEffect(() => {
+    if (!profile) return;
+    setName(profile?.name ?? "");
+    setGender(profile?.gender ?? "other");
+    setAge(profile?.age?.toString() ?? "");
+    setBio(profile?.bio ?? "");
+    setImgs(profile?.imgs ?? []);
+  }, [profile])
 
   const onChangeIndex = useCallback((index: number) => {
     console.warn(
@@ -51,44 +77,37 @@ export default function FilterScreen() {
     );
     setTab(index);
   }, []);
+
   const [screenPreset, setScreenPreset] = useState(
     SegmentedControl.presets.DEFAULT
   );
 
   const submitHandler = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
     try {
-      console.log("imgs", imgs);
-      const imgsFirebase = await uploadToFireBase(imgs[0], "hahaha");
-      console.log("imgsFirebase", imgsFirebase);
+      // console.log("imgs", imgs)
+      // const imgsFirebase = await uploadToFireBase(imgs[0], "haha");
+      // console.log("imgsFirebase", imgsFirebase)
 
       // 2. Chuẩn bị dữ liệu người dùng
       const userData = {
         name,
-        age,
+        age: Number(age),
         bio,
         gender,
-        imgsFirebase,
+        imgs: imgs, // imgsFirebase
+        user_id: session.user.id,
       };
 
-      // console.log("fetch dữ liệu", userData)
-
-      // // 3. Gửi dữ liệu đến API khác
-      // const response = await fetch("http://<YOUR_NEXTJS_SERVER>/api/user/create", {
-      //   method: "POST",
-      //   body: JSON.stringify(userData),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-
-      // const data = await response.json();
-      // if (!response.ok) {
-      //   throw new Error(data.error || "Failed to save user data!");
-      // }
-
-      // console.log("User data saved successfully:", data);
+      await supabase.from("profiles").upsert(userData, { onConflict: "user_id" });
+      await getProfile?.();
+      setIsSubmitting(false);
+      router.back();
     } catch (error) {
       // console.error("Error submitting data:", error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -163,7 +182,7 @@ export default function FilterScreen() {
             <View className="px-6 py-4 flex justify-start items-start bg-zinc-100 dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-full">
               <SingleChoicePicker
                 value={gender}
-                onChange={setGender} // Ensure this matches the correct type
+                onChange={(value) => setGender(value as string)} // Ensure this matches the correct type
                 title="Chọn một"
                 placeholder="Chọn một giá trị"
                 options={optionsGender}
@@ -199,8 +218,8 @@ export default function FilterScreen() {
             validateOnChange
             validate={[
               "required",
-              (value) => value >= 18,
-              (value) => value <= 100,
+              (value) => Number(value) >= 18,
+              (value) => Number(value) <= 100,
             ]}
             validationMessage={[
               "Tuổi không được để trống",
@@ -251,7 +270,8 @@ export default function FilterScreen() {
           color={colorScheme === "dark" ? "white" : "black"}
           // floatingPlaceholder
           // floatOnFocus
-          onChangeText={(text) => console.log(text)}
+          value={bio}
+          onChangeText={setBio}
           enableErrors
           validateOnChange
           // validate={["required"]}
@@ -353,8 +373,7 @@ export default function FilterScreen() {
         )}
 
         {/* Nút Submit */}
-
-        <Button onPress={submitHandler} className="mt-4 rounded-full">
+        <Button onPress={submitHandler} className="mt-4 rounded-full" disabled={!isDirtyFields || isSubmitting} variant="red">
           <Text>Lưu</Text>
         </Button>
       </View>

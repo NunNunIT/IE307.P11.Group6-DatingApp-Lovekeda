@@ -85,7 +85,7 @@ const Tinder = () => {
   const [currentIndex, setCurrentIndex] = useState(db.length - 1);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const childRefs = useMemo(
     () =>
@@ -131,7 +131,7 @@ const Tinder = () => {
   useEffect(() => {
     // Giả lập tải dữ liệu
     const timeout = setTimeout(() => {
-      setLoading(false);
+      setIsLoading(false);
     }, 2000); // Tải trong 2 giây
 
     return () => clearTimeout(timeout); // Xóa timeout khi unmount
@@ -139,7 +139,7 @@ const Tinder = () => {
 
   return (
     <View className="relative flex-1 w-full h-full">
-      {loading ? (
+      {isLoading ? (
         <View className="w-full h-full flex justify-center items-center">
           <Loading1 />
           <View className="absolute items-center justify-center">
@@ -172,23 +172,18 @@ const Tinder = () => {
           {/* Buttons */}
           <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
             <Button
-              className="flex-1 rounded-full"
-              // size="icon"
+              className="flex-1"
               variant="secondary"
               onPress={() => swipe("left")}
             >
               <XMarkIcon size={32} color={"#fe183c"} />
             </Button>
-            {/* <Button className="rounded-full" size="icon" onPress={() => goBack()}>
-            <Text>Undo</Text>
-          </Button> */}
             <Button
-              className="flex-1 rounded-full"
-              // size="icon"
-              variant="secondary"
+              className="flex-1"
+              variant="red"
               onPress={() => swipe("right")}
             >
-              <HeartIcon size={32} color={"#fe183c"} />
+              <HeartIcon size={32} color={"#fff"} />
             </Button>
           </View>
         </>

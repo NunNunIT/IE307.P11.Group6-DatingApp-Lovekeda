@@ -1,58 +1,50 @@
 import {
   View,
   Image,
-  TouchableOpacity,
   ScrollView,
-  Dimensions,
 } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
 import { profileData } from "@/constant";
-import DarkModeSwitch from "@/components/darkModeOption/switch";
 import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
-import ImageUploadType1 from "@/components/imageUpload/type1";
-import Carousel from "@/components/carousel/type1";
-import { Plus } from "@/lib/icons";
-import MultiChoicePicker from "@/components/select/multiChoice";
-import SingleChoicePicker from "@/components/select/oneChoice";
-var { width, height } = Dimensions.get("window");
+import { useAuth } from "@/provider/AuthProvider";
 
-const options = [
-  { label: "JavaScript", value: "js" },
-  { label: "Java", value: "java" },
-  { label: "Python1", value: "python1" },
-  { label: "Python2", value: "python2" },
-  { label: "Python3", value: "python3" },
-  { label: "Python4", value: "python4" },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "Perl1", value: "perl1" },
-  { label: "Perl4", value: "perl4" },
-  { label: "Perl3", value: "perl3" },
-  { label: "Perl2", value: "perl2" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-];
+// const options = [
+//   { label: "JavaScript", value: "js" },
+//   { label: "Java", value: "java" },
+//   { label: "Python1", value: "python1" },
+//   { label: "Python2", value: "python2" },
+//   { label: "Python3", value: "python3" },
+//   { label: "Python4", value: "python4" },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "Perl1", value: "perl1" },
+//   { label: "Perl4", value: "perl4" },
+//   { label: "Perl3", value: "perl3" },
+//   { label: "Perl2", value: "perl2" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+// ];
 
 export default function ProfileScreen() {
   const data = profileData[0];
-  const [values, setValues] = useState<string[]>(["perl2"]);
-  const [value, setValue] = useState<string>();
+  const { profile } = useAuth();
+
   return (
     <ScrollView
       className="relative flex-1"
@@ -63,7 +55,7 @@ export default function ProfileScreen() {
     >
       {/* Image */}
       <View className="relative m-3">
-        <Image source={{ uri: data.imgUrl }} className="rounded-full size-40" />
+        <Image source={{ uri: profile?.imgs?.[0] }} className="rounded-full size-40" />
         <Button
           className="rounded-full absolute -bottom-2 -right-2 p-6"
           variant="secondary"
@@ -76,21 +68,21 @@ export default function ProfileScreen() {
 
       <View className="w-full justify-center items-center flex-row">
         <Text className="text-black dark:text-white text-center font-bold text-xl">
-          {data.name}
+          {profile?.name}
           {", "}
         </Text>
         <Text className="text-black dark:text-white text-center font-bold text-xl ">
-          {data.age}
+          {profile?.age}
         </Text>
       </View>
 
       <View className="w-full justify-start items-start px-6 space-y-4 mt-6">
         {/* User Bio */}
-        <View>
+        {!!profile?.bio && (<View>
           <Text className="text-black dark:text-white text-left font-medium text-sm">
-            {data.bio}
+            {profile.bio}
           </Text>
-        </View>
+        </View>)}
 
         {/* User location */}
         <View className="flex flex-col mt-6">

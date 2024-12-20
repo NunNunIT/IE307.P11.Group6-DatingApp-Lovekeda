@@ -117,7 +117,7 @@ export default function RegisterScreen() {
               Keyboard.dismiss();
               await onSubmit(data);
             })}>
-            <Text>Submit</Text>
+            <Text>Đăng ký</Text>
           </StateButton>
         </Form>
 

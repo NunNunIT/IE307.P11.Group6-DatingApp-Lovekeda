@@ -1,28 +1,34 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
 
-const LocationContext = createContext(null);
+type TPermissionStatus = "pending" | "granted" | "denied";
 
-export const LocationProvider = ({ children }) => {
-  const [location, setLocation] = useState(null);
-  const [permissionStatus, setPermissionStatus] = useState("pending");
+const LocationContext = createContext<{
+  location: Location.LocationObject | null;
+  permissionStatus: TPermissionStatus;
+  checking: () => Promise<void>;
+}>({} as any);
+
+export const LocationProvider = ({ children }: { children: React.ReactNode }) => {
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [permissionStatus, setPermissionStatus] = useState<TPermissionStatus>("pending");
+  const checking = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      const currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+      setPermissionStatus("granted");
+    } else {
+      setPermissionStatus("denied");
+    }
+  };
 
   useEffect(() => {
-    (async () => {
-      // Kiểm tra quyền truy cập vị trí
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const currentLocation = await Location.getCurrentPositionAsync({});
-        setLocation(currentLocation);
-        setPermissionStatus("granted");
-      } else {
-        setPermissionStatus("denied");
-      }
-    })();
+    checking();
   }, []);
 
   return (
-    <LocationContext.Provider value={{ location, permissionStatus }}>
+    <LocationContext.Provider value={{ location, permissionStatus, checking }}>
       {children}
     </LocationContext.Provider>
   );

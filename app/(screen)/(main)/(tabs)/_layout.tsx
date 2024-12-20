@@ -4,8 +4,6 @@ import { Image, Platform, View } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   User,
   Home,
@@ -15,14 +13,11 @@ import {
   Settings,
   Settings2,
 } from "@/lib/icons";
-import DarkModeText from "@/components/darkModeOption/text";
 import { Button } from "@/components/ui/button";
-import { BadgePlus } from "lucide-react-native";
 import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const { location, permissionStatus } = useLocation();
+  const { permissionStatus } = useLocation();
   if (permissionStatus === "denied") {
     return <Redirect href="/(screen)/(main)/permissionError" />;
   }
@@ -60,19 +55,15 @@ export default function TabLayout() {
           headerRight: () => (
             <View className="flex flex-row gap-3 mr-2">
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/filter")}
               >
                 <Settings2 className="size-6 text-black dark:text-white" />
               </Button>
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/noti")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
@@ -98,21 +89,17 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color }) => <User color={color} />,
           headerRight: () => (
-            <View className="flex flex-row gap-3">
+            <View className="flex flex-row gap-3 mr-2">
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/noti")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/settings")}
               >
                 <Settings className="size-6 text-black dark:text-white" />

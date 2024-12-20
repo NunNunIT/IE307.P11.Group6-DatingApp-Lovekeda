@@ -2,7 +2,7 @@ import ImageUploadType2 from "@/components/imageUpload/type2";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { View, Text, Pressable } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
@@ -10,12 +10,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TextField } from "react-native-ui-lib";
 import { useAuth } from "@/provider/AuthProvider";
 import Spinner from "react-native-loading-spinner-overlay";
+import { supabase } from "@/utils/supabase";
+import { Button } from "@/components/ui/button";
 
-const OPTIONS = [
+export const GENDER_OPTIONS = [
   { label: "Nam", value: "male" },
   { label: "Nữ", value: "female" },
   { label: "Khác", value: "other" },
 ] as const;
+
+export const SEARCH_GENDER_OPTIONS = [
+  ...GENDER_OPTIONS.slice(0, 2),
+  { label: "Tất cả", value: "all" },
+]
 
 export default function ExampleOne() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -23,12 +30,24 @@ export default function ExampleOne() {
   const [gender, setGender] = useState<string>("male");
   const [age, setAge] = useState<string | undefined>(undefined);
   const [bio, setBio] = useState("");
-  const [genderFind, setGenderFind] = useState("male");
-  const [purposeValue, setPurposeValue] = React.useState<string>("friends");
+  const [genderFind, setGenderFind] = useState<string>("male");
+  const [purposeValue, setPurposeValue] = useState<string>("friends");
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { profile, setProfile } = useAuth();
+  const { isFetching, session, signOut, profile, getProfile } = useAuth();
+  useEffect(() => {
+    (async () => getProfile?.())()
+  }, []);
+
+  useEffect(() => {
+    if (profile?.name) setName(profile.name);
+    if (profile?.age) setAge(profile.age.toString());
+    if (profile?.bio) setBio(profile.bio);
+    if (profile?.genderFind) setGenderFind(profile.genderFind);
+    if (profile?.purposeValue) setPurposeValue(profile.purposeValue);
+    if (profile?.imgs) setImgs(profile.imgs);
+  }, [profile]);
 
   const defaultScrollViewProps = {
     keyboardShouldPersistTaps: "handled",
@@ -38,14 +57,30 @@ export default function ExampleOne() {
     },
   };
 
-  const onNextStep1 = () => {
-    // Phải kiểm tra đủ biến name, gender, age chưa
-    console.log("called next step");
+  const onNextStep1 = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
+    await supabase.from("profiles").upsert({
+      user_id: session.user.id,
+      name,
+      gender,
+      age: Number(age),
+      bio,
+    }, { onConflict: "user_id" })
+    await getProfile?.();
+    setIsSubmitting(false);
   };
 
-  const onNextStep2 = () => {
-    // Phải kiểm tra đủ biến genderFind, purpose chưa
-    console.log("called next step");
+  const onNextStep2 = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
+    await supabase.from("profiles").upsert({
+      user_id: session.user.id,
+      genderFind,
+      purposeValue,
+    }, { onConflict: 'user_id' })
+    await getProfile?.();
+    setIsSubmitting(false);
   };
 
   const onPrevStep = () => {
@@ -53,10 +88,16 @@ export default function ExampleOne() {
   };
 
   const onSubmitSteps = async () => {
+    if (!session) return;
     setIsSubmitting(true);
-    setProfile({ ...profile, is_complete_profile: true });
+    await supabase.from("profiles").upsert({
+      created_at: new Date().toISOString(),
+      user_id: session.user.id,
+      is_complete_profile: true,
+      imgs,
+    }, { onConflict: 'user_id' });
+    await getProfile?.();
     setIsSubmitting(false);
-    console.log("🚀 ~ onSubmitSteps ~ true:", true)
     router.replace("/(screen)/(main)/(tabs)");
   };
 
@@ -82,7 +123,7 @@ export default function ExampleOne() {
       className="relative bg-white dark:bg-black"
       style={{ flex: 1 }}
     >
-      <Spinner visible={isSubmitting} />
+      <Spinner visible={isFetching || isSubmitting} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <ProgressSteps {...progressStepsStyle}>
           <ProgressStep
@@ -91,12 +132,13 @@ export default function ExampleOne() {
             nextBtnDisabled={
               name === "" || typeof age === "undefined" || Number(age!) < 18 || Number(age!) > 100
             }
-            onPrevious={() => router.back()}
+            onPrevious={() => signOut?.()}
             scrollViewProps={defaultScrollViewProps}
             nextBtnTextStyle={buttonTextStyle}
             nextBtnText={"Tiếp tục"}
             previousBtnTextStyle={buttonTextStyle}
             previousBtnText={"Trở về"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full flex flex-col justify-start items-center p-4">
               <TextField
@@ -157,7 +199,7 @@ export default function ExampleOne() {
                       onChange={(value) => setGender(value as string)}
                       title="Chọn một"
                       placeholder="Chọn một giá trị"
-                      options={[...OPTIONS]}
+                      options={[...GENDER_OPTIONS]}
                       useDialogDefault
                     />
                   </View>
@@ -232,6 +274,8 @@ export default function ExampleOne() {
                   paddingVertical: 3,
                   paddingHorizontal: 12,
                 }}
+                value={bio}
+                onChangeText={setBio}
                 placeholder={"Viết gì đó giới thiệu bạn với mọi người"}
                 placeholderTextColor="gray"
                 floatingPlaceholderStyle={{
@@ -241,9 +285,6 @@ export default function ExampleOne() {
                   paddingBottom: 2,
                 }}
                 color={colorScheme === "dark" ? "white" : "black"}
-                // floatingPlaceholder
-                // floatOnFocus
-                onChangeText={(text) => console.log(text)}
                 enableErrors
                 validateOnChange
                 // validate={["required"]}
@@ -272,6 +313,9 @@ export default function ExampleOne() {
                   borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
                 }}
               />
+              <Button onPress={signOut} variant="outline" className="dark:text-white">
+                <Text>Đăng xuất</Text>
+              </Button>
             </View>
           </ProgressStep>
           <ProgressStep
@@ -283,6 +327,7 @@ export default function ExampleOne() {
             nextBtnText={"Tiếp tục"}
             previousBtnTextStyle={buttonTextStyle}
             previousBtnText={"Quay lại"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full flex flex-col justify-start items-center p-4">
               <View className="">
@@ -295,7 +340,7 @@ export default function ExampleOne() {
                     onChange={(value) => setGenderFind(value as string)}
                     title="Chọn một"
                     placeholder="Chọn một giá trị"
-                    options={[...OPTIONS]}
+                    options={[...SEARCH_GENDER_OPTIONS]}
                     useDialogDefault
                   />
                 </View>
@@ -338,6 +383,7 @@ export default function ExampleOne() {
             previousBtnTextStyle={buttonTextStyle}
             finishBtnText={"Hoàn thành"}
             previousBtnText={"Quay lại"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full p-4 flex justify-start items-start">
               <ImageUploadType2 imgs={imgs} setImgs={setImgs} />

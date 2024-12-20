@@ -1,25 +1,28 @@
 import { Redirect, Stack } from "expo-router";
 import React from "react";
 import { useAuth } from "~/provider/AuthProvider";
-import { LocationProvider, useLocation } from "@/provider/LocationProvider";
+import { LocationProvider } from "@/provider/LocationProvider";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function NotesLayoutScreen() {
-  const { session, profile } = useAuth();
+  const { isFetching, session, profile } = useAuth();
   if (!session) {
     return <Redirect href="/(screen)/auth" />;
   }
 
-  if (!profile?.is_complete_profile) {
+  if (!isFetching && !profile?.is_complete_profile) {
     return <Redirect href="/(screen)/(set-up-profile)" />;
   }
 
   return (
     <LocationProvider>
+      <Spinner visible={isFetching} />
       <Stack>
         <Stack.Screen
           name="(tabs)"
           options={{
             headerShown: false,
+            title: ""
           }}
         />
         <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />
