@@ -1,9 +1,7 @@
 import {
   View,
   Image,
-  // TouchableOpacity,
   ScrollView,
-  // Dimensions,
 } from "react-native";
 import { useState } from "react";
 import {
@@ -17,37 +15,36 @@ import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/provider/AuthProvider";
 
-const options = [
-  { label: "JavaScript", value: "js" },
-  { label: "Java", value: "java" },
-  { label: "Python1", value: "python1" },
-  { label: "Python2", value: "python2" },
-  { label: "Python3", value: "python3" },
-  { label: "Python4", value: "python4" },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "Perl1", value: "perl1" },
-  { label: "Perl4", value: "perl4" },
-  { label: "Perl3", value: "perl3" },
-  { label: "Perl2", value: "perl2" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-];
+// const options = [
+//   { label: "JavaScript", value: "js" },
+//   { label: "Java", value: "java" },
+//   { label: "Python1", value: "python1" },
+//   { label: "Python2", value: "python2" },
+//   { label: "Python3", value: "python3" },
+//   { label: "Python4", value: "python4" },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "C++", value: "c++", disabled: true },
+//   { label: "Perl1", value: "perl1" },
+//   { label: "Perl4", value: "perl4" },
+//   { label: "Perl3", value: "perl3" },
+//   { label: "Perl2", value: "perl2" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+//   { label: "Perl", value: "perl" },
+// ];
 
 export default function ProfileScreen() {
   const data = profileData[0];
   const { profile } = useAuth();
-  // const [values, setValues] = useState<string[]>(["perl2"]);
-  // const [value, setValue] = useState<string>();
+
   return (
     <ScrollView
       className="relative flex-1"

@@ -22,7 +22,7 @@ const buttonVariants = cva(
         ghost: 'web:hover:bg-accent web:hover:text-accent-foreground active:bg-accent',
         link: 'web:underline-offset-4 web:hover:underline web:focus:underline ',
         none: '',
-        red: 'w-full bg-pri-color dark:bg-pri-color active:bg-pri-color/60',
+        red: 'bg-pri-color dark:bg-pri-color active:bg-pri-color/60',
       },
       size: {
         default: 'h-12 px-4 py-2 native:h-12 native:px-5 native:py-2',

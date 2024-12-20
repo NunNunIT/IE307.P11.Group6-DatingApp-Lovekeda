@@ -1,9 +1,9 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
 
+import { PasswordInput } from "@/components/customize-ui/password-input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Alert, View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -14,7 +14,7 @@ import { FormItem } from "~/components/formItem";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { Mail, Lock, Eye, EyeClosed } from "~/lib/icons";
+import { Mail, Lock } from "~/lib/icons";
 import { supabase } from "~/utils/supabase";
 
 // Định nghĩa schema Zod cho form
@@ -26,7 +26,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -95,7 +94,7 @@ export default function LoginScreen() {
 
         <FormItem
           name="password"
-          label="Password"
+          label="Mật khẩu"
           error={errors?.password?.message}
           required
         >
@@ -103,32 +102,20 @@ export default function LoginScreen() {
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                secureTextEntry={!showPassword}
+              <PasswordInput
+                childLeft={<Lock className="ml-1 size-6 text-zinc-500" />}
+                autoCapitalize="none"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                placeholder="Nhập mật khẩu"
                 value={value}
-                startIcon={<Lock className="ml-1 size-6 text-zinc-500" />}
-                endIcon={
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onPress={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeClosed className="mr-1 size-6" />
-                    ) : (
-                      <Eye className="mr-1 size-6" />
-                    )}
-                  </Button>
-                }
+                placeholder="Nhập mật khẩu"
               />
             )}
           />
         </FormItem>
 
         <Button
+          className="w-full"
           variant="red"
           onPress={handleSubmit(onSubmit)}
         >
