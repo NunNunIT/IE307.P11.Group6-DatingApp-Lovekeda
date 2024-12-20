@@ -2,7 +2,7 @@ import ImageUploadType2 from "@/components/imageUpload/type2";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ScrollView } from "react-native";
 import { View, Text, Pressable } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
@@ -24,8 +24,8 @@ export default function ExampleOne() {
   const [gender, setGender] = useState<string>("male");
   const [age, setAge] = useState<string | undefined>(undefined);
   const [bio, setBio] = useState("");
-  const [genderFind, setGenderFind] = useState("male");
-  const [purposeValue, setPurposeValue] = React.useState<string>("friends");
+  const [genderFind, setGenderFind] = useState<string>("male");
+  const [purposeValue, setPurposeValue] = useState<string>("friends");
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,14 +39,30 @@ export default function ExampleOne() {
     },
   };
 
-  const onNextStep1 = () => {
-    // Phải kiểm tra đủ biến name, gender, age chưa
-    console.log("called next step");
+  const onNextStep1 = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
+    await supabase.from("profiles").upsert({
+      user_id: session.user.id,
+      name,
+      gender,
+      age: Number(age),
+      bio,
+    }, { onConflict: "user_id" })
+    await getProfile?.();
+    setIsSubmitting(false);
   };
 
-  const onNextStep2 = () => {
-    // Phải kiểm tra đủ biến genderFind, purpose chưa
-    console.log("called next step");
+  const onNextStep2 = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
+    await supabase.from("profiles").upsert({
+      user_id: session.user.id,
+      genderFind,
+      purposeValue,
+    }, { onConflict: 'user_id' })
+    await getProfile?.();
+    setIsSubmitting(false);
   };
 
   const onPrevStep = () => {
@@ -60,6 +76,7 @@ export default function ExampleOne() {
       created_at: new Date().toISOString(),
       user_id: session.user.id,
       is_complete_profile: true,
+      imgs,
     }, { onConflict: 'user_id' });
     await getProfile?.();
     setIsSubmitting(false);
@@ -239,6 +256,8 @@ export default function ExampleOne() {
                   paddingVertical: 3,
                   paddingHorizontal: 12,
                 }}
+                value={bio}
+                onChangeText={setBio}
                 placeholder={"Viết gì đó giới thiệu bạn với mọi người"}
                 placeholderTextColor="gray"
                 floatingPlaceholderStyle={{
@@ -248,9 +267,6 @@ export default function ExampleOne() {
                   paddingBottom: 2,
                 }}
                 color={colorScheme === "dark" ? "white" : "black"}
-                // floatingPlaceholder
-                // floatOnFocus
-                onChangeText={(text) => console.log(text)}
                 enableErrors
                 validateOnChange
                 // validate={["required"]}
