@@ -4,8 +4,6 @@ import { Image, Platform, View } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
 import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import {
   User,
   Home,
@@ -15,9 +13,7 @@ import {
   Settings,
   Settings2,
 } from "@/lib/icons";
-import DarkModeText from "@/components/darkModeOption/text";
 import { Button } from "@/components/ui/button";
-import { BadgePlus } from "lucide-react-native";
 import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {

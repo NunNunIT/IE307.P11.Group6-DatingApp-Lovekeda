@@ -22,6 +22,7 @@ export default function NotesLayoutScreen() {
           name="(tabs)"
           options={{
             headerShown: false,
+            title: ""
           }}
         />
         <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />

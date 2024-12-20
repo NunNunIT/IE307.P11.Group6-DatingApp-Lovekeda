@@ -13,11 +13,16 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { supabase } from "@/utils/supabase";
 import { Button } from "@/components/ui/button";
 
-export const OPTIONS = [
+export const GENDER_OPTIONS = [
   { label: "Nam", value: "male" },
   { label: "Nữ", value: "female" },
   { label: "Khác", value: "other" },
 ] as const;
+
+export const SEARCH_GENDER_OPTIONS = [
+  ...GENDER_OPTIONS.slice(0, 2),
+  { label: "Tất cả", value: "all" },
+]
 
 export default function ExampleOne() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -194,7 +199,7 @@ export default function ExampleOne() {
                       onChange={(value) => setGender(value as string)}
                       title="Chọn một"
                       placeholder="Chọn một giá trị"
-                      options={[...OPTIONS]}
+                      options={[...GENDER_OPTIONS]}
                       useDialogDefault
                     />
                   </View>
@@ -333,7 +338,7 @@ export default function ExampleOne() {
                     onChange={(value) => setGenderFind(value as string)}
                     title="Chọn một"
                     placeholder="Chọn một giá trị"
-                    options={[...OPTIONS]}
+                    options={[...SEARCH_GENDER_OPTIONS]}
                     useDialogDefault
                   />
                 </View>
