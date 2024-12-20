@@ -10,7 +10,7 @@ export default function NotesLayoutScreen() {
     return <Redirect href="/(screen)/auth" />;
   }
 
-  if (!profile?.is_complete_profile) {
+  if (!isFetching && !profile?.is_complete_profile) {
     return <Redirect href="/(screen)/(set-up-profile)" />;
   }
 

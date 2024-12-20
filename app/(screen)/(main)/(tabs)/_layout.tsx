@@ -59,19 +59,15 @@ export default function TabLayout() {
           headerRight: () => (
             <View className="flex flex-row gap-3 mr-2">
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/filter")}
               >
                 <Settings2 className="size-6 text-black dark:text-white" />
               </Button>
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/noti")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
@@ -97,21 +93,17 @@ export default function TabLayout() {
         options={{
           tabBarIcon: ({ color }) => <User color={color} />,
           headerRight: () => (
-            <View className="flex flex-row gap-3">
+            <View className="flex flex-row gap-3 mr-2">
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/noti")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>
               <Button
-                // variant="ghost"
                 size="icon"
                 variant="ghost"
-                className="flex flex-row gap-2"
                 onPress={() => router.push("/settings")}
               >
                 <Settings className="size-6 text-black dark:text-white" />

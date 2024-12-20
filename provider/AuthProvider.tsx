@@ -1,5 +1,5 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Database } from '@/database.types';
 import { Session } from '@supabase/supabase-js';
 import { SplashScreen } from 'expo-router';
 import {
@@ -14,9 +14,16 @@ import { supabase } from '~/utils/supabase';
 type AuthProps = {
   session: Session | null;
   profile: {
+    age: number | null
+    bio: string | null
     created_at: string
+    gender: string | null
+    genderFind: string | null
     id: number
+    imgs: string[] | null
     is_complete_profile: boolean | null
+    name: string | null
+    purposeValue: string | null
     user_id: string | null
   } | null;
   getProfile?: any;
@@ -39,9 +46,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<{
+    age: number | null
+    bio: string | null
     created_at: string
+    gender: string | null
+    genderFind: string | null
     id: number
+    imgs: string[] | null
     is_complete_profile: boolean | null
+    name: string | null
+    purposeValue: string | null
     user_id: string | null
   } | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -61,7 +75,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     } finally {
       setIsFetching(false);
     }
-    setIsFetching(false);
   }, [setIsFetching, session, setProfile]);
 
   useEffect(() => {

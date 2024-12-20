@@ -2,7 +2,7 @@ import ImageUploadType2 from "@/components/imageUpload/type2";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { View, Text, Pressable } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
@@ -11,8 +11,9 @@ import { TextField } from "react-native-ui-lib";
 import { useAuth } from "@/provider/AuthProvider";
 import Spinner from "react-native-loading-spinner-overlay";
 import { supabase } from "@/utils/supabase";
+import { Button } from "@/components/ui/button";
 
-const OPTIONS = [
+export const OPTIONS = [
   { label: "Nam", value: "male" },
   { label: "Nữ", value: "female" },
   { label: "Khác", value: "other" },
@@ -29,7 +30,19 @@ export default function ExampleOne() {
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { session, signOut, getProfile } = useAuth();
+  const { isFetching, session, signOut, profile, getProfile } = useAuth();
+  useEffect(() => {
+    (async () => getProfile?.())()
+  }, []);
+
+  useEffect(() => {
+    if (profile?.name) setName(profile.name);
+    if (profile?.age) setAge(profile.age.toString());
+    if (profile?.bio) setBio(profile.bio);
+    if (profile?.genderFind) setGenderFind(profile.genderFind);
+    if (profile?.purposeValue) setPurposeValue(profile.purposeValue);
+    if (profile?.imgs) setImgs(profile.imgs);
+  }, [profile]);
 
   const defaultScrollViewProps = {
     keyboardShouldPersistTaps: "handled",
@@ -105,7 +118,7 @@ export default function ExampleOne() {
       className="relative bg-white dark:bg-black"
       style={{ flex: 1 }}
     >
-      <Spinner visible={isSubmitting} />
+      <Spinner visible={isFetching || isSubmitting} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <ProgressSteps {...progressStepsStyle}>
           <ProgressStep
@@ -295,6 +308,7 @@ export default function ExampleOne() {
                   borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
                 }}
               />
+              <Button onPress={signOut}><Text>Đăng xuất</Text></Button>
             </View>
           </ProgressStep>
           <ProgressStep
