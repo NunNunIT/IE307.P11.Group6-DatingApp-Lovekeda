@@ -5,69 +5,9 @@ import { Pressable, ScrollView, View } from "react-native";
 // import { Text } from "~/components/ui/text";
 // import { GridView } from "react-native-ui-lib";
 import { router } from "expo-router";
+import { datesData, matchesData } from "@/constant";
 
-const db = [
-  {
-    name: "Nguyễn Văn Hiếu",
-    imgs: [
-      "https://phanmemmkt.vn/wp-content/uploads/2024/09/avt-Facebook-cho-am-dep.jpg",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-      "https://placehold.co/400",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Trần Văn Bình",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Lê Thị Hương",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Phạm Minh Tuấn",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Đặng Hoàng Long",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-];
+const db = datesData
 
 export default function MatchesScreen1() {
   return (

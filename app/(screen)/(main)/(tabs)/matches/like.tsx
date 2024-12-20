@@ -4,69 +4,9 @@ import HumanCard2 from "@/components/card/human2"; // Đảm bảo import đúng
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { GridView } from "react-native-ui-lib";
+import { likeData } from "@/constant";
 
-const db = [
-  {
-    name: "Richard Hendricks",
-    imgs: [
-      "https://phanmemmkt.vn/wp-content/uploads/2024/09/avt-Facebook-cho-am-dep.jpg",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-      "https://placehold.co/400",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Erlich Bachman",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Monica Hall",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Jared Dunn",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Dinesh Chugtai",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-];
+const db = likeData
 
 export default function LikeScreen() {
   return (

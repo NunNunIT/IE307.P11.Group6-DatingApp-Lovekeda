@@ -19,17 +19,17 @@ export default function Matches() {
               onPress={() => router.push("/chatDetail/1")}
             >
               <Image
-                source={{ uri: matches.imgUrl }}
+                source={{ uri: matches.imgs[0] }}
                 resizeMode="cover"
                 className="rounded-full w-full aspect-square size-16"
               />
               <Text
-                className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base"
+                className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base text-nowrap line-clamp-1"
                 style={{
                   fontSize: hp(1.6),
                 }}
               >
-                {matches.name}
+                {matches.name?.split(' ').slice(-1)}
               </Text>
             </TouchableOpacity>
           );

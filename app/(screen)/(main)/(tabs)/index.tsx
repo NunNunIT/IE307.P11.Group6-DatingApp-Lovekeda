@@ -14,82 +14,20 @@ import {
 import Loading1 from "@/components/loading";
 import { Image } from "react-native";
 import { useAuth } from "@/provider/AuthProvider";
-
-const db = [
-  {
-    name: "Nguyễn Văn Hiếu",
-    imgs: [
-      "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-      "https://placehold.co/400",
-      "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Trần Văn Bình",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Lê Thị Hương",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Phạm Minh Tuấn",
-    imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-  {
-    name: "Phạm Minh Hòa",
-    imgs: [
-      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-1.jpg",
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkhSY0ashlgEOOv6UQf7QVJLNeJWuB_cb9cw&s",
-      "https://bikipdepxinh.com/wp-content/uploads/anh-gai-xinh-3.jpg",
-      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-2.jpg",
-    ],
-    age: "18",
-    city: "HCM",
-    country: "VN",
-  },
-];
+import { userData } from "@/constant";
 
 const alreadyRemoved: string[] = [];
-let charactersState = db;
+let charactersState = userData;
 
 const Tinder = () => {
-  const [currentIndex, setCurrentIndex] = useState(db.length - 1);
+  const [currentIndex, setCurrentIndex] = useState(userData.length - 1);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const childRefs = useMemo(
     () =>
-      Array(db.length)
+      Array(userData.length)
         .fill(0)
         .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()), // Correct type for TinderCard ref
     []
@@ -100,7 +38,7 @@ const Tinder = () => {
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < db.length - 1;
+  const canGoBack = currentIndex < userData.length - 1;
   const canSwipe = currentIndex >= 0;
 
   const swiped = (direction: string, nameToDelete: string, index: number) => {
@@ -116,7 +54,7 @@ const Tinder = () => {
   };
 
   const swipe = async (dir: "left" | "right") => {
-    if (canSwipe && currentIndex < db.length) {
+    if (canSwipe && currentIndex < userData.length) {
       await childRefs[currentIndex].current?.swipe(dir);
     }
   };
@@ -147,7 +85,9 @@ const Tinder = () => {
           <View className="absolute items-center justify-center">
             <Image
               source={{
-                uri: profile?.imgs?.[0] ?? "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+                uri:
+                  profile?.imgs?.[0] ??
+                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
               }}
               className="rounded-full size-28"
             />
@@ -157,7 +97,7 @@ const Tinder = () => {
         <>
           {/* Tinder Cards */}
           <View className="flex-1 w-full h-full">
-            {db.map((character, index) => (
+            {userData.map((character, index) => (
               <TinderCard
                 ref={childRefs[index]}
                 key={character.name}

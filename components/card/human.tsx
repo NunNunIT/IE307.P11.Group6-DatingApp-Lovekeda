@@ -50,26 +50,28 @@ export default function DatesCard({ item }) {
         onPress={() => router.push("/profileDetail/1")}
         className="absolute bottom-6 justify-start w-full items-start px-4"
       >
-        <View className="flex-row justify-center items-center ">
+        <Text className="bg-green-700 rounded-full p-1 px-3 text-white">
+          Cách bạn {item?.distance}
+        </Text>
+        <View className="w-full flex flex-row justify-between items-center ">
           <Text className="text-2xl text-white font-bold">
             {item?.name}
             {", "}
-          </Text>
-          <Text className="text-2xl text-white font-bold mr-2">
             {item?.age}
           </Text>
+
           {/* <CheckBadgeIcon size={25} color={"#3B82F6"} /> */}
           <Button
             size="icon"
-            variant="secondary"
-            className="rounded-full size-8"
+            variant="none"
+            className="rounded-full p-2 bg-zinc-600/50"
           >
-            <IdCard className="text-zinc-600 dark:text-zinc-200 size-6" />
+            <IdCard className="text-white size-6" />
           </Button>
         </View>
 
         {/* Location */}
-        <View className="flex-row justify-center items-center ">
+        {/* <View className="flex-row justify-center items-center ">
           <Text className="text-lg text-white font-regular">
             {item?.city}
             {", "}
@@ -77,6 +79,18 @@ export default function DatesCard({ item }) {
           <Text className="text-lg text-white font-regular mr-2">
             {item?.country}
           </Text>
+        </View> */}
+
+        <Text className="text-white text-xl mb-2">
+          <Text className="text-xl">❝ </Text>
+          {item?.bio}
+        </Text>
+        <View className="flex flex-row flex-wrap gap-2">
+          {item?.hobbies.map((hobby, index) => (
+            <Text key={index} className="bg-zinc-500 text-white rounded-full p-1 px-3">
+              {hobby}
+            </Text>
+          ))}
         </View>
       </Pressable>
     </View>
