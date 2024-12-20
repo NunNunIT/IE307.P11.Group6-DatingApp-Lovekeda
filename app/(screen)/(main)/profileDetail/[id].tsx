@@ -1,5 +1,7 @@
 import Carousel from "@/components/carousel/type1";
 import { Text } from "@/components/ui/text";
+import { userData } from "@/constant";
+import { useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
   Dimensions,
@@ -11,20 +13,16 @@ import {
 
 const { width } = Dimensions.get("window");
 
-const IMAGES = [
-  "https://images.pexels.com/photos/2529159/pexels-photo-2529159.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-  "https://images.pexels.com/photos/2529158/pexels-photo-2529158.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=600",
-  "https://images.pexels.com/photos/2529146/pexels-photo-2529146.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-  "https://images.pexels.com/photos/2529158/pexels-photo-2529158.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-];
-
 const ProfileDetailScreen = () => {
-  const [loading, setLoading] = useState(true); // Trạng thái tải
+  const local = useLocalSearchParams();
+  const [isLoading, setIsLoading] = useState(true); // Trạng thái tải
+  const [data, setData] = useState<any>(null);
 
   // Giả lập việc tải dữ liệu
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false); // Sau 2 giây, kết thúc tải
+      setData(userData.find((item) => item.id.toString() === local.id));
+      setIsLoading(false); // Sau 2 giây, kết thúc tải
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -32,13 +30,13 @@ const ProfileDetailScreen = () => {
 
   return (
     <ScrollView className="relative flex-1 w-full h-full">
-      {loading ? (
+      {isLoading ? (
         <View className="w-full h-full justify-center items-center">
           <ActivityIndicator size="large" color="#fe183c" />
         </View>
       ) : (
         <View className="flex flex-col gap-3">
-          <Carousel data={IMAGES} containerStyle="h-fit aspect-[3/4]">
+          <Carousel data={data?.imgs} containerStyle="h-fit aspect-[3/4]">
             {(item) => (
               <Image
                 source={{ uri: item }}
@@ -49,9 +47,9 @@ const ProfileDetailScreen = () => {
           </Carousel>
           <View className="p-2">
             <Text className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-              Tên người dùng
+              {data.name}
               {", "}
-              {19}
+              {data.age}
             </Text>
 
             <Text className="text-lg text-zinc-900 dark:text-white font-regular">
@@ -66,9 +64,7 @@ const ProfileDetailScreen = () => {
               Giới thiệu về bạn ấy
             </Text>
             <Text className="text-black dark:text-white text-left font-medium text-sm">
-              {
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-              }
+              {"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}
             </Text>
           </View>
 

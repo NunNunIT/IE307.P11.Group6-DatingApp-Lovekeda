@@ -22,6 +22,8 @@ import { router } from "expo-router";
 import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
 import { fbApp, uploadToFireBase } from "@/firebase/config";
+import MultiChoicePicker from "@/components/select/multiChoice";
+import { GENDER_OPTIONS } from "../(set-up-profile)";
 
 // console.log(fbApp)
 
@@ -31,10 +33,30 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
 };
 
-const optionsGender = [
-  { label: "Nam", value: "male" },
-  { label: "Nữ", value: "female" },
-  { label: "Khác", value: "other" },
+const options = [
+  { label: "JavaScript", value: "js" },
+  { label: "Java", value: "java" },
+  { label: "Python1", value: "python1" },
+  { label: "Python2", value: "python2" },
+  { label: "Python3", value: "python3" },
+  { label: "Python4", value: "python4" },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "Perl1", value: "perl1" },
+  { label: "Perl4", value: "perl4" },
+  { label: "Perl3", value: "perl3" },
+  { label: "Perl2", value: "perl2" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
+  { label: "Perl", value: "perl" },
 ];
 
 export default function FilterScreen() {
@@ -46,6 +68,7 @@ export default function FilterScreen() {
   const [bio, setBio] = useState<string>(profile?.bio ?? "");
   const [imgs, setImgs] = useState<string[]>([]);
   const [tab, setTab] = useState(0);
+  const [hobbies, setHobbies] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDirtyFields, setIsDirtyFields] = useState(false);
 
@@ -185,7 +208,7 @@ export default function FilterScreen() {
                 onChange={(value) => setGender(value as string)} // Ensure this matches the correct type
                 title="Chọn một"
                 placeholder="Chọn một giá trị"
-                options={optionsGender}
+                options={[...GENDER_OPTIONS]}
                 useDialogDefault
               />
             </View>
@@ -298,6 +321,17 @@ export default function FilterScreen() {
             borderWidth: 2,
             borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
           }}
+        />
+
+
+        <MultiChoicePicker
+          values={hobbies}
+          onChange={(value) => setHobbies(value.map(item => item.toString()))} // Ensure this matches the correct type
+          title="Sở thích"
+          placeholder="Chọn nhiều giá trị"
+          options={options}
+          showSearch
+        // useDialogDefault
         />
 
         <SegmentedControl

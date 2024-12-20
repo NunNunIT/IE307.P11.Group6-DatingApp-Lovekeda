@@ -15,7 +15,7 @@ import { router } from "expo-router";
 import { IdCard } from "@/lib/icons";
 var { width, height } = Dimensions.get("window");
 
-export default function DatesCard({ item }) {
+export default function DatesCard({ item }: { item: any }) {
   return (
     <View className="relative h-full">
       <Carousel data={item.imgs} containerStyle="h-full">
@@ -47,7 +47,7 @@ export default function DatesCard({ item }) {
       />
 
       <Pressable
-        onPress={() => router.push("/profileDetail/1")}
+        onPress={() => router.push(`/profileDetail/${item.id}`)}
         className="absolute bottom-6 justify-start w-full items-start px-4"
       >
         <View className="flex-row justify-center items-center ">
