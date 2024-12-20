@@ -1,8 +1,4 @@
-import {
-  View,
-  Image,
-  ScrollView,
-} from "react-native";
+import { View, Image, ScrollView } from "react-native";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -28,7 +24,10 @@ export default function ProfileScreen() {
     >
       {/* Image */}
       <View className="relative m-3">
-        <Image source={{ uri: profile?.imgs?.[0] }} className="rounded-full size-40" />
+        <Image
+          source={{ uri: profile?.imgs?.[0] }}
+          className="rounded-full size-40"
+        />
         <Button
           className="rounded-full absolute -bottom-2 -right-2 p-6"
           variant="secondary"
@@ -51,15 +50,15 @@ export default function ProfileScreen() {
 
       <View className="w-full justify-start items-start px-6 space-y-4 mt-6">
         {/* User Bio */}
-        {!!profile?.bio && (<View>
-          <Text className="text-black dark:text-white text-left font-medium text-sm">
-            {profile.bio}
-          </Text>
-        </View>)}
+        <Text className="text-black dark:text-white text-left font-medium text-sm">
+          {profile?.bio ? profile.bio : "Chưa có bio"}
+        </Text>
 
         {/* User location */}
         <View className="flex flex-col mt-6">
-          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">Nơi sống</Text>
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
+            Nơi sống
+          </Text>
           <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
             {"Phường Linh Trung, Đông Hòa, ...."}
           </Text>
@@ -67,12 +66,16 @@ export default function ProfileScreen() {
 
         {/* User hobbies */}
         <View className="flex flex-col mt-6">
-          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">Sở thích</Text>
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
+            Sở thích
+          </Text>
           <View className="flex-row mt-3 flex-wrap gap-2">
             {profile?.hobbies?.map((hobby, index) => (
               <View key={index} className="bg-pri-color rounded-3xl p-1 px-3">
                 {/* <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text> */}
-                <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text>
+                <Text className="text-white dark:text-white">
+                  {HOBBY_OPTIONS.find((item) => item.value === hobby)?.label}
+                </Text>
               </View>
             ))}
           </View>

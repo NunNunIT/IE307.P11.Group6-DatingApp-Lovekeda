@@ -40,14 +40,11 @@ export const HOBBY_OPTIONS = [
   { label: "Sở thích 4", value: "hobby 4" },
   { label: "Sở thích 5", value: "hobby 5" },
   { label: "Sở thích 6", value: "hobby 6" },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
-  { label: "C++", value: "c++", disabled: true },
+  { label: "Nấu ăn", value: "cook" },
+  { label: "Âm nhạc", value: "music" },
+  { label: "Mua sắm", value: "shopping" },
+  { label: "Ngủ", value: "sleep" },
+  { label: "Xem phim", value: "movie" },
 ];
 
 export default function FilterScreen() {
@@ -59,7 +56,7 @@ export default function FilterScreen() {
   const [bio, setBio] = useState<string>(profile?.bio ?? "");
   const [imgs, setImgs] = useState<string[]>([]);
   const [tab, setTab] = useState(0);
-  const [hobbies, setHobbies] = useState<string[]>([]);
+  const [hobbies, setHobbies] = useState<string[]>(profile?.hobbies ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDirtyFields, setIsDirtyFields] = useState(false);
 
