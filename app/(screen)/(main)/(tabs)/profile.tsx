@@ -3,7 +3,6 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { useState } from "react";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -14,35 +13,9 @@ import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/provider/AuthProvider";
-
-// const options = [
-//   { label: "JavaScript", value: "js" },
-//   { label: "Java", value: "java" },
-//   { label: "Python1", value: "python1" },
-//   { label: "Python2", value: "python2" },
-//   { label: "Python3", value: "python3" },
-//   { label: "Python4", value: "python4" },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "C++", value: "c++", disabled: true },
-//   { label: "Perl1", value: "perl1" },
-//   { label: "Perl4", value: "perl4" },
-//   { label: "Perl3", value: "perl3" },
-//   { label: "Perl2", value: "perl2" },
-//   { label: "Perl", value: "perl" },
-//   { label: "Perl", value: "perl" },
-//   { label: "Perl", value: "perl" },
-//   { label: "Perl", value: "perl" },
-//   { label: "Perl", value: "perl" },
-// ];
+import { HOBBY_OPTIONS } from "../editProfile";
 
 export default function ProfileScreen() {
-  const data = profileData[0];
   const { profile } = useAuth();
 
   return (
@@ -96,9 +69,10 @@ export default function ProfileScreen() {
         <View className="flex flex-col mt-6">
           <Text className="text-zinc-800 dark:text-zinc-200 font-bold">Sở thích</Text>
           <View className="flex-row mt-3 flex-wrap gap-2">
-            {data.hobbies?.map((hobby, index) => (
-              <View key={index} className="bg-pri-color rounded-3xl p-2">
-                <Text className="text-white dark:text-white">{hobby}</Text>
+            {profile?.hobbies?.map((hobby, index) => (
+              <View key={index} className="bg-pri-color rounded-3xl p-1 px-3">
+                {/* <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text> */}
+                <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text>
               </View>
             ))}
           </View>

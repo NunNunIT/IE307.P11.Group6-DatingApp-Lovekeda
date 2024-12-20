@@ -33,13 +33,13 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
 };
 
-const options = [
-  { label: "JavaScript", value: "js" },
-  { label: "Java", value: "java" },
-  { label: "Python1", value: "python1" },
-  { label: "Python2", value: "python2" },
-  { label: "Python3", value: "python3" },
-  { label: "Python4", value: "python4" },
+export const HOBBY_OPTIONS = [
+  { label: "Sở thích 1", value: "hobby 1" },
+  { label: "Sở thích 2", value: "hobby 2" },
+  { label: "Sở thích 3", value: "hobby 3" },
+  { label: "Sở thích 4", value: "hobby 4" },
+  { label: "Sở thích 5", value: "hobby 5" },
+  { label: "Sở thích 6", value: "hobby 6" },
   { label: "C++", value: "c++", disabled: true },
   { label: "C++", value: "c++", disabled: true },
   { label: "C++", value: "c++", disabled: true },
@@ -48,15 +48,6 @@ const options = [
   { label: "C++", value: "c++", disabled: true },
   { label: "C++", value: "c++", disabled: true },
   { label: "C++", value: "c++", disabled: true },
-  { label: "Perl1", value: "perl1" },
-  { label: "Perl4", value: "perl4" },
-  { label: "Perl3", value: "perl3" },
-  { label: "Perl2", value: "perl2" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
-  { label: "Perl", value: "perl" },
 ];
 
 export default function FilterScreen() {
@@ -74,13 +65,14 @@ export default function FilterScreen() {
 
   useEffect(() => {
     const isDirty =
-      JSON.stringify({ name, gender, age, bio, imgs })
+      JSON.stringify({ name, gender, age, bio, imgs, hobbies })
       !== JSON.stringify({
         name: profile?.name,
         gender: profile?.gender,
         age: profile?.age?.toString(),
         bio: profile?.bio,
         imgs: profile?.imgs,
+        hobbies: profile?.hobbies,
       });
     setIsDirtyFields(isDirty);
   }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
@@ -120,6 +112,7 @@ export default function FilterScreen() {
         bio,
         gender,
         imgs: imgs, // imgsFirebase
+        hobbies,
         user_id: session.user.id,
       };
 
@@ -329,7 +322,7 @@ export default function FilterScreen() {
           onChange={(value) => setHobbies(value.map(item => item.toString()))} // Ensure this matches the correct type
           title="Sở thích"
           placeholder="Chọn nhiều giá trị"
-          options={options}
+          options={HOBBY_OPTIONS}
           showSearch
         // useDialogDefault
         />

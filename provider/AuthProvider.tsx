@@ -19,6 +19,7 @@ type AuthProps = {
     created_at: string
     gender: string | null
     genderFind: string | null
+    hobbies: string[] | null
     id: number
     imgs: string[] | null
     is_complete_profile: boolean | null
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     created_at: string
     gender: string | null
     genderFind: string | null
+    hobbies: string[] | null
     id: number
     imgs: string[] | null
     is_complete_profile: boolean | null
