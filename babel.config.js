@@ -20,7 +20,8 @@ module.exports = function (api) {
       'nativewind/babel',
     ],
     plugins: [
-      'react-native-reanimated/plugin', // Đặt plugin này cuối cùng
+      ['react-native-reanimated/plugin'], // Đặt plugin này cuối cùng
+      ['module:react-native-dotenv']
     ],
   };
 };

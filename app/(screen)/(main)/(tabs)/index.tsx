@@ -67,10 +67,10 @@ const db = [
   {
     name: "Dinesh Chugtai",
     imgs: [
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
-      "https://placehold.co/400",
+      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-1.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkhSY0ashlgEOOv6UQf7QVJLNeJWuB_cb9cw&s",
+      "https://bikipdepxinh.com/wp-content/uploads/anh-gai-xinh-3.jpg",
+      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-2.jpg",
     ],
     age: "18",
     city: "HCM",
