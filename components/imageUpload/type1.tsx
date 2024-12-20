@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import {
   Camera,
@@ -53,6 +53,10 @@ ImageUploadType1Props) {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [flashMode, setFlashMode] = useState<FlashMode>("off");
+
+  // useEffect(() => {
+  //   console.log(imgs);
+  // }, [imgs]);
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));

@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import * as FileSystem from "expo-file-system";
 import { Dimensions, Image, ScrollView, View } from "react-native";
 import { Slider, RangeSlider } from "@sharcoux/slider";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
+import { fbApp } from "@/firebase/config";
+
+console.log(fbApp)
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,14 +38,10 @@ const optionsGender = [
 
 export default function FilterScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
-  const [rangeAge, setRangeAge] = React.useState<[number, number]>([18, 100]);
-  const [valueDistance, setValueDistance] = React.useState<number>(10);
   const [name, setName] = useState("");
   const [gender, setGender] = useState("male");
   const [age, setAge] = useState(null);
   const [bio, setBio] = useState("");
-  const [genderFind, setGenderFind] = useState("male");
-  const [purposeValue, setPurposeValue] = React.useState<string>("friends");
   const [imgs, setImgs] = useState<string[]>([]);
   const [tab, setTab] = useState(0);
 
@@ -55,15 +55,41 @@ export default function FilterScreen() {
     SegmentedControl.presets.DEFAULT
   );
 
-  const submitHandler = () => {
-    const data = {
-      name: name,
-      age: age,
-      bio: bio,
-      gender: gender,
-      imgs: imgs,
-    };
-    console.log("Data submitted:", data);
+  const submitHandler = async () => {
+    try {
+      console.log("imgs", imgs)
+      const imgsFirebase = await uploadImages(imgs);
+      console.log("imgsFirebase", imgsFirebase)
+
+      // 2. Chuẩn bị dữ liệu người dùng
+      const userData = {
+        name,
+        age,
+        bio,
+        gender,
+        imgsFirebase,
+      };
+
+      // console.log("fetch dữ liệu", userData)
+
+      // // 3. Gửi dữ liệu đến API khác
+      // const response = await fetch("http://<YOUR_NEXTJS_SERVER>/api/user/create", {
+      //   method: "POST",
+      //   body: JSON.stringify(userData),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+
+      // const data = await response.json();
+      // if (!response.ok) {
+      //   throw new Error(data.error || "Failed to save user data!");
+      // }
+
+      // console.log("User data saved successfully:", data);
+    } catch (error) {
+      // console.error("Error submitting data:", error.message);
+    }
   };
 
   const CustomThumb = () => {

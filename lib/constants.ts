@@ -16,3 +16,6 @@ export const NAV_THEME = {
       text: 'hsl(0 0% 98%)', // foreground
     },
     };
+
+export const NEXTJS_SERVER = "https://lovekeda-api.vercel.app"
+// export const NEXTJS_SERVER = "http://172.17.21.246:3000"
