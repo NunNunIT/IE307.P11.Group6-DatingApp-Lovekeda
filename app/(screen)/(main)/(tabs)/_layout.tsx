@@ -21,8 +21,7 @@ import { BadgePlus } from "lucide-react-native";
 import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const { location, permissionStatus } = useLocation();
+  const { permissionStatus } = useLocation();
   if (permissionStatus === "denied") {
     return <Redirect href="/(screen)/(main)/permissionError" />;
   }

@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TextField } from "react-native-ui-lib";
 import { useAuth } from "@/provider/AuthProvider";
 import Spinner from "react-native-loading-spinner-overlay";
+import { supabase } from "@/utils/supabase";
 
 const OPTIONS = [
   { label: "Nam", value: "male" },
@@ -28,7 +29,7 @@ export default function ExampleOne() {
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { profile, setProfile } = useAuth();
+  const { session, signOut, getProfile } = useAuth();
 
   const defaultScrollViewProps = {
     keyboardShouldPersistTaps: "handled",
@@ -53,10 +54,15 @@ export default function ExampleOne() {
   };
 
   const onSubmitSteps = async () => {
+    if (!session) return;
     setIsSubmitting(true);
-    setProfile({ ...profile, is_complete_profile: true });
+    await supabase.from("profiles").upsert({
+      created_at: new Date().toISOString(),
+      user_id: session.user.id,
+      is_complete_profile: true,
+    }, { onConflict: 'user_id' });
+    await getProfile?.();
     setIsSubmitting(false);
-    console.log("🚀 ~ onSubmitSteps ~ true:", true)
     router.replace("/(screen)/(main)/(tabs)");
   };
 
@@ -91,12 +97,13 @@ export default function ExampleOne() {
             nextBtnDisabled={
               name === "" || typeof age === "undefined" || Number(age!) < 18 || Number(age!) > 100
             }
-            onPrevious={() => router.back()}
+            onPrevious={() => signOut?.()}
             scrollViewProps={defaultScrollViewProps}
             nextBtnTextStyle={buttonTextStyle}
             nextBtnText={"Tiếp tục"}
             previousBtnTextStyle={buttonTextStyle}
             previousBtnText={"Trở về"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full flex flex-col justify-start items-center p-4">
               <TextField
@@ -283,6 +290,7 @@ export default function ExampleOne() {
             nextBtnText={"Tiếp tục"}
             previousBtnTextStyle={buttonTextStyle}
             previousBtnText={"Quay lại"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full flex flex-col justify-start items-center p-4">
               <View className="">
@@ -338,6 +346,7 @@ export default function ExampleOne() {
             previousBtnTextStyle={buttonTextStyle}
             finishBtnText={"Hoàn thành"}
             previousBtnText={"Quay lại"}
+            nextBtnStyle={{ paddingInline: 0 }}
           >
             <View className="w-full h-full p-4 flex justify-start items-start">
               <ImageUploadType2 imgs={imgs} setImgs={setImgs} />
