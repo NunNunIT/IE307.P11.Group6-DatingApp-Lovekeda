@@ -163,8 +163,6 @@ export default function FilterScreen() {
             paddingBottom: 2,
           }}
           color={colorScheme === "dark" ? "white" : "black"}
-          // floatingPlaceholder
-          // floatOnFocus
           enableErrors
           validateOnChange
           validate={["required"]}
@@ -401,7 +399,7 @@ export default function FilterScreen() {
         )}
 
         {/* Nút Submit */}
-        <Button onPress={submitHandler} className="mt-4 rounded-full" disabled={!isDirtyFields || isSubmitting} variant="red">
+        <Button onPress={submitHandler} className="mt-4 rounded-full z-50" disabled={!isDirtyFields || isSubmitting} variant="red">
           <Text>Lưu</Text>
         </Button>
       </View>
