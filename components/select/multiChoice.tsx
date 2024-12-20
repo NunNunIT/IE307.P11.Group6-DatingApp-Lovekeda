@@ -86,8 +86,8 @@ export default function MultiChoicePicker({
     );
   };
 
-  const handleChange = (items: PickerMultiValue | PickerSingleValue) => {
-    onChange(items as string[]);
+  const handleChange = (value: PickerValue) => {
+    onChange(value as PickerMultiValue);
   };
 
   return (

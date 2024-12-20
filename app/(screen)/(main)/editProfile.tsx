@@ -22,6 +22,8 @@ import { router } from "expo-router";
 import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
 import { fbApp, uploadToFireBase } from "@/firebase/config";
+import MultiChoicePicker from "@/components/select/multiChoice";
+import { GENDER_OPTIONS } from "../(set-up-profile)";
 
 // console.log(fbApp)
 
@@ -31,10 +33,21 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
 };
 
-const optionsGender = [
-  { label: "Nam", value: "male" },
-  { label: "Nữ", value: "female" },
-  { label: "Khác", value: "other" },
+export const HOBBY_OPTIONS = [
+  { label: "Sở thích 1", value: "hobby 1" },
+  { label: "Sở thích 2", value: "hobby 2" },
+  { label: "Sở thích 3", value: "hobby 3" },
+  { label: "Sở thích 4", value: "hobby 4" },
+  { label: "Sở thích 5", value: "hobby 5" },
+  { label: "Sở thích 6", value: "hobby 6" },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
+  { label: "C++", value: "c++", disabled: true },
 ];
 
 export default function FilterScreen() {
@@ -46,18 +59,20 @@ export default function FilterScreen() {
   const [bio, setBio] = useState<string>(profile?.bio ?? "");
   const [imgs, setImgs] = useState<string[]>([]);
   const [tab, setTab] = useState(0);
+  const [hobbies, setHobbies] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDirtyFields, setIsDirtyFields] = useState(false);
 
   useEffect(() => {
     const isDirty =
-      JSON.stringify({ name, gender, age, bio, imgs })
+      JSON.stringify({ name, gender, age, bio, imgs, hobbies })
       !== JSON.stringify({
         name: profile?.name,
         gender: profile?.gender,
         age: profile?.age?.toString(),
         bio: profile?.bio,
         imgs: profile?.imgs,
+        hobbies: profile?.hobbies,
       });
     setIsDirtyFields(isDirty);
   }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
@@ -69,6 +84,7 @@ export default function FilterScreen() {
     setAge(profile?.age?.toString() ?? "");
     setBio(profile?.bio ?? "");
     setImgs(profile?.imgs ?? []);
+    setHobbies(profile?.hobbies ?? []);
   }, [profile])
 
   const onChangeIndex = useCallback((index: number) => {
@@ -97,6 +113,7 @@ export default function FilterScreen() {
         bio,
         gender,
         imgs: imgs, // imgsFirebase
+        hobbies,
         user_id: session.user.id,
       };
 
@@ -185,7 +202,7 @@ export default function FilterScreen() {
                 onChange={(value) => setGender(value as string)} // Ensure this matches the correct type
                 title="Chọn một"
                 placeholder="Chọn một giá trị"
-                options={optionsGender}
+                options={[...GENDER_OPTIONS]}
                 useDialogDefault
               />
             </View>
@@ -298,6 +315,17 @@ export default function FilterScreen() {
             borderWidth: 2,
             borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
           }}
+        />
+
+
+        <MultiChoicePicker
+          values={hobbies}
+          onChange={(value) => setHobbies(value.map(item => item.toString()))} // Ensure this matches the correct type
+          title="Sở thích"
+          placeholder="Chọn nhiều giá trị"
+          options={HOBBY_OPTIONS}
+          showSearch
+        // useDialogDefault
         />
 
         <SegmentedControl

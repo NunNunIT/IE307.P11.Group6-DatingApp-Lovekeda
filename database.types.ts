@@ -16,6 +16,7 @@ export type Database = {
           created_at: string
           gender: string | null
           genderFind: string | null
+          hobbies: string[] | null
           id: number
           imgs: string[] | null
           is_complete_profile: boolean | null
@@ -29,6 +30,7 @@ export type Database = {
           created_at?: string
           gender?: string | null
           genderFind?: string | null
+          hobbies?: string[] | null
           id?: number
           imgs?: string[] | null
           is_complete_profile?: boolean | null
@@ -42,6 +44,7 @@ export type Database = {
           created_at?: string
           gender?: string | null
           genderFind?: string | null
+          hobbies?: string[] | null
           id?: number
           imgs?: string[] | null
           is_complete_profile?: boolean | null
