@@ -20,9 +20,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
-import { fbApp } from "@/firebase/config";
+import { fbApp, uploadToFireBase } from "@/firebase/config";
 
-console.log(fbApp)
+// console.log(fbApp);
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,9 +57,9 @@ export default function FilterScreen() {
 
   const submitHandler = async () => {
     try {
-      console.log("imgs", imgs)
-      const imgsFirebase = await uploadImages(imgs);
-      console.log("imgsFirebase", imgsFirebase)
+      console.log("imgs", imgs);
+      const imgsFirebase = await uploadToFireBase(imgs[0], "hahaha");
+      console.log("imgsFirebase", imgsFirebase);
 
       // 2. Chuẩn bị dữ liệu người dùng
       const userData = {

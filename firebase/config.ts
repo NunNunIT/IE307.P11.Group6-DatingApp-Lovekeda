@@ -5,16 +5,17 @@ import {FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_STORAGE_BUCKET} from "@env"
 // import {...} from "firebase/database";
 // import {...} from "firebase/firestore";
 // import {...} from "firebase/functions";
-import {getStorage} from "firebase/storage";
+import {getDownloadURL, ref, getStorage, uploadBytesResumable} from "firebase/storage";
+import { UploadTask } from 'expo-file-system';
 
-console.log(FIREBASE_API_KEY)
+// console.log(FIREBASE_API_KEY)
 
 // Initialize Firebase
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
-  // authDomain: 'project-id.firebaseapp.com',
+  authDomain: 'project-id.firebaseapp.com',
   // databaseURL: 'https://project-id.firebaseio.com',
-  // projectId: 'project-id',
+  projectId: 'project-id',
   storageBucket: FIREBASE_STORAGE_BUCKET,
   // messagingSenderId: 'sender-id',
   appId: FIREBASE_APP_ID,
@@ -27,8 +28,36 @@ if (getApps().length === 0) {
 
 const fbApp = getApp();
 const fbStorage = getStorage();
+
+const uploadToFireBase = async (uri, name, onProgress) => {
+  const fetchResponse = await fetch(uri);
+  const theBlob = await fetchResponse.blob();
+  console.log("theblob", theBlob);
+  const imageRef = ref(getStorage(), `images/${name}`);
+
+  const uploadTask = uploadBytesResumable(imageRef, theBlob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress && onProgress(progress);
+      },
+      (error) => {
+        reject(error);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve({ downloadUrl, metadata: uploadTask.snapshot.metadata });
+      }
+    );
+  });
+};
+
+
 export {
-  fbApp, fbStorage
+  fbApp, fbStorage, uploadToFireBase
 }
 
 // For more information on how to access Firebase in your project,
