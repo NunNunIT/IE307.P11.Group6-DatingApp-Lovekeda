@@ -33,11 +33,6 @@ export default function RegisterScreen() {
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
-        options: {
-          data: {
-            name: data.name,
-          },
-        },
       });
 
       if (error) throw error;
@@ -58,19 +53,6 @@ export default function RegisterScreen() {
       <Spinner visible={form.formState.isSubmitting} />
       <View className='px-6'>
         <Form {...form}>
-          <FormController
-            name="name"
-            label="Name:"
-            render={({ field }) => (
-              <Input
-                childLeft={<User className="ml-1 size-6 text-zinc-500" />}
-                autoCapitalize="words"
-                placeholder="Nhập tên của bạn"
-                {...field}
-              />
-            )}
-          />
-
           <FormController
             name="email"
             label="Email:"
@@ -134,8 +116,6 @@ export default function RegisterScreen() {
           <Text>Đã tài khoản rồi? </Text>
           <Text className="font-bold underline">Đăng nhập ngay</Text>
         </Button>
-
-        <DarkModeButton />
       </View>
     </SafeAreaView>
   );

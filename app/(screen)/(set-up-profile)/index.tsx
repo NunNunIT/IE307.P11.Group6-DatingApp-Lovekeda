@@ -20,12 +20,12 @@ export const GENDER_OPTIONS = [
 ] as const;
 
 export const SEARCH_GENDER_OPTIONS = [
-  ...GENDER_OPTIONS.slice(0, 2),
+  ...GENDER_OPTIONS,
   { label: "Tất cả", value: "all" },
 ] as const;
 
 export default function ExampleOne() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const [name, setName] = useState("");
   const [gender, setGender] = useState<string>("male");
   const [age, setAge] = useState<string | undefined>(undefined);

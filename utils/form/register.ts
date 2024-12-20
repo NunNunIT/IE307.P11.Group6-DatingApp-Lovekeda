@@ -4,7 +4,6 @@ import { z } from 'zod';
 // import utils
 
 export const DEFAULT_REGISTER_FORM_VALUES = {
-  name: '',
   email: '',
   password: '',
   passwordConfirm: '',
@@ -12,7 +11,6 @@ export const DEFAULT_REGISTER_FORM_VALUES = {
 
 export const registerFormSchema = z
   .object({
-    name: z.string().min(1, { message: 'Name must be at least 3 characters long.' }),
     email: z
       .string()
       .min(1, { message: 'This field has to be filled.' })
