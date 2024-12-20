@@ -84,6 +84,7 @@ export default function FilterScreen() {
     setAge(profile?.age?.toString() ?? "");
     setBio(profile?.bio ?? "");
     setImgs(profile?.imgs ?? []);
+    setHobbies(profile?.hobbies ?? []);
   }, [profile])
 
   const onChangeIndex = useCallback((index: number) => {
