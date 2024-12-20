@@ -313,7 +313,9 @@ export default function ExampleOne() {
                   borderColor: colorScheme === "dark" ? "#27272a" : "#e4e4e7",
                 }}
               />
-              <Button onPress={signOut}><Text>Đăng xuất</Text></Button>
+              <Button onPress={signOut} variant="outline" className="dark:text-white">
+                <Text>Đăng xuất</Text>
+              </Button>
             </View>
           </ProgressStep>
           <ProgressStep
