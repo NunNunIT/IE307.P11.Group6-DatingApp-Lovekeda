@@ -60,7 +60,7 @@ export default function FilterScreen() {
         imgs: profile?.imgs,
       });
     setIsDirtyFields(isDirty);
-  }, [profile, setIsDirtyFields, name, gender, age, bindAll, imgs]);
+  }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
 
   useEffect(() => {
     if (!profile) return;
@@ -373,7 +373,7 @@ export default function FilterScreen() {
         )}
 
         {/* Nút Submit */}
-        <Button onPress={submitHandler} className="mt-4 rounded-full" disabled={!isDirtyFields} variant="red">
+        <Button onPress={submitHandler} className="mt-4 rounded-full" disabled={!isDirtyFields || isSubmitting} variant="red">
           <Text>Lưu</Text>
         </Button>
       </View>
