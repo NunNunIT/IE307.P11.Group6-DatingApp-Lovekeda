@@ -22,7 +22,7 @@ export const GENDER_OPTIONS = [
 export const SEARCH_GENDER_OPTIONS = [
   ...GENDER_OPTIONS.slice(0, 2),
   { label: "Tất cả", value: "all" },
-]
+] as const;
 
 export default function ExampleOne() {
   const { colorScheme, toggleColorScheme } = useColorScheme();

@@ -74,8 +74,8 @@ export default function LikeScreen() {
       {/* Render list of people */}
       <View className="flex flex-row flex-wrap gap-2 justify-between p-4 pb-20">
         {db.map((item, index) => (
-          <View className="w-[48%] aspect-[3/4] overflow-hidden rounded-lg">
-            <HumanCard2 key={index} item={item} />
+          <View key={index} className="w-[48%] aspect-[3/4] overflow-hidden rounded-lg">
+            <HumanCard2 item={item} handleClick={undefined} />
           </View>
         ))}
       </View>

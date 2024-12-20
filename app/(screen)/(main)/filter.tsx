@@ -14,8 +14,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { router } from "expo-router";
 
 export default function FilterScreen() {
-  const [rangeAge, setRangeAge] = useState<[number, number]>([0, 10]);
-  const [valueDistance, setValueDistance] = useState<number>(0);
+  const [rangeAge, setRangeAge] = useState<[number, number]>([18, 30]);
+  const [valueDistance, setValueDistance] = useState<number>(10);
   const [genderFind, setGenderFind] = useState<string>("");
   const [purposeValue, setPurposeValue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

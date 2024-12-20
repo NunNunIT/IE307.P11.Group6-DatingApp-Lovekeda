@@ -13,11 +13,11 @@ import {
 } from "react-native-heroicons/solid";
 import Loading1 from "@/components/loading";
 import { Image } from "react-native";
-import { Redirect } from "expo-router";
+import { useAuth } from "@/provider/AuthProvider";
 
 const db = [
   {
-    name: "Richard Hendricks",
+    name: "Nguyễn Văn Hiếu",
     imgs: [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
       "https://img.hoidap247.com/picture/question/20210904/large_1630765811060.jpg",
@@ -29,7 +29,7 @@ const db = [
     country: "VN",
   },
   {
-    name: "Erlich Bachman",
+    name: "Trần Văn Bình",
     imgs: [
       "https://placehold.co/400",
       "https://placehold.co/400",
@@ -41,7 +41,7 @@ const db = [
     country: "VN",
   },
   {
-    name: "Monica Hall",
+    name: "Lê Thị Hương",
     imgs: [
       "https://placehold.co/400",
       "https://placehold.co/400",
@@ -53,7 +53,7 @@ const db = [
     country: "VN",
   },
   {
-    name: "Jared Dunn",
+    name: "Phạm Minh Tuấn",
     imgs: [
       "https://placehold.co/400",
       "https://placehold.co/400",
@@ -65,7 +65,7 @@ const db = [
     country: "VN",
   },
   {
-    name: "Dinesh Chugtai",
+    name: "Phạm Minh Hòa",
     imgs: [
       "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-1.jpg",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkhSY0ashlgEOOv6UQf7QVJLNeJWuB_cb9cw&s",
@@ -121,6 +121,8 @@ const Tinder = () => {
     }
   };
 
+  const { profile } = useAuth();
+
   const goBack = async () => {
     if (!canGoBack) return;
     const newIndex = currentIndex + 1;
@@ -145,7 +147,7 @@ const Tinder = () => {
           <View className="absolute items-center justify-center">
             <Image
               source={{
-                uri: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+                uri: profile?.imgs?.[0] ?? "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
               }}
               className="rounded-full size-28"
             />
