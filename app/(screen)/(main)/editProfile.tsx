@@ -21,7 +21,7 @@ import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
-// import { fbApp } from "@/firebase/config";
+import { fbApp, uploadToFireBase } from "@/firebase/config";
 
 // console.log(fbApp)
 
@@ -87,7 +87,7 @@ export default function FilterScreen() {
     setIsSubmitting(true);
     try {
       // console.log("imgs", imgs)
-      // const imgsFirebase = await uploadImages(imgs);
+      // const imgsFirebase = await uploadToFireBase(imgs[0], "haha");
       // console.log("imgsFirebase", imgsFirebase)
 
       // 2. Chuẩn bị dữ liệu người dùng
