@@ -23,45 +23,35 @@ import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
+import { CHAT_DATA, USER_DATA } from "@/constant";
 
-const android = Platform.OS === "android";
+const isAndroid = Platform.OS === "android";
 
 export default function ChatDetailsScreen() {
+  const { id } = useLocalSearchParams();
+  // const chatData = CHAT_DATA.find((item) => item.id === id);
+  // if (!chatData) return NotFoundScreen();
+  const userData = USER_DATA.find((item) => item.id.toString() === id);
+  const [setChatData] = useState<any>(null);
   const [message, setMessage] = useState("");
   const [chatList, setChatList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
   const [audioUri, setAudioUri] = useState<string | null>(null);
   const [playingSound, setPlayingSound] = useState<Audio.Sound | null>(null);
   const [imgs, setImgs] = useState<string[]>([]); // Mảng hình ảnh
 
-  const chatData = {
-    id: 1,
-    name: "Betty",
-    imgUrl:
-      "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
-    age: 32,
-  };
-
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
+      setIsLoading(true);
       setTimeout(() => {
-        setChatList([
-          {
-            sender: "me",
-            message: "Hi there! How's it going?",
-            timestamp: "10:00 AM",
-          },
-          {
-            sender: "Betty",
-            message: "I am doing great, thanks!",
-            timestamp: "10:05 AM",
-          },
-        ]);
-        setLoading(false);
-      }, 2000);
+        const chatData = CHAT_DATA.find((item) => item.id === id);
+        if (!chatData) return;
+        setChatData(chatData);
+        setChatList([...chatData?.chat]);
+        setIsLoading(false);
+      }, 1000);
     };
 
     fetchData();
@@ -145,7 +135,7 @@ export default function ChatDetailsScreen() {
     <SafeAreaView
       className="justify-center items-center relative bg-white dark:bg-black"
       style={{
-        paddingTop: android ? hp(4) : 0,
+        paddingTop: isAndroid ? hp(4) : 0,
       }}
     >
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
@@ -155,11 +145,11 @@ export default function ChatDetailsScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             className="w-2/3 flex-row items-center"
-            onPress={() => router.push("/profileDetail/1")}
+            onPress={() => router.push(`/profileDetail/${id}`)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
               <Image
-                source={{ uri: chatData.imgUrl }}
+                source={{ uri: userData?.imgs[0] }}
                 style={{
                   width: hp(4.5),
                   height: hp(4.5),
@@ -169,7 +159,7 @@ export default function ChatDetailsScreen() {
             </View>
             <View className="justify-center items-start">
               <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
-                {chatData.name}, {chatData.age}
+                {userData?.name}, {userData?.age}
               </Text>
               <Text className="text-xs text-neutral-400">
                 You matched today
@@ -190,7 +180,7 @@ export default function ChatDetailsScreen() {
       </View>
 
       <View className="w-full h-full">
-        {loading ? (
+        {isLoading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#fe183c" />
             <Text className="text-sm text-gray-500 mt-2">

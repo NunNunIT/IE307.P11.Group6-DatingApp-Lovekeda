@@ -216,7 +216,7 @@ export const LIKE_DATA = [
 
 export const CHAT_DATA = [
   {
-    id: 1,
+    id: "1",
     name: "Betty",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 32,
@@ -259,7 +259,7 @@ export const CHAT_DATA = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     name: "Basquit",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 28,
@@ -316,7 +316,7 @@ export const CHAT_DATA = [
     ],
   },
   {
-    id: 3,
+    id: "3",
     name: "Oliver",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 30,
@@ -369,7 +369,7 @@ export const CHAT_DATA = [
     ],
   },
   {
-    id: 4,
+    id: "4",
     name: "Sophie",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 27,
@@ -418,9 +418,8 @@ export const CHAT_DATA = [
       },
     ],
   },
-
   {
-    id: 5,
+    id: "5",
     name: "William",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 29,
@@ -442,7 +441,7 @@ export const CHAT_DATA = [
     ],
   },
   {
-    id: 6,
+    id: "6",
     name: "Jack",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 30,
@@ -464,7 +463,95 @@ export const CHAT_DATA = [
     ],
   },
   {
-    id: 7,
+    id: "7",
+    name: "Jack",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+    age: 30,
+    isOnline: true,
+    lastMessage: "Sounds like a great idea. Let's make it happen.",
+    date: "2023-10-07",
+    timeSent: "45 mins",
+    chat: [
+      {
+        sender: "me",
+        message: "Hey Jack, how's your week been?",
+        timestamp: "6:00 PM",
+      },
+      {
+        sender: "Jack",
+        message: "It's been busy but good. How about you?",
+        timestamp: "6:05 PM",
+      },
+    ],
+  },
+  {
+    id: "8",
+    name: "Jack",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+    age: 30,
+    isOnline: true,
+    lastMessage: "Sounds like a great idea. Let's make it happen.",
+    date: "2023-10-07",
+    timeSent: "45 mins",
+    chat: [
+      {
+        sender: "me",
+        message: "Hey Jack, how's your week been?",
+        timestamp: "6:00 PM",
+      },
+      {
+        sender: "Jack",
+        message: "It's been busy but good. How about you?",
+        timestamp: "6:05 PM",
+      },
+    ],
+  },
+  {
+    id: "9",
+    name: "Jack",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+    age: 30,
+    isOnline: true,
+    lastMessage: "Sounds like a great idea. Let's make it happen.",
+    date: "2023-10-07",
+    timeSent: "45 mins",
+    chat: [
+      {
+        sender: "me",
+        message: "Hey Jack, how's your week been?",
+        timestamp: "6:00 PM",
+      },
+      {
+        sender: "Jack",
+        message: "It's been busy but good. How about you?",
+        timestamp: "6:05 PM",
+      },
+    ],
+  },
+  {
+    id: "10",
+    name: "Jack",
+    imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+    age: 30,
+    isOnline: true,
+    lastMessage: "Sounds like a great idea. Let's make it happen.",
+    date: "2023-10-07",
+    timeSent: "45 mins",
+    chat: [
+      {
+        sender: "me",
+        message: "Hey Jack, how's your week been?",
+        timestamp: "6:00 PM",
+      },
+      {
+        sender: "Jack",
+        message: "It's been busy but good. How about you?",
+        timestamp: "6:05 PM",
+      },
+    ],
+  },
+  {
+    id: "11",
     name: "Jack",
     imgUrl: "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
     age: 30,
