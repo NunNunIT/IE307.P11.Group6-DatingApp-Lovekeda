@@ -5,7 +5,7 @@ import { Pressable, ScrollView, View } from "react-native";
 // import { Text } from "~/components/ui/text";
 // import { GridView } from "react-native-ui-lib";
 import { router } from "expo-router";
-import { datesData, matchesData } from "@/constant";
+import { datesData } from "@/constant";
 
 const db = datesData
 

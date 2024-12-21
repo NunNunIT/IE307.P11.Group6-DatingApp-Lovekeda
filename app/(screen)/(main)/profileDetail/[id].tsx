@@ -64,7 +64,7 @@ const ProfileDetailScreen = () => {
               Giới thiệu về bạn ấy
             </Text>
             <Text className="text-black dark:text-white text-left font-medium text-sm">
-              {"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."}
+              {data.bio}
             </Text>
           </View>
 
@@ -73,8 +73,8 @@ const ProfileDetailScreen = () => {
               Sở thích
             </Text>
             <View className="flex-row mt-3 flex-wrap gap-2">
-              {["cook1", "cook2", "cook3", "cook4", "cook5", "cook6"].map(
-                (hobby, index) => (
+              {data.hobbies.map(
+                (hobby: string, index: number) => (
                   <View key={index} className="bg-pri-color rounded-3xl p-2">
                     <Text className="text-white dark:text-white">{hobby}</Text>
                   </View>

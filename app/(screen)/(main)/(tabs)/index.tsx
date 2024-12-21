@@ -97,7 +97,7 @@ const Tinder = () => {
         <>
           {/* Tinder Cards */}
           <View className="flex-1 w-full h-full">
-            {userData.map((character, index) => (
+            {charactersState.map((character, index) => (
               <TinderCard
                 ref={childRefs[index]}
                 key={character.name}
