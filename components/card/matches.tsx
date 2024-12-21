@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React from "react";
-import { datesData, matchesData } from "@/constant";
+import { DATE_DATA } from "@/constant";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
 
@@ -11,7 +11,7 @@ export default function Matches() {
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {datesData?.map((matches, index) => {
+        {DATE_DATA?.map((matches, index) => {
           return (
             <TouchableOpacity
               key={index}

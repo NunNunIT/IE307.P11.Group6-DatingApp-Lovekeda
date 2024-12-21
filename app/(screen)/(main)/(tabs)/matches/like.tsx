@@ -4,9 +4,9 @@ import HumanCard2 from "@/components/card/human2"; // Đảm bảo import đúng
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { GridView } from "react-native-ui-lib";
-import { likeData } from "@/constant";
+import { LIKE_DATA } from "@/constant";
 
-const db = likeData
+const db = LIKE_DATA
 
 export default function LikeScreen() {
   return (

@@ -6,10 +6,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "~/components/ui/text";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+// import {
+//   GoogleSignin,
+//   statusCodes,
+// } from '@react-native-google-signin/google-signin';
 import { supabase } from "@/utils/supabase";
 
 const { width, height } = Dimensions.get("screen");
@@ -25,32 +25,32 @@ const decorate = [
 
 const handleLoginGoogle = async () => {
   try {
-    await GoogleSignin.hasPlayServices();
-    const userInfo = await GoogleSignin.signIn();
-    if (!userInfo?.data?.idToken) return;
-    const { data: dataLogin, error: errorLogin } = await supabase.auth.signInWithIdToken({
-      provider: 'google',
-      token: userInfo.data.idToken,
-    });
+    // await GoogleSignin.hasPlayServices();
+    // const userInfo = await GoogleSignin.signIn();
+    // if (!userInfo?.data?.idToken) return;
+    // const { data: dataLogin, error: errorLogin } = await supabase.auth.signInWithIdToken({
+    //   provider: 'google',
+    //   token: userInfo.data.idToken,
+    // });
 
-    if (errorLogin) throw errorLogin;
+    // if (errorLogin) throw errorLogin;
   } catch (error: any) {
-    if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-      // user cancelled the login flow
-    } else if (error.code === statusCodes.IN_PROGRESS) {
-      // operation (e.g. sign in) is in progress already
-    } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      // play services not available or outdated
-    } else {
-      console.error('Sign-in error:', error);
-    }
+    // if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+    //   // user cancelled the login flow
+    // } else if (error.code === statusCodes.IN_PROGRESS) {
+    //   // operation (e.g. sign in) is in progress already
+    // } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+    //   // play services not available or outdated
+    // } else {
+    //   console.error('Sign-in error:', error);
+    // }
   }
 };
 
-GoogleSignin.configure({
-  scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-  webClientId: process.env.EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID,
-})
+// GoogleSignin.configure({
+//   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+//   webClientId: process.env.EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID,
+// })
 
 export default function Login() {
   return (

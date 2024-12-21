@@ -1,4 +1,6 @@
-export const userData = [
+export const LOCATION_API_URL_UNFORMATTED: string = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={}&lon={}`;
+
+export const USER_DATA = [
   {
     id: "1",
     name: "Nguyễn Văn Hiếu",
@@ -6,7 +8,7 @@ export const userData = [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
     ],
     gender: "male",
-    distance: "5m", 
+    distance: "5m",
     age: "18",
     bio: "Hiếu ngu dốt tìm gái",
     city: "HCM",
@@ -22,7 +24,7 @@ export const userData = [
     ],
     age: "18",
     gender: "male",
-    distance: "5m", 
+    distance: "5m",
     bio: "Hello",
     city: "HCM",
     country: "VN",
@@ -36,7 +38,7 @@ export const userData = [
       "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsaostyle.vn%2Fdan-trai-dep-the-he-moi-vua-hoc-gioi-vua-da-tai%2F&psig=AOvVaw2CTxX-rU0VVeV7grlzC5I3&ust=1734764116034000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiQjYjjtYoDFQAAAAAdAAAAABAU",
     ],
     age: "22",
-    distance: "1m", 
+    distance: "1m",
     gender: "male",
     bio: "Tuấn tiền tỉ",
 
@@ -56,7 +58,7 @@ export const userData = [
     bio: "Tìm gái fwb",
 
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["ăn uống", "nhậu"]
   },
@@ -71,7 +73,7 @@ export const userData = [
     bio: "Thích trai đẹp",
 
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["yêu đương", "fwb"]
   },
@@ -87,7 +89,7 @@ export const userData = [
     gender: "female",
     bio: "Hương xinh gái cute đáng yêu",
 
-    distance: "3m", 
+    distance: "3m",
     city: "HCM",
     country: "VN",
     hobbies: ["game"]
@@ -104,7 +106,7 @@ export const userData = [
 
     city: "HCM",
     bio: "Bio cuar ai do",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["yêu đương", "điện thoại", "mua sắm"]
   },
@@ -121,7 +123,7 @@ export const userData = [
     bio: "Phạm Minh Hòa đẹp trai ",
     gender: "male",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["sở thích 1"]
 
@@ -139,7 +141,7 @@ export const userData = [
     gender: "male",
     bio: "Hello 2",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["coding", "ngủ", "lười"]
 
@@ -154,7 +156,7 @@ export const userData = [
     gender: "male",
     bio: "Hello",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["chó mèo", "chúa hề"]
 
@@ -170,47 +172,49 @@ export const userData = [
     gender: "male",
     bio: "Hello",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["deadline", "chúa hề"]
   },
-];
+] as const;
 
-export const likeData = [  {
-  id: "8",
-  name: "Ngọc Trinh",
-  imgs: [
-    "https://giadinh.mediacdn.vn/296230595582509056/2021/5/9/photo-7-16205612188382001922015.jpeg",
-  ],
-  age: "20",
-  gender: "female",
+export const LIKE_DATA = [
+  {
+    id: "8",
+    name: "Ngọc Trinh",
+    imgs: [
+      "https://giadinh.mediacdn.vn/296230595582509056/2021/5/9/photo-7-16205612188382001922015.jpeg",
+    ],
+    age: "20",
+    gender: "female",
 
-  city: "HCM",
-  bio: "Bio cuar ai do",
-  distance: "1m", 
-  country: "VN",
-  hobbies: ["yêu đương", "điện thoại", "mua sắm"]
-},
-{
-  id: "5",
-  name: "Phạm Minh Hòa",
-  imgs: [
-    "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-1.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkhSY0ashlgEOOv6UQf7QVJLNeJWuB_cb9cw&s",
-    "https://bikipdepxinh.com/wp-content/uploads/anh-gai-xinh-3.jpg",
-    "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-2.jpg",
-  ],
-  age: "18",
-  bio: "Phạm Minh Hòa đẹp trai ",
-  gender: "male",
-  city: "HCM",
-  distance: "1m", 
-  country: "VN",
-  hobbies: ["sở thích 1"]
+    city: "HCM",
+    bio: "Bio cuar ai do",
+    distance: "1m",
+    country: "VN",
+    hobbies: ["yêu đương", "điện thoại", "mua sắm"]
+  },
+  {
+    id: "5",
+    name: "Phạm Minh Hòa",
+    imgs: [
+      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-1.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkhSY0ashlgEOOv6UQf7QVJLNeJWuB_cb9cw&s",
+      "https://bikipdepxinh.com/wp-content/uploads/anh-gai-xinh-3.jpg",
+      "https://ispacedanang.edu.vn/wp-content/uploads/2024/05/hinh-anh-dep-ve-hoc-sinh-cap-3-2.jpg",
+    ],
+    age: "18",
+    bio: "Phạm Minh Hòa đẹp trai ",
+    gender: "male",
+    city: "HCM",
+    distance: "1m",
+    country: "VN",
+    hobbies: ["sở thích 1"]
 
-},]
+  },
+] as const;
 
-export const chatData = [
+export const CHAT_DATA = [
   {
     id: 1,
     name: "Betty",
@@ -481,9 +485,9 @@ export const chatData = [
       },
     ],
   },
-];
+] as const;
 
-export const datesData = [
+export const DATE_DATA = [
   {
     id: "1",
     name: "Nguyễn Văn Hiếu",
@@ -491,7 +495,7 @@ export const datesData = [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
     ],
     gender: "male",
-    distance: "5m", 
+    distance: "5m",
     age: "18",
     bio: "Hiếu ngu dốt tìm gái",
     city: "HCM",
@@ -507,7 +511,7 @@ export const datesData = [
     ],
     age: "18",
     gender: "male",
-    distance: "5m", 
+    distance: "5m",
     bio: "Hello",
     city: "HCM",
     country: "VN",
@@ -521,7 +525,7 @@ export const datesData = [
       "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsaostyle.vn%2Fdan-trai-dep-the-he-moi-vua-hoc-gioi-vua-da-tai%2F&psig=AOvVaw2CTxX-rU0VVeV7grlzC5I3&ust=1734764116034000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiQjYjjtYoDFQAAAAAdAAAAABAU",
     ],
     age: "22",
-    distance: "1m", 
+    distance: "1m",
     gender: "male",
     bio: "Tuấn tiền tỉ",
 
@@ -541,7 +545,7 @@ export const datesData = [
     bio: "Tìm gái fwb",
 
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["ăn uống", "nhậu"]
   },
@@ -557,7 +561,7 @@ export const datesData = [
     gender: "male",
     bio: "Hello 2",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["coding", "ngủ", "lười"]
 
@@ -572,7 +576,7 @@ export const datesData = [
     gender: "male",
     bio: "Hello",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["chó mèo", "chúa hề"]
 
@@ -588,13 +592,13 @@ export const datesData = [
     gender: "male",
     bio: "Hello",
     city: "HCM",
-    distance: "1m", 
+    distance: "1m",
     country: "VN",
     hobbies: ["deadline", "chúa hề"]
   },
-];
+] as const;
 
-export const profileData = [
+export const PROFILE_DATA = [
   {
     name: "Jacob Jones",
     age: 30,
@@ -602,4 +606,4 @@ export const profileData = [
     hobbies: ["Hiking", "Photography", "Cooking", "Hiking1", "Photography1", "Cooking1"],
     bio: "I'm an adventurous person who loves exploring new places, trying out different cuisines, capturing moments through photography, and spending time in nature. I enjoy hiking on weekends and experimenting with new recipes in the kitchen. Traveling and experiencing different cultures are some of my greatest passions, and I'm always looking for my next adventure.",
   },
-];
+] as const;

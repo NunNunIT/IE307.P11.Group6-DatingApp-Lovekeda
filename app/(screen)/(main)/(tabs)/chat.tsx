@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { chatData } from "@/constant";
+import { CHAT_DATA } from "@/constant";
 import { Input } from "@/components/ui/input";
 import { Search } from "@/lib/icons";
 import { router } from "expo-router";
@@ -116,7 +116,7 @@ export default function ChatScreen() {
           }}
         >
           <View>
-            {chatData.map((item) => (
+            {CHAT_DATA.map((item) => (
               <ChatItem
                 key={item.id}
                 item={item}

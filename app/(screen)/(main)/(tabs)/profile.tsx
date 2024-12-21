@@ -3,7 +3,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { profileData } from "@/constant";
+import { PROFILE_DATA } from "@/constant";
 import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { Pen } from "@/lib/icons";

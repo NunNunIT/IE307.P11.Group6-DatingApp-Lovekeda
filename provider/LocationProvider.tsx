@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { supabase } from "@/utils/supabase";
 import { useAuth } from "./AuthProvider";
+import { getRelativeLocation } from "@/lib/utils";
 
 type TPermissionStatus = "pending" | "granted" | "denied";
 
@@ -23,6 +24,7 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
       setLocation(coordinates);
       setPermissionStatus("granted");
       if (!session) return;
+      const payload = await getRelativeLocation(coordinates);
       await supabase.from("locations").upsert({
         coordinates,
         user_id: session.user.id,

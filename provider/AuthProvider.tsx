@@ -1,5 +1,5 @@
 // 21522436 - Nguyễn Thị Hồng Nhung
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { Session } from '@supabase/supabase-js';
 import { SplashScreen } from 'expo-router';
 import {
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const signOut = async () => {
     await Promise.all([
       supabase.auth.signOut(),
-      GoogleSignin.signOut()
+      // GoogleSignin.signOut()
     ]);
   };
 

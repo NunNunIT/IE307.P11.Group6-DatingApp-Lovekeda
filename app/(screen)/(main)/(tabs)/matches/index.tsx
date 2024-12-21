@@ -5,9 +5,9 @@ import { Pressable, ScrollView, View } from "react-native";
 // import { Text } from "~/components/ui/text";
 // import { GridView } from "react-native-ui-lib";
 import { router } from "expo-router";
-import { datesData } from "@/constant";
+import { DATE_DATA } from "@/constant";
 
-const db = datesData
+const db = DATE_DATA
 
 export default function MatchesScreen1() {
   return (

@@ -14,20 +14,20 @@ import {
 import Loading1 from "@/components/loading";
 import { Image } from "react-native";
 import { useAuth } from "@/provider/AuthProvider";
-import { userData } from "@/constant";
+import { USER_DATA } from "@/constant";
 
 const alreadyRemoved: string[] = [];
-let charactersState = userData;
+let charactersState = USER_DATA;
 
 const Tinder = () => {
-  const [currentIndex, setCurrentIndex] = useState(userData.length - 1);
+  const [currentIndex, setCurrentIndex] = useState(USER_DATA.length - 1);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const childRefs = useMemo(
     () =>
-      Array(userData.length)
+      Array(USER_DATA.length)
         .fill(0)
         .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()), // Correct type for TinderCard ref
     []
@@ -38,7 +38,7 @@ const Tinder = () => {
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < userData.length - 1;
+  const canGoBack = currentIndex < USER_DATA.length - 1;
   const canSwipe = currentIndex >= 0;
 
   const swiped = (direction: string, nameToDelete: string, index: number) => {
@@ -54,7 +54,7 @@ const Tinder = () => {
   };
 
   const swipe = async (dir: "left" | "right") => {
-    if (canSwipe && currentIndex < userData.length) {
+    if (canSwipe && currentIndex < USER_DATA.length) {
       await childRefs[currentIndex].current?.swipe(dir);
     }
   };

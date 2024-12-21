@@ -1,6 +1,6 @@
 import Carousel from "@/components/carousel/type1";
 import { Text } from "@/components/ui/text";
-import { userData } from "@/constant";
+import { USER_DATA } from "@/constant";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
@@ -21,7 +21,7 @@ const ProfileDetailScreen = () => {
   // Giả lập việc tải dữ liệu
   useEffect(() => {
     const timer = setTimeout(() => {
-      setData(userData.find((item) => item.id.toString() === local.id));
+      setData(USER_DATA.find((item) => item.id.toString() === local.id));
       setIsLoading(false); // Sau 2 giây, kết thúc tải
     }, 2000);
 
