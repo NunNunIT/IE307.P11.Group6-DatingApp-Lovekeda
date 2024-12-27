@@ -16,6 +16,25 @@ const Tinder = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
 
+  const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
+
+  const postSwipeData = async () => {
+    try {
+      const res = await fetch(`${NEXTJS_SERVER}/api/users/swipe-batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({
+          userId: "123", // TODO: Replace with actual user ID
+          swipes: swipedUsersRef.current
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to post swipe data');
+      swipedUsersRef.current = [];
+    } catch (error) {
+      console.error('Error posting swipe data:', error);
+    }
+  };
+
   const fetchMoreUsers = useCallback(() => {
     setIsLoading(true);
     fetch(NEXTJS_SERVER + '/api/users/find')
@@ -28,11 +47,10 @@ const Tinder = () => {
         setCharacters(prevCharacters => {
           if (prevCharacters.length === 0) {
             setCurrentIndex(payload.data.length - 1);
-            currentIndexRef.current = payload.data.length - 1;
             return payload.data;
           }
           const result = [...prevCharacters, ...payload.data]
-          currentIndexRef.current = result.length - 1;
+          setCurrentIndex(result.length - 1);
           return result;
         });
       })
@@ -75,6 +93,20 @@ const Tinder = () => {
   const swiped = (direction: string, nameToDelete: string, index: number) => {
     setLastDirection(direction);
     updateCurrentIndex(index - 1);
+
+    // Store the swipe data
+    const swipedUser = characters[index];
+    if (swipedUser) {
+      swipedUsersRef.current.push({
+        userId: swipedUser.id,
+        direction: direction
+      });
+    }
+
+    // If this was the last card, post the swipe data
+    if (index === 0 && swipedUsersRef.current.length > 0) {
+      postSwipeData();
+    }
   };
 
   const outOfFrame = (name: string, idx: number) => {

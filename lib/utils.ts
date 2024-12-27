@@ -6,8 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+
+
 export async function getRelativeLocation(
   coordinates: [number, number],
+  maxRetries = 3,
+  delay = 1000
 ): Promise<any> {
   const LOCATION_API_URL: string =
     LOCATION_API_URL_UNFORMATTED
@@ -16,14 +20,25 @@ export async function getRelativeLocation(
     + "&zoom=13"
     + `&accept-language=vi`;
 
-  try {
-    const res = await fetch(LOCATION_API_URL);
-    if (!res.ok) throw new Error("Failed to fetch location");
-    const payload = await res.json();
-    console.log("🚀 ~ payload:", payload)
-    return payload;
-  } catch (error: unknown) {
-    console.log(">> Error in getRelativeLocation", error instanceof Error ? error.message : "unknown error");
-    return null;
+  async function fetchWithRetry(url: string, retries: number): Promise<any> {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch location");
+      const payload = await res.json();
+      return payload;
+    } catch (error: unknown) {
+      if (retries > 0) {
+        console.log(`Retrying... (${maxRetries - retries + 1})`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return fetchWithRetry(url, retries - 1);
+      }
+      console.log(
+        ">> Error in getRelativeLocation",
+        error instanceof Error ? error.message : "unknown error"
+      );
+      return null;
+    }
   }
+
+  return fetchWithRetry(LOCATION_API_URL, maxRetries);
 }
