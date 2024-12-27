@@ -1,36 +1,67 @@
-import DatesCard from "@/components/card/human";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { ImageBackground, View } from "react-native";
+import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { View, Image } from "react-native";
 import TinderCard from "react-tinder-card";
-import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  CheckBadgeIcon,
-  HeartIcon,
-  LockClosedIcon,
-  XMarkIcon,
-} from "react-native-heroicons/solid";
+import { HeartIcon, XMarkIcon } from "react-native-heroicons/solid";
+import { Button } from "@/components/ui/button";
+import DatesCard from "@/components/card/human";
 import Loading1 from "@/components/loading";
-import { Image } from "react-native";
 import { useAuth } from "@/provider/AuthProvider";
-import { USER_DATA } from "@/constant";
-
-const alreadyRemoved: string[] = [];
-let charactersState = USER_DATA;
+import { NEXTJS_SERVER } from '@/lib/constants';
 
 const Tinder = () => {
-  const [currentIndex, setCurrentIndex] = useState(USER_DATA.length - 1);
+  const [characters, setCharacters] = useState<any[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
+
+  const fetchMoreUsers = useCallback(() => {
+    setIsLoading(true);
+    fetch(NEXTJS_SERVER + '/api/users/find')
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then((payload) => {
+        // Initialize or append data based on whether it's the first fetch
+        setCharacters(prevCharacters => {
+          if (prevCharacters.length === 0) {
+            setCurrentIndex(payload.data.length - 1);
+            currentIndexRef.current = payload.data.length - 1;
+            return payload.data;
+          }
+          const result = [...prevCharacters, ...payload.data]
+          currentIndexRef.current = result.length - 1;
+          return result;
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsFetchingMore(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!isFetchingMore) return;
+    fetchMoreUsers();
+  }, [fetchMoreUsers, isFetchingMore]);
+
+  useEffect(() => {
+    if (currentIndex < 0) {
+      setIsFetchingMore(true);
+    }
+  }, [currentIndex]);
 
   const childRefs = useMemo(
     () =>
-      Array(USER_DATA.length)
+      Array(characters.length)
         .fill(0)
-        .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()), // Correct type for TinderCard ref
-    []
+        .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()),
+    [characters.length]
   );
 
   const updateCurrentIndex = (val: number) => {
@@ -38,7 +69,7 @@ const Tinder = () => {
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < USER_DATA.length - 1;
+  const canGoBack = currentIndex < characters.length - 1;
   const canSwipe = currentIndex >= 0;
 
   const swiped = (direction: string, nameToDelete: string, index: number) => {
@@ -47,15 +78,14 @@ const Tinder = () => {
   };
 
   const outOfFrame = (name: string, idx: number) => {
-    console.log(`${name} (${idx}) left the screen!`, currentIndexRef.current);
     if (currentIndexRef.current >= idx) {
       childRefs[idx].current?.restoreCard();
     }
   };
 
   const swipe = async (dir: "left" | "right") => {
-    if (canSwipe && currentIndex < USER_DATA.length) {
-      await childRefs[currentIndex].current?.swipe(dir);
+    if (canSwipe && currentIndex < characters.length) {
+      childRefs[currentIndex].current?.swipe(dir);
     }
   };
 
@@ -68,26 +98,16 @@ const Tinder = () => {
     await childRefs[newIndex].current?.restoreCard();
   };
 
-  useEffect(() => {
-    // Giả lập tải dữ liệu
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // Tải trong 2 giây
-
-    return () => clearTimeout(timeout); // Xóa timeout khi unmount
-  }, []);
-
   return (
     <View className="relative flex-1 w-full h-full">
-      {isLoading ? (
+      {isLoading || isFetchingMore || characters.length === 0 ? (
         <View className="w-full h-full flex justify-center items-center">
           <Loading1 />
           <View className="absolute items-center justify-center">
             <Image
               source={{
-                uri:
-                  profile?.imgs?.[0] ??
-                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+                uri: profile?.imgs?.[0] ??
+                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp"
               }}
               className="rounded-full size-28"
             />
@@ -95,12 +115,11 @@ const Tinder = () => {
         </View>
       ) : (
         <>
-          {/* Tinder Cards */}
           <View className="flex-1 w-full h-full">
-            {charactersState.map((character, index) => (
+            {characters.map((character, index) => (
               <TinderCard
+                key={character.name + index}
                 ref={childRefs[index]}
-                key={character.name}
                 onSwipe={(dir) => swiped(dir, character.name, index)}
                 onCardLeftScreen={() => outOfFrame(character.name, index)}
               >
@@ -111,7 +130,6 @@ const Tinder = () => {
             ))}
           </View>
 
-          {/* Buttons */}
           <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
             <Button
               className="flex-1"

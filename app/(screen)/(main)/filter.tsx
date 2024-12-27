@@ -100,7 +100,7 @@ export default function FilterScreen() {
           {/* Khoảng cách */}
           <View className="relative flex flex-col justify-between gap-6 rounded-lg bg-white dark:bg-zinc-900 shadow p-4">
             <View className="flex flex-row justify-between">
-              <Text className="text-lg font-bold">Khoảng cách (km)</Text>
+              <Text className="text-lg font-bold">Khoảng cách tối đa (km)</Text>
               <Text className="text-lg text-zinc-800 dark:text-zinc-300">
                 {valueDistance} km
               </Text>

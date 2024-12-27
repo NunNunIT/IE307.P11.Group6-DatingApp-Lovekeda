@@ -20,7 +20,7 @@ export const GENDER_OPTIONS = [
 ] as const;
 
 export const SEARCH_GENDER_OPTIONS = [
-  ...GENDER_OPTIONS,
+  ...GENDER_OPTIONS.slice(0, 2),
   { label: "Tất cả", value: "all" },
 ] as const;
 

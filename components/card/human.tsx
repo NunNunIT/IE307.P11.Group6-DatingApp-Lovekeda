@@ -32,8 +32,6 @@ export default function DatesCard({ item }: { item: any }) {
         )}
       </Carousel>
 
-      {/* <Text>Hello</Text> */}
-
       <LinearGradient
         colors={["transparent", "rgba(0,0,0,0.9)"]}
         style={{
