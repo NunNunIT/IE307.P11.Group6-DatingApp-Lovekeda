@@ -25,6 +25,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router, useLocalSearchParams } from "expo-router";
 import { CHAT_DATA, USER_DATA } from "@/constant";
+import { RecordingOptionsPresets } from "expo-av/build/Audio";
 
 const isAndroid = Platform.OS === "android";
 
@@ -33,7 +34,7 @@ export default function ChatDetailsScreen() {
   // const chatData = CHAT_DATA.find((item) => item.id === id);
   // if (!chatData) return NotFoundScreen();
   const userData = USER_DATA.find((item) => item.id.toString() === id);
-  const [setChatData] = useState<any>(null);
+  const [, setChatData] = useState<any>(null);
   const [message, setMessage] = useState("");
   const [chatList, setChatList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +88,7 @@ export default function ChatDetailsScreen() {
 
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+        RecordingOptionsPresets.HIGH_QUALITY
       );
       await recording.startAsync();
       setRecording(recording);

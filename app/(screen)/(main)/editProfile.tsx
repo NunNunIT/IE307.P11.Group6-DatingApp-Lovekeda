@@ -21,7 +21,7 @@ import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
-import { fbApp, uploadToFireBase } from "@/firebase/config";
+// import { fbApp, uploadToFireBase } from "@/firebase";
 import MultiChoicePicker from "@/components/select/multiChoice";
 import { GENDER_OPTIONS } from "../(set-up-profile)";
 

@@ -41,6 +41,7 @@
     "@sharcoux/slider": "^8.0.6",
     "@shopify/flash-list": "1.7.1",
     "@supabase/supabase-js": "^2.47.10",
+    "@types/react-native-dotenv": "^0.2.2",
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",

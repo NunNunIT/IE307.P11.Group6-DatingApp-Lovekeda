@@ -65,6 +65,7 @@ export default function DatesCard({ item }: { item: any }) {
             size="icon"
             variant="none"
             className="rounded-full p-2 bg-zinc-600/50"
+            onPress={() => router.push(`/profileDetail/${item.id}`)}
           >
             <IdCard className="text-white size-6" />
           </Button>
@@ -86,7 +87,7 @@ export default function DatesCard({ item }: { item: any }) {
           {item?.bio}
         </Text>
         <View className="flex flex-row flex-wrap gap-2">
-          {item?.hobbies.map((hobby, index) => (
+          {item?.hobbies.map((hobby: any, index: any) => (
             <Text key={index} className="bg-zinc-500 text-white rounded-full p-1 px-3">
               {hobby}
             </Text>
