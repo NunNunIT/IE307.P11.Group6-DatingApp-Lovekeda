@@ -47,19 +47,39 @@ const Tinder = () => {
 
   const fetchMoreUsers = useCallback((page: number) => {
     setIsLoading(true);
+    setIsFetchingMore(true);
     (async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-      console.log("🚀 ~ data:", data)
+      const [
+        { data: profiles, error: errorProfile },
+        { data: locations, error: errorLocation }
+      ] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select("*"),
+        supabase
+          .from('locations')
+          .select("*")
+      ])
 
-      if (error) {
+      if (errorProfile || errorLocation) {
         setIsLoading(false);
+        setIsFetchingMore(false);
         return;
       }
 
-      setCharacters(prevCharacters => [...data, ...prevCharacters,]);
-      setIsLoading(true);
+      console.log("🚀 ~ locations:", locations)
+
+      // Merge profiles and locations
+      const mergedProfiles = profiles?.map(profile => {
+        const location = locations?.find(l => l.user_id === profile.user_id);
+        console.log("🚀 ~ mergedProfiles ~ location:", location)
+
+        return { ...profile, ...location };
+      });
+
+      setCharacters(prevCharacters => [...(mergedProfiles ?? []), ...prevCharacters,]);
+      setIsLoading(false);
+      setIsFetchingMore(false);
     })()
     // fetch(NEXTJS_SERVER + '/api/users/find')
     //   .then((res) => {
