@@ -35,11 +35,16 @@ export default function MatchesScreen1() {
       const uniquePairs = new Set<string>();
 
       likes.forEach(like => {
-        const key =
-          like?.user_id && like?.target_user_id && like.user_id < like.target_user_id
-            ? `${like.user_id}-${like.target_user_id}`
-            : `${like.target_user_id}-${like.user_id}`;
-        uniquePairs.add(key);
+        if (
+          like?.user_id === session?.user.id ||
+          like?.target_user_id === session?.user.id
+        ) {
+          const key =
+            like?.user_id && like?.target_user_id && like.user_id < like.target_user_id
+              ? `${like.user_id}-${like.target_user_id}`
+              : `${like.target_user_id}-${like.user_id}`;
+          uniquePairs.add(key);
+        }
       });
 
       const mergedProfiles = Array.from(uniquePairs).map((pair: string) => {

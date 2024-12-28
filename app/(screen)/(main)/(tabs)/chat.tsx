@@ -302,11 +302,11 @@ export default function ChatScreen() {
     return () => unsubscribe();
   }, [me]);
 
-  console.log(chatRoom);
+  // console.log(chatRoom);
 
   // Filter out the current user
   const filteredData = DATE_DATA.filter(
-    (item) => item.id !== session?.user?.id
+    (item) => item.user_id !== session?.user?.id
   );
 
   return (
@@ -348,7 +348,7 @@ export default function ChatScreen() {
         >
           {filteredData.slice(0, 3).map((item) => (
             <ChatItem
-              key={item.id}
+              key={item.user_id}
               item={item}
               // onPress={() =>
               //   router.push(
