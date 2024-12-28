@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      likes: {
+        Row: {
+          created_at: string
+          id: number
+          target_user_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          target_user_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          target_user_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           coordinates: number[] | null

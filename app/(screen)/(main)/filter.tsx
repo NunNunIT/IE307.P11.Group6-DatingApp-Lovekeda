@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import { router } from "expo-router";
+import { useDump } from "@/provider/DumpProvider";
 
 export default function FilterScreen() {
   const [rangeAge, setRangeAge] = useState<[number, number]>([18, 30]);
@@ -21,10 +22,20 @@ export default function FilterScreen() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDirtyFields, setIsDirtyFields] = useState<boolean>(false);
   const { session, profile, getProfile } = useAuth();
+  const { setValue } = useDump();
 
   const submitHandler = async () => {
     if (!session) return;
     setIsSubmitting(true);
+    setValue((prev: any) => ({
+      ...(prev ?? {}),
+      filter: {
+        ageRange: rangeAge,
+        distance: valueDistance,
+        genderFind,
+        purposeValue,
+      }
+    }))
     const data = {
       genderFind,
       purposeValue,

@@ -17,31 +17,27 @@ const Tinder = () => {
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
-  const { value, setValue } = useDump();
+  const { value } = useDump();
   const [page, setPage] = useState(1);
   const { session, profile } = useAuth();
   const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
 
   const postSwipeData = async () => {
     try {
-      const res = await fetch(`${NEXTJS_SERVER}/api/users/swipe-batch`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', },
-        body: JSON.stringify({
-          userId: "123", // TODO: Replace with actual user ID
-          swipes: swipedUsersRef.current
-        }),
-      });
-      if (!res.ok) throw new Error('Failed to post swipe data');
+      // console.log(swipedUsersRef.current);
+      const { data, error } = await supabase
+        .from('likes')
+        .insert(
+          swipedUsersRef.current
+            .filter(item => item.direction === 'right')
+            .map(s => ({
+              user_id: session?.user.id,
+              target_user_id: s.userId,
+            })));
+      // console.log("🚀 ~ postSwipeData ~ error:", error)
       swipedUsersRef.current = [];
-      setValue((prev: any) => ({
-        ...prev,
-        liked: [
-          ...(prev.liked ?? []),
-          ...swipedUsersRef.current.filter(s => s.direction === 'right').map(s => s.userId)],
-      }))
     } catch (error) {
-      console.error('Error posting swipe data:', error);
+      // console.error('Error posting swipe data:', error);
     }
   };
 
@@ -67,15 +63,22 @@ const Tinder = () => {
         return;
       }
 
-      console.log("🚀 ~ locations:", locations)
+      console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
 
       // Merge profiles and locations
       const mergedProfiles = profiles?.map(profile => {
         const location = locations?.find(l => l.user_id === profile.user_id);
-        console.log("🚀 ~ mergedProfiles ~ location:", location)
-
         return { ...profile, ...location };
-      });
+      }).filter(item => item.user_id !== session?.user.id).filter((item: any) => {
+
+        return !value?.filter?.ageRange || !item.age ? true :
+          item.age >= value.filter.ageRange[0] &&
+          item.age <= value.filter.ageRange[1]
+      })
+        .filter((item: any) =>
+          !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
+            item.gender === value?.filter?.genderFind
+        );
 
       setCharacters(prevCharacters => [...(mergedProfiles ?? []), ...prevCharacters,]);
       setIsLoading(false);
@@ -105,7 +108,7 @@ const Tinder = () => {
     //     setIsLoading(false);
     //     setIsFetchingMore(false);
     //   });
-  }, []);
+  }, [value]);
 
   useEffect(() => {
     if (!isFetchingMore) return;
@@ -132,7 +135,7 @@ const Tinder = () => {
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < characters.length - 1;
+  // const canGoBack = currentIndex < characters.length - 1;
   const canSwipe = currentIndex >= 0;
 
   const swiped = (direction: string, nameToDelete: string, index: number) => {
@@ -143,7 +146,7 @@ const Tinder = () => {
     const swipedUser = characters[index];
     if (swipedUser) {
       swipedUsersRef.current.push({
-        userId: swipedUser.id,
+        userId: swipedUser.user_id,
         direction: direction
       });
     }
@@ -166,12 +169,24 @@ const Tinder = () => {
     }
   };
 
-  const goBack = async () => {
-    if (!canGoBack) return;
-    const newIndex = currentIndex + 1;
-    updateCurrentIndex(newIndex);
-    await childRefs[newIndex].current?.restoreCard();
-  };
+  // const goBack = async () => {
+  //   if (!canGoBack) return;
+  //   const newIndex = currentIndex + 1;
+  //   updateCurrentIndex(newIndex);
+  //   await childRefs[newIndex].current?.restoreCard();
+  // };
+
+  const data = useMemo(() => characters
+    .filter(item => item.user_id !== session?.user.id).filter((item: any) => {
+
+      return !value?.filter?.ageRange || !item.age ? true :
+        item.age >= value.filter.ageRange[0] &&
+        item.age <= value.filter.ageRange[1]
+    })
+    .filter((item: any) =>
+      !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
+        item.gender === value?.filter?.genderFind
+    ), [characters, value]);
 
   return (
     <View className="relative flex-1 w-full h-full">
@@ -191,18 +206,18 @@ const Tinder = () => {
       ) : (
         <>
           <View className="flex-1 w-full h-full">
-            {characters.map((character, index) => (
-              <TinderCard
-                key={character.name + index}
-                ref={childRefs[index]}
-                onSwipe={(dir) => swiped(dir, character.name, index)}
-                onCardLeftScreen={() => outOfFrame(character.name, index)}
-              >
-                <View className="absolute bg-white w-full shadow-lg">
-                  <DatesCard item={character} />
-                </View>
-              </TinderCard>
-            ))}
+              {data.map((character, index) => (
+                <TinderCard
+                  key={character.name + index}
+                  ref={childRefs[index]}
+                  onSwipe={(dir) => swiped(dir, character.name, index)}
+                  onCardLeftScreen={() => outOfFrame(character.name, index)}
+                >
+                  <View className="absolute bg-white w-full shadow-lg">
+                    <DatesCard item={character} />
+                  </View>
+                </TinderCard>
+              ))}
           </View>
 
           <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
