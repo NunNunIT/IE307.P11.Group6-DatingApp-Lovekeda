@@ -108,7 +108,7 @@ const Tinder = () => {
     //     setIsLoading(false);
     //     setIsFetchingMore(false);
     //   });
-  }, []);
+  }, [value]);
 
   useEffect(() => {
     if (!isFetchingMore) return;
@@ -176,6 +176,18 @@ const Tinder = () => {
   //   await childRefs[newIndex].current?.restoreCard();
   // };
 
+  const data = useMemo(() => characters
+    .filter(item => item.user_id !== session?.user.id).filter((item: any) => {
+
+      return !value?.filter?.ageRange || !item.age ? true :
+        item.age >= value.filter.ageRange[0] &&
+        item.age <= value.filter.ageRange[1]
+    })
+    .filter((item: any) =>
+      !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
+        item.gender === value?.filter?.genderFind
+    ), [characters, value]);
+
   return (
     <View className="relative flex-1 w-full h-full">
       {isLoading || isFetchingMore || characters.length === 0 ? (
@@ -194,19 +206,18 @@ const Tinder = () => {
       ) : (
         <>
           <View className="flex-1 w-full h-full">
-              {characters
-                .map((character, index) => (
-                  <TinderCard
-                    key={character.name + index}
-                    ref={childRefs[index]}
-                    onSwipe={(dir) => swiped(dir, character.name, index)}
-                    onCardLeftScreen={() => outOfFrame(character.name, index)}
-                  >
-                    <View className="absolute bg-white w-full shadow-lg">
-                      <DatesCard item={character} />
-                    </View>
-                  </TinderCard>
-                ))}
+              {data.map((character, index) => (
+                <TinderCard
+                  key={character.name + index}
+                  ref={childRefs[index]}
+                  onSwipe={(dir) => swiped(dir, character.name, index)}
+                  onCardLeftScreen={() => outOfFrame(character.name, index)}
+                >
+                  <View className="absolute bg-white w-full shadow-lg">
+                    <DatesCard item={character} />
+                  </View>
+                </TinderCard>
+              ))}
           </View>
 
           <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
