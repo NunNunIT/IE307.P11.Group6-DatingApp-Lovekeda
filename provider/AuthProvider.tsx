@@ -26,6 +26,7 @@ type AuthProps = {
     name: string | null
     purposeValue: string | null
     user_id: string | null
+    display_address: string | null
   } | null;
   getProfile?: any;
   setProfile?: any;
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     name: string | null
     purposeValue: string | null
     user_id: string | null
+    display_address: string | null
   } | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
@@ -67,13 +69,23 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     try {
       const { user } = session ?? {};
       if (!user) return;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select()
-        .eq('user_id', user.id)
+      const [
+        { data: profile, error: profileError },
+        { data: location, error: locationError }
+      ] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select()
+          .eq('user_id', user.id),
+        supabase
+          .from('locations')
+          .select("display_address")
+          .eq('user_id', user.id)
+      ])
 
-      if (error) throw error;
-      setProfile(data?.[0]);
+      if (profileError) throw profileError;
+      if (locationError) throw locationError;
+      setProfile({ ...profile?.[0], display_address: location?.[0]?.display_address });
     } finally {
       setIsFetching(false);
     }

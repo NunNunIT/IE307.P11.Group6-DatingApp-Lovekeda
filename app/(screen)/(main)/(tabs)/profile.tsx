@@ -3,7 +3,6 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from "react-native-responsive-screen";
-import { PROFILE_DATA } from "@/constant";
 import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
@@ -60,7 +59,7 @@ export default function ProfileScreen() {
             Nơi sống
           </Text>
           <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
-            {"Phường Linh Trung, Đông Hòa, ...."}
+            {profile?.display_address ?? "Phường Đông Hòa, Thành phố Dĩ An, Tỉnh Bình Dương, Việt Nam"}
           </Text>
         </View>
 
