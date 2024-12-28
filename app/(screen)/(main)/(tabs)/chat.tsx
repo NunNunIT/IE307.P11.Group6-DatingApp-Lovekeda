@@ -203,9 +203,16 @@ import { Search } from "@/lib/icons";
 import { router } from "expo-router";
 import Matches from "@/components/card/matches";
 import { useAuth } from "@/provider/AuthProvider";
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+} from "firebase/firestore";
 import { database } from "@/config/firebase";
 import colors from "@/config/colors";
+import { DATE_DATA } from "@/constant";
 
 const ChatItem = ({ item, onPress }: { item: any; onPress: any }) => (
   <TouchableOpacity
@@ -221,7 +228,7 @@ const ChatItem = ({ item, onPress }: { item: any; onPress: any }) => (
       }}
     >
       <Image
-        source={{ uri: item.imgUrl }}
+        source={{ uri: item.imgs[0] }}
         style={{
           width: "90%",
           height: "90%",
@@ -295,7 +302,12 @@ export default function ChatScreen() {
     return () => unsubscribe();
   }, [me]);
 
-  console.log(chatRoom)
+  console.log(chatRoom);
+
+  // Filter out the current user
+  const filteredData = DATE_DATA.filter(
+    (item) => item.id !== session?.user?.id
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black py-4">
@@ -334,15 +346,18 @@ export default function ChatScreen() {
             paddingBottom: hp(5),
           }}
         >
-          {chatRoom.map((item) => (
+          {filteredData.slice(0, 3).map((item) => (
             <ChatItem
-              key={item._id}
+              key={item.id}
               item={item}
-              onPress={() =>
-                router.push(
-                  `/chatDetail/${item.receiver !== me ? item.receiver : item.sender}`
-                )
-              }
+              // onPress={() =>
+              //   router.push(
+              //     `/chatDetail/${
+              //       item.receiver !== me ? item.receiver : item.sender
+              //     }`
+              //   )
+              // }
+              onPress={() => router.push(`/chatDetail/${item.id}`)}
             />
           ))}
         </ScrollView>
