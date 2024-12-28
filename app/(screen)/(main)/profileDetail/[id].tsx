@@ -1,6 +1,6 @@
 import Carousel from "@/components/carousel/type1";
 import { Text } from "@/components/ui/text";
-import { USER_DATA } from "@/constant";
+import { supabase } from "@/utils/supabase";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState, useEffect } from "react";
 import {
@@ -14,18 +14,26 @@ import {
 const { width } = Dimensions.get("window");
 
 const ProfileDetailScreen = () => {
-  const local = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(true); // Trạng thái tải
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>(undefined);
 
-  // Giả lập việc tải dữ liệu
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setData(USER_DATA.find((item) => item.id.toString() === local.id));
-      setIsLoading(false); // Sau 2 giây, kết thúc tải
-    }, 2000);
+    (async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", id);
 
-    return () => clearTimeout(timer);
+      if (error) {
+        console.log("error", error);
+        return;
+      }
+
+      setData(data[0]);
+      setIsLoading(false);
+    })()
   }, []);
 
   return (

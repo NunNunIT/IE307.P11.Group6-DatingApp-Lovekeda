@@ -49,7 +49,7 @@ export default function DatesCard({ item }: { item: any }) {
       />
 
       <Pressable
-        onPress={() => router.push(`/profileDetail/${item.id}`)}
+        onPress={() => router.push(`/profileDetail/${item.user_id}`)}
         className="absolute bottom-6 justify-start w-full items-start px-4"
       >
         {!!location && item.coordinates && <Text className="bg-green-700 rounded-full p-1 px-3 text-white">
