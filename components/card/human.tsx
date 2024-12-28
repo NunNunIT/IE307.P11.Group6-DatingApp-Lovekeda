@@ -18,7 +18,7 @@ import { useLocation } from "@/provider/LocationProvider";
 var { width, height } = Dimensions.get("window");
 
 export default function DatesCard({ item }: { item: any }) {
-  // console.log("🚀 ~ DatesCard ~ item:", item)
+  console.log("🚀 ~ DatesCard ~ item:", item)
   const { location } = useLocation();
   return (
     <View className="relative h-full">
@@ -69,7 +69,7 @@ export default function DatesCard({ item }: { item: any }) {
             size="icon"
             variant="none"
             className="rounded-full p-2 bg-zinc-600/50"
-            onPress={() => router.push(`/profileDetail/${item.id}`)}
+            onPress={() => router.push(`/profileDetail/${item.user_id}`)}
           >
             <IdCard className="text-white size-6" />
           </Button>
