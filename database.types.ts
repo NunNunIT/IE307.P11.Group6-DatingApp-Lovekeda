@@ -13,18 +13,21 @@ export type Database = {
         Row: {
           coordinates: number[] | null
           created_at: string
+          display_address: string | null
           id: number
           user_id: string | null
         }
         Insert: {
           coordinates?: number[] | null
           created_at?: string
+          display_address?: string | null
           id?: number
           user_id?: string | null
         }
         Update: {
           coordinates?: number[] | null
           created_at?: string
+          display_address?: string | null
           id?: number
           user_id?: string | null
         }
