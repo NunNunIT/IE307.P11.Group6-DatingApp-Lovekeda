@@ -576,8 +576,8 @@ export const CHAT_DATA = [
 
 export const DATE_DATA = [
   {
-    id: "1",
-    name: "Nguyễn Văn Hiếu",
+    id: "cd013bd7-b878-4bbc-bd0a-64c7e7d30417",
+    name: "Number 1",
     imgs: [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
     ],
@@ -590,8 +590,8 @@ export const DATE_DATA = [
     hobbies: ["nấu ăn", "âm nhạc"]
   },
   {
-    id: "2",
-    name: "Trần Văn Bình",
+    id: "b16f7027-648c-4183-95fb-42adfb2e991f",
+    name: "Nguyễn Thị Hồng Nhung",
     imgs: [
       "https://thanhnien.mediacdn.vn/uploaded/longbn/2020_06_08/lo2_NOGF.jpg?width=500",
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbCB5BRIt-wX2fd4aMMw2Z2XJ9x2bjbDnfg&s",
@@ -605,8 +605,8 @@ export const DATE_DATA = [
     hobbies: ["nấu ăn", "âm nhạc", "diễn kịch", "ngủ"]
   },
   {
-    id: "4",
-    name: "Phạm Minh Tuấn",
+    id: "184dbb87-964a-4211-b728-f8d7cd070bd5",
+    name: "Lê Trung Hiếu",
     imgs: [
       "https://tdmuflc.edu.vn/wp-content/uploads/2023/09/46-hinh-anh-trai-dep-che-mat-2.jpg",
       "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsaostyle.vn%2Fdan-trai-dep-the-he-moi-vua-hoc-gioi-vua-da-tai%2F&psig=AOvVaw2CTxX-rU0VVeV7grlzC5I3&ust=1734764116034000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiQjYjjtYoDFQAAAAAdAAAAABAU",

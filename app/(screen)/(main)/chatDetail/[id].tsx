@@ -1,136 +1,111 @@
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Image,
   Platform,
-  Pressable,
+  SafeAreaView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat";
 import {
-  ChevronLeftIcon,
-  MicrophoneIcon,
-  PaperAirplaneIcon,
-  PhotoIcon,
-} from "react-native-heroicons/outline";
-import React, { useEffect, useState } from "react";
-
-import { Audio } from "expo-av";
-import { Button } from "@/components/ui/button";
-import { EllipsisHorizontalIcon } from "react-native-heroicons/solid";
+  collection,
+  addDoc,
+  orderBy,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
+import { signOut } from "firebase/auth";
+import { auth, database } from "@/config/firebase";
+import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import colors from "@/config/colors";
+import { useAuth } from "@/provider/AuthProvider";
+import { useLocalSearchParams } from "expo-router";
 import ImageUploadType1 from "@/components/imageUpload/type1";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components/ui/button";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { router, useLocalSearchParams } from "expo-router";
-import { CHAT_DATA, USER_DATA } from "@/constant";
-import { RecordingOptionsPresets } from "expo-av/build/Audio";
 
 const isAndroid = Platform.OS === "android";
 
-export default function ChatDetailsScreen() {
-  const { id } = useLocalSearchParams();
-  // const chatData = CHAT_DATA.find((item) => item.id === id);
-  // if (!chatData) return NotFoundScreen();
-  const userData = USER_DATA.find((item) => item.id.toString() === id);
-  const [, setChatData] = useState<any>(null);
-  const [message, setMessage] = useState("");
-  const [chatList, setChatList] = useState<any[]>([]);
+export default function Chat() {
+  const { session, profile } = useAuth();
+  const { id: other } = useLocalSearchParams();
+  const [messages, setMessages] = useState([]);
+  // const navigation = useNavigation();
+  const [imgs, setImgs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
-  const [audioUri, setAudioUri] = useState<string | null>(null);
-  const [playingSound, setPlayingSound] = useState<Audio.Sound | null>(null);
-  const [imgs, setImgs] = useState<string[]>([]); // Mảng hình ảnh
+  const me = session?.user?.id; // Current user id
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setTimeout(() => {
-        const chatData = CHAT_DATA.find((item) => item.id === id);
-        if (!chatData) return;
-        setChatData(chatData);
-        setChatList([...chatData?.chat]);
-        setIsLoading(false);
-      }, 1000);
-    };
+  // Fetch messages
+  useLayoutEffect(() => {
+    const collectionRef = collection(database, "chats");
 
-    fetchData();
-  }, []);
+    const q = query(
+      collectionRef,
+      where("sender", "in", [me, other]),
+      where("receiver", "in", [me, other]),
+      orderBy("createdAt", "desc")
+    );
 
-  const sendMess = () => {
-    if (message.trim() === "" && imgs.length === 0 && !audioUri) return;
-
-    const newMessage = {
-      sender: "me",
-      message: message.trim(),
-      images: imgs,
-      audio: audioUri,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-
-    setChatList((prev) => [...prev, newMessage]);
-    setMessage("");
-    setImgs([]);
-    setAudioUri(null);
-  };
-
-  const startRecording = async () => {
-    try {
-      const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) {
-        alert("Permission to access microphone is required!");
-        return;
-      }
-
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(
-        RecordingOptionsPresets.HIGH_QUALITY
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      return setMessages(
+        querySnapshot.docs.map((doc) => ({
+          _id: doc.data()._id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text,
+          image: doc.data().image || null, // Handle image messages
+          sender: doc.data().sender,
+          receiver: doc.data().receiver,
+          user: doc.data().user,
+        }))
       );
-      await recording.startAsync();
-      setRecording(recording);
-    } catch (error) {
-      console.error("Failed to start recording:", error);
-    }
-  };
+      setIsLoading(false); // Ngừng trạng thái tải khi dữ liệu đã sẵn sàng
+    });
 
-  const stopRecording = async () => {
-    try {
-      await recording?.stopAndUnloadAsync();
-      const uri = recording?.getURI() ?? null;
-      setAudioUri(uri);
-      setRecording(undefined);
-    } catch (error) {
-      console.error("Failed to stop recording:", error);
-    }
-  };
+    return unsubscribe;
+  }, [me, other]);
 
-  const playAudio = async (uri: string) => {
-    await playingSound?.stopAsync();
-    await playingSound?.unloadAsync();
-    setPlayingSound(null);
+  // Handle sending messages
+  const onSend = useCallback(
+    async (messages = []) => {
+      try {
+        setMessages((previousMessages) =>
+          GiftedChat.append(previousMessages, messages)
+        );
 
-    try {
-      const { sound } = await Audio.Sound.createAsync(
-        { uri },
-        { shouldPlay: true }
-      );
+        const { _id, createdAt, text, user } = messages[0];
+        const validAvatar =
+          profile?.imgs?.[0] ?? "https://example.com/default-avatar.png";
 
-      setPlayingSound(sound);
+        await addDoc(collection(database, "chats"), {
+          _id,
+          text,
+          image: imgs[0] || null,
+          sender: me,
+          user,
+          receiver: other,
+          createdAt,
+        });
 
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if ("didJustFinish" in status && status.didJustFinish) {
-          setPlayingSound(null);
-          sound.unloadAsync();
+        // Clear images after successful send
+        if (imgs.length > 0) {
+          setImgs([]);
         }
-      });
-    } catch (error) {
-      console.error("Failed to play audio:", error);
-    }
-  };
+      } catch (error) {
+        console.error("Failed to send message:", error);
+        // Revert optimistic update
+        setMessages((previousMessages) =>
+          previousMessages.filter((msg) => msg._id !== messages[0]._id)
+        );
+        // Show error to user
+        Alert.alert("Error", "Failed to send message. Please try again.");
+      }
+    },
+    [me, other, profile, imgs]
+  );
 
   return (
     <SafeAreaView
@@ -189,102 +164,49 @@ export default function ChatDetailsScreen() {
             </Text>
           </View>
         ) : (
-          <FlatList
-            data={chatList}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{ paddingBottom: hp(15) }}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  flexDirection: item.sender === "me" ? "row-reverse" : "row",
-                  padding: 10,
-                  paddingVertical: item.sender === "me" ? 13 : 3,
-                }}
-              >
-                <View style={{ maxWidth: "70%" }}>
-                  <View
-                    style={{
-                      borderBottomRightRadius: item.sender === "me" ? 0 : 10,
-                      borderBottomLeftRadius: item.sender === "me" ? 10 : 0,
-                      backgroundColor: item.sender === "me" ? "#212121" : "#fe183c",
-                      padding: 10,
-                      borderRadius: 10,
-                    }}
-                  >
-                    {item.message ? (
-                      <Text className="text-white text-base leading-5">
-                        {item.message}
-                      </Text>
-                    ) : null}
-                    {item.images?.length > 0 &&
-                      item.images.map((img: string, index: number) => (
-                        <Image
-                          key={index}
-                          source={{ uri: img }}
-                          style={{ width: 100, height: 100, marginTop: 5 }}
-                        />
-                      ))}
-                    {item.audio && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onPress={() => playAudio(item.audio)}
-                      >
-                        <Text className="text-white">Play Audio</Text>
-                      </Button>
-                    )}
-                  </View>
-                  <Text
-                    className={`text-xs font-semibold text-neutral-500 ${item.sender === "me" ? "text-right" : "text-left"
-                      }`}
-                  >
-                    {"Đã gửi " + item.timestamp}
-                  </Text>
-                </View>
-              </View>
-            )}
-          />
-        )}
-      </View>
-
-      {/* Text Input */}
-      <View className="absolute max-h-[8rem] flex-row justify-between items-center w-full px-4 pb-12 pt-2 bg-white dark:bg-zinc-900 bottom-0">
-        <View className="flex-row items-center rounded-2xl bg-neutral-200 dark:bg-zinc-800 px-3 py-3 w-[85%]">
-          <TextInput
-            placeholder="Write your message here"
-            placeholderTextColor={"gray"}
-            value={message}
-            onChangeText={setMessage}
-            style={{
-              fontSize: hp(1.7),
-              fontWeight: "medium",
-            }}
-            className="flex-1 text-base mb-1 pl-1 tracking-wider text-black dark:text-white"
-          />
-          <View className="w-1/5 flex-row justify-end items-center gap-2">
-            <ImageUploadType1
-              imgs={imgs}
-              setImgs={setImgs}
-              triggerContent={
-                <Button variant="ghost" size="icon">
-                  <PhotoIcon size={hp(3)} color={"gray"} strokeWidth={2} />
-                </Button>
-              }
+          <View style={{ flex: 1 }}>
+            <GiftedChat
+              messages={messages}
+              showAvatarForEveryMessage={false}
+              showUserAvatar={false}
+              onSend={(messages) => onSend(messages)}
+              messagesContainerStyle={{
+                backgroundColor: "#fff",
+              }}
+              textInputStyle={{
+                backgroundColor: "#fff",
+                borderRadius: 20,
+              }}
+              user={{
+                _id: me,
+                avatar: "https://i.pravatar.cc/500",
+              }}
             />
-            {recording ? (
-              <Button variant="ghost" size="icon" onPress={stopRecording}>
-                <MicrophoneIcon size={hp(3)} color="red" strokeWidth={2} />
-              </Button>
-            ) : (
-              <Button variant="ghost" size="icon" onPress={startRecording}>
-                <MicrophoneIcon size={hp(3)} color={"gray"} strokeWidth={2} />
-              </Button>
-            )}
+
+            {/* Image Upload Section */}
+            <View
+              style={{
+                padding: 10,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <ImageUploadType1
+                imgs={imgs}
+                setImgs={setImgs}
+                triggerContent={
+                  <Button>
+                    <Text>Upload Image</Text>
+                  </Button>
+                }
+              />
+
+              {!!profile?.imgs?.[0] && (
+                <Image src={imgs[0]} className="w-10 h-10 rounded-full" />
+              )}
+            </View>
           </View>
-        </View>
-        <Pressable onPress={sendMess} className="w-[12%] justify-center">
-          <PaperAirplaneIcon size={hp(3.2)} color={"gray"} strokeWidth={2} />
-        </Pressable>
+        )}
       </View>
     </SafeAreaView>
   );
