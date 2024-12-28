@@ -18,7 +18,7 @@ import { useLocation } from "@/provider/LocationProvider";
 var { width, height } = Dimensions.get("window");
 
 export default function DatesCard({ item }: { item: any }) {
-  console.log("🚀 ~ DatesCard ~ item:", item)
+  // console.log("🚀 ~ DatesCard ~ item:", item)
   const { location } = useLocation();
   return (
     <View className="relative h-full">
