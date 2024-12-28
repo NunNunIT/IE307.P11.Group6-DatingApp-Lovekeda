@@ -16,6 +16,7 @@ import { IdCard } from "@/lib/icons";
 var { width, height } = Dimensions.get("window");
 
 export default function DatesCard({ item }: { item: any }) {
+  console.log("🚀 ~ DatesCard ~ item:", item)
   return (
     <View className="relative h-full">
       <Carousel data={item.imgs} containerStyle="h-full">
