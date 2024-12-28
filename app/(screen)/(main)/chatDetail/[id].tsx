@@ -135,7 +135,7 @@ export default function Chat() {
     [me, other, profile, imgs]
   );
 
-  const CustomInputToolbar = (props) => (
+  const CustomInputToolbar = (props: any) => (
     <View className="relative w-full flex flex-col h-fit border-t-2 border-t-[#ccc] pt-2">
       {!!imgs?.[0] && <Image src={imgs[0]} className="size-24 rounded-md" />}
       <InputToolbar
@@ -149,7 +149,7 @@ export default function Chat() {
     </View>
   );
 
-  const CustomActions = (props) => (
+  const CustomActions = (props: any) => (
     <Actions
       {...props}
       icon={() => (
@@ -167,7 +167,7 @@ export default function Chat() {
     />
   );
 
-  const CustomSend = (props) => (
+  const CustomSend = (props: any) => (
     <Send {...props}>
       <FontAwesome name="send" size={24} color="blue" style={{ margin: 5 }} />
     </Send>
@@ -239,7 +239,7 @@ export default function Chat() {
               showUserAvatar={false}
               onSend={(messages) => onSend(messages)}
               messagesContainerStyle={{
-                backgroundColor: "#fff",
+              backgroundColor: "#fff",
               }}
               textInputStyle={{
                 backgroundColor: "#fff",
