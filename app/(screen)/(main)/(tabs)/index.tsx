@@ -63,7 +63,7 @@ const Tinder = () => {
         return;
       }
 
-      console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
+      // console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
 
       // Merge profiles and locations
       const mergedProfiles = profiles?.map(profile => {

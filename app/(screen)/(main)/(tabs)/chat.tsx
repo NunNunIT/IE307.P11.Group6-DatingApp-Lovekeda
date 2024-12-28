@@ -292,13 +292,13 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
           <View className="flex-row justify-center">
             <View className="flex-row">
               <Text className="font-bold text-base text-black dark:text-white">
-                {item.name}
+                {data.name}
               </Text>
             </View>
           </View>
-          <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
+          {/* <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
             {item.timeSent}
-          </Text>
+          </Text> */}
         </View>
         <View>
           <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
@@ -343,11 +343,11 @@ export default function ChatScreen() {
     return () => unsubscribe();
   }, [me]);
 
-  console.log("MMMM", chatRoom);
+  console.log(chatRoom);
 
   // Filter out the current user
   const filteredData = DATE_DATA.filter(
-    (item) => item.id !== session?.user?.id
+    (item) => item.user_id !== session?.user?.id
   );
 
   return (
@@ -389,7 +389,7 @@ export default function ChatScreen() {
         >
           {chatRoom.slice(0, 3).map((item) => (
             <ChatItem
-              key={item._id}
+              key={item.id}
               item={item}
               other={item.receiver !== me ? item.receiver : item.sender}
               onPress={() =>

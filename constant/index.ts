@@ -576,112 +576,49 @@ export const CHAT_DATA = [
 
 export const DATE_DATA = [
   {
-    id: "cd013bd7-b878-4bbc-bd0a-64c7e7d30417",
-    name: "Lê Trung Hiếu",
+    user_id: "184dbb87-964a-4211-b728-f8d7cd070bd5",
+    name: "Huy",
     imgs: [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
     ],
     gender: "male",
     distance: "5m",
-    age: "18",
-    bio: "HEHE",
+    age: "22",
+    bio: "",
     city: "HCM",
     country: "VN",
-    hobbies: ["nấu ăn", "âm nhạc"]
+    hobbies: ["hobby 2", "hobby 3", "hobby 5"],
   },
   {
-    id: "b16f7027-648c-4183-95fb-42adfb2e991f",
-    name: "Nguyễn Thị Hồng Nhung",
+    user_id: "b16f7027-648c-4183-95fb-42adfb2e991f",
+    name: "Hồng Nhung real",
     imgs: [
-      "https://thanhnien.mediacdn.vn/uploaded/longbn/2020_06_08/lo2_NOGF.jpg?width=500",
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqbCB5BRIt-wX2fd4aMMw2Z2XJ9x2bjbDnfg&s",
+      "https://th.bing.com/th/id/R.8b43a67bb29c5a642f68fad402695b42?rik=mlH%2bylAsGFu8jQ&pid=ImgRaw&r=0",
+      "https://th.bing.com/th/id/OIP.xktSZiKMCvzBNOqtCjeaWwHaJQ?w=736&h=920&rs=1&pid=ImgDetMain",
+      "https://i.pinimg.com/originals/7b/d5/33/7bd5337df2b950eb003e440b67033ee9.jpg",
     ],
-    age: "18",
-    gender: "male",
-    distance: "5m",
-    bio: "Chạy deadline đi",
+    gender: "female",
+    distance: "10m",
+    age: "30",
+    bio: "Tôi là Nhung 2. Sửa lần 1",
     city: "HCM",
     country: "VN",
-    hobbies: ["nấu ăn", "âm nhạc", "diễn kịch", "ngủ"]
+    hobbies: ["hobby 1", "hobby 2", "shopping", "sleep", "movie", "music"],
   },
   {
-    id: "184dbb87-964a-4211-b728-f8d7cd070bd5",
-    name: "Tuấn tiền tỉ",
+    user_id: "d9f6203e-d512-457b-82b3-80537dabe6f0",
+    name: "Bảo",
     imgs: [
       "https://tdmuflc.edu.vn/wp-content/uploads/2023/09/46-hinh-anh-trai-dep-che-mat-2.jpg",
       "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsaostyle.vn%2Fdan-trai-dep-the-he-moi-vua-hoc-gioi-vua-da-tai%2F&psig=AOvVaw2CTxX-rU0VVeV7grlzC5I3&ust=1734764116034000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiQjYjjtYoDFQAAAAAdAAAAABAU",
     ],
+    gender: "male",
+    distance: "3m",
     age: "22",
-    distance: "1m",
-    gender: "male",
-    bio: "Tuấn tiền tỉ",
-
+    bio: "Mèo béo",
     city: "HCM",
     country: "VN",
-    hobbies: ["giàu"]
-
-  },
-  {
-    id: "6",
-    name: "Trần Anh Hào",
-    imgs: [
-      "https://hoanghamobile.com/tin-tuc/wp-content/uploads/2024/04/anh-trai-dep-Viet-Nam-81.jpg",
-    ],
-    age: "30",
-    gender: "male",
-    bio: "Yêu màu hồng, ghét sự giả dối",
-
-    city: "HCM",
-    distance: "1m",
-    country: "VN",
-    hobbies: ["ăn uống", "nhậu"]
-  },
-  {
-    id: "9",
-    name: "Thanh Trung",
-    imgs: [
-      "https://i.pinimg.com/236x/82/c2/b4/82c2b4e5e39f1a0fb474f5574d890e89.jpg",
-
-      "https://kenh14cdn.com/thumb_w/660/2017/20664687-1931280623811540-2633903832468491112-n-1505389713725-1513421614447.jpg",
-    ],
-    age: "20",
-    gender: "male",
-    bio: "Hello 2",
-    city: "HCM",
-    distance: "1m",
-    country: "VN",
-    hobbies: ["coding", "ngủ", "lười"]
-
-  },
-  {
-    id: "10",
-    name: "Chiquaqua",
-    imgs: [
-      "https://media.istockphoto.com/id/582257588/vi/anh/ch%C3%A2n-dung-ch%C3%A0ng-trai-b%C3%A9o-ph%C3%AC-%C4%91%E1%BA%B9p-trai.jpg?s=1024x1024&w=is&k=20&c=boKchv-pldNu4cD6SqNAn1k0IMuBMN60uzV3EhsjsPY=",
-    ],
-    age: "20",
-    gender: "male",
-    bio: "Hello",
-    city: "HCM",
-    distance: "1m",
-    country: "VN",
-    hobbies: ["chó mèo", "chúa hề"]
-
-  },
-  {
-    id: "11",
-    name: "Gia Baor",
-    imgs: [
-      "https://cafefcdn.com/203337114487263232/2022/6/3/photo-1-16542387788121418948737.jpeg",
-      "https://cafebiz.cafebizcdn.vn/162123310254002176/2022/2/5/photo-1-1644042833020745879342.jpg",
-    ],
-    age: "22",
-    gender: "male",
-    bio: "Hello",
-    city: "HCM",
-    distance: "1m",
-    country: "VN",
-    hobbies: ["deadline", "chúa hề"]
+    hobbies: ["hobby 6", "hobby 5", "hobby 4", "hobby 3"],
   },
 ] as const;
 
