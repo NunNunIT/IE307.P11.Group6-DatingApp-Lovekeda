@@ -15,7 +15,7 @@ import { router } from "expo-router";
 import { IdCard } from "@/lib/icons";
 var { width, height } = Dimensions.get("window");
 
-export default function HumanCard2({ item, handleClick }) {
+export default function HumanCard2({ item, handleClick }: { item: any, handleClick: any }) {
   return (
     <View className="relative w-full h-full">
       <Image
