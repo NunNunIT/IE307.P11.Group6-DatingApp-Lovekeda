@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { Actions, GiftedChat, InputToolbar, Send } from "react-native-gifted-chat";
 import {
   collection,
   addDoc,
@@ -21,7 +21,7 @@ import {
 import { signOut } from "firebase/auth";
 import { auth, database } from "@/config/firebase";
 import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import colors from "@/config/colors";
 import { useAuth } from "@/provider/AuthProvider";
 import { router, useLocalSearchParams } from "expo-router";
@@ -36,9 +36,13 @@ import {
   Bell,
   Settings,
   Settings2,
+  ImageIcon,
   // ChevronLeftIcon
 } from "@/lib/icons";
-import { ChevronLeftIcon, EllipsisHorizontalIcon } from "react-native-heroicons/solid";
+import {
+  ChevronLeftIcon,
+  EllipsisHorizontalIcon,
+} from "react-native-heroicons/solid";
 
 const isAndroid = Platform.OS === "android";
 
@@ -63,7 +67,7 @@ export default function Chat() {
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      return setMessages(
+      setMessages(
         querySnapshot.docs.map((doc) => ({
           _id: doc.data()._id,
           createdAt: doc.data().createdAt.toDate(),
@@ -104,9 +108,8 @@ export default function Chat() {
         });
 
         // Clear images after successful send
-        if (imgs.length > 0) {
-          setImgs([]);
-        }
+
+        setImgs([]);
       } catch (error) {
         console.error("Failed to send message:", error);
         // Revert optimistic update
@@ -120,11 +123,51 @@ export default function Chat() {
     [me, other, profile, imgs]
   );
 
+  const CustomInputToolbar = (props) => (
+    <View className="relative w-full flex flex-col h-fit border-t-2 border-t-[#ccc] pt-2">
+      {!!imgs?.[0] && <Image src={imgs[0]} className="size-24 rounded-md" />}
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          backgroundColor: "transparent",
+          borderTopWidth: 0,
+          borderTopColor: "transparent",
+        }}
+      />
+    </View>
+  );
+
+  const CustomActions = (props) => (
+    <Actions
+      {...props}
+      icon={() => (
+        <ImageUploadType1
+          imgs={imgs}
+          setImgs={setImgs}
+          triggerContent={
+            <Button variant="secondary" size="icon">
+              <ImageIcon className="size-6 text-zinc-600" />
+            </Button>
+          }
+        />
+      )}
+      onPressActionButton={() => console.log("Action button pressed!")}
+    />
+  );
+
+  const CustomSend = (props) => (
+    <Send {...props}>
+      <FontAwesome name="send" size={24} color="blue" style={{ margin: 5 }} />
+    </Send>
+  );
+
+  console.log(messages);
+
   return (
     <SafeAreaView
       className="justify-center items-center relative bg-white dark:bg-black"
       style={{
-        paddingTop: isAndroid ? hp(8) : 0,
+        paddingTop: isAndroid ? hp(4) : 0,
       }}
     >
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
@@ -177,7 +220,7 @@ export default function Chat() {
             </Text>
           </View>
         ) : (
-          <View style={{ flex: 1 }}>
+          <View className="flex-[0.9]">
             <GiftedChat
               messages={messages}
               showAvatarForEveryMessage={false}
@@ -190,6 +233,9 @@ export default function Chat() {
                 backgroundColor: "#fff",
                 borderRadius: 20,
               }}
+              renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
+              renderActions={(props) => <CustomActions {...props} />}
+              renderSend={(props) => <CustomSend {...props} />}
               user={{
                 _id: me,
                 avatar: "https://i.pravatar.cc/500",
@@ -197,12 +243,8 @@ export default function Chat() {
             />
 
             {/* Image Upload Section */}
-            <View
-              style={{
-                padding: 10,
-                flexDirection: "row",
-                alignItems: "center",
-              }}
+            {/* <View
+              className="bottom-0"
             >
               <ImageUploadType1
                 imgs={imgs}
@@ -217,7 +259,7 @@ export default function Chat() {
               {!!profile?.imgs?.[0] && (
                 <Image src={imgs[0]} className="w-10 h-10 rounded-full" />
               )}
-            </View>
+            </View> */}
           </View>
         )}
       </View>

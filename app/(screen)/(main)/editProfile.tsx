@@ -45,6 +45,25 @@ export const HOBBY_OPTIONS = [
   { label: "Mua sắm", value: "shopping" },
   { label: "Ngủ", value: "sleep" },
   { label: "Xem phim", value: "movie" },
+  { label: "Đọc sách", value: "reading" },
+  { label: "Chụp ảnh", value: "photography" },
+  { label: "Du lịch", value: "travel" },
+  { label: "Hội họa", value: "painting" },
+  { label: "Thể dục thể thao", value: "sports" },
+  { label: "Làm vườn", value: "gardening" },
+  { label: "Chơi game", value: "gaming" },
+  { label: "Viết lách", value: "writing" },
+  { label: "Học ngoại ngữ", value: "language learning" },
+  { label: "Chơi nhạc cụ", value: "instrument" },
+  { label: "Câu cá", value: "fishing" },
+  { label: "Leo núi", value: "hiking" },
+  { label: "Yoga", value: "yoga" },
+  { label: "Tập gym", value: "gym" },
+  { label: "Cắm trại", value: "camping" },
+  { label: "Thiền", value: "meditation" },
+  { label: "Khiêu vũ", value: "dancing" },
+  { label: "Sưu tầm đồ cổ", value: "antique collecting" },
+  { label: "Xếp hình", value: "puzzle" },
 ];
 
 export default function FilterScreen() {
@@ -62,8 +81,8 @@ export default function FilterScreen() {
 
   useEffect(() => {
     const isDirty =
-      JSON.stringify({ name, gender, age, bio, imgs, hobbies })
-      !== JSON.stringify({
+      JSON.stringify({ name, gender, age, bio, imgs, hobbies }) !==
+      JSON.stringify({
         name: profile?.name,
         gender: profile?.gender,
         age: profile?.age?.toString(),
@@ -82,7 +101,7 @@ export default function FilterScreen() {
     setBio(profile?.bio ?? "");
     setImgs(profile?.imgs ?? []);
     setHobbies(profile?.hobbies ?? []);
-  }, [profile])
+  }, [profile]);
 
   const onChangeIndex = useCallback((index: number) => {
     console.warn(
@@ -114,7 +133,9 @@ export default function FilterScreen() {
         user_id: session.user.id,
       };
 
-      await supabase.from("profiles").upsert(userData, { onConflict: "user_id" });
+      await supabase
+        .from("profiles")
+        .upsert(userData, { onConflict: "user_id" });
       await getProfile?.();
       setIsSubmitting(false);
       router.back();
@@ -313,16 +334,20 @@ export default function FilterScreen() {
             }}
           />
 
-
-          <MultiChoicePicker
-            values={hobbies}
-            onChange={(value) => setHobbies(value.map(item => item.toString()))} // Ensure this matches the correct type
-            title="Sở thích"
-            placeholder="Chọn nhiều giá trị"
-            options={HOBBY_OPTIONS}
-            showSearch
-          // useDialogDefault
-          />
+          <View className="flex flex-row justify-between">
+            <Text className="font-bold">Sở thích</Text>
+            <MultiChoicePicker
+              values={hobbies}
+              onChange={(value) =>
+                setHobbies(value.map((item) => item.toString()))
+              } // Ensure this matches the correct type
+              // title="Sở thích"
+              placeholder="Chọn nhiều giá trị"
+              options={HOBBY_OPTIONS}
+              showSearch
+              // useDialogDefault
+            />
+          </View>
 
           <SegmentedControl
             style={{
@@ -395,11 +420,15 @@ export default function FilterScreen() {
               )}
             </Carousel>
           )}
-
         </View>
       </ScrollView>
       {/* Nút Submit */}
-      <Button onPress={submitHandler} className="m-4 rounded-full z-50" disabled={!isDirtyFields || isSubmitting} variant="red">
+      <Button
+        onPress={submitHandler}
+        className="m-4 rounded-full z-50"
+        disabled={!isDirtyFields || isSubmitting}
+        variant="red"
+      >
         <Text>Lưu</Text>
       </Button>
     </View>
