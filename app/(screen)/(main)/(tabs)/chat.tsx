@@ -323,7 +323,7 @@ export default function ChatScreen() {
       where("participants", "array-contains", me), // Fetch all chats involving the current user
       orderBy("createdAt", "desc")
     );
-
+  
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
@@ -331,7 +331,23 @@ export default function ChatScreen() {
           id: doc.id,
           ...doc.data(),
         }));
-        setChatRoom(chats);
+  
+        // Loại bỏ các bản ghi trùng lặp
+        const uniqueChats = [];
+        const seenParticipants = new Set();
+  
+        chats.forEach((chat) => {
+          const participantsKey = chat.participants
+            .sort() // Chuẩn hóa danh sách người tham gia
+            .join(","); // Tạo chuỗi khóa duy nhất cho mỗi danh sách người tham gia
+  
+          if (!seenParticipants.has(participantsKey)) {
+            seenParticipants.add(participantsKey);
+            uniqueChats.push(chat);
+          }
+        });
+  
+        setChatRoom(uniqueChats);
         setIsLoading(false);
       },
       (error) => {
@@ -339,7 +355,7 @@ export default function ChatScreen() {
         setIsLoading(false);
       }
     );
-
+  
     return () => unsubscribe();
   }, [me]);
 
