@@ -44,7 +44,6 @@ export default function MatchesScreen1() {
       // console.log("🚀 ~ uniquePairs:", uniquePairs)
 
       const mergedProfiles = [
-        ...DATE_DATA,
         ...Array.from(uniquePairs)
           .map((pair: string) => {
             const [user_id, target_user_id] = pair.split("---");
@@ -78,7 +77,7 @@ export default function MatchesScreen1() {
         {data?.map((item) => (
           <Pressable
             key={item.user_id} // Use `id` for unique keys
-            onPress={() => router.push(`/chatDetail/${item.id}`)}
+            onPress={() => router.push(`/chatDetail/${item.user_id}`)}
             className="w-[48%] aspect-[3/4] overflow-hidden rounded-lg"
           >
             <HumanCard2 item={item} handleClick={undefined} />
