@@ -16,6 +16,7 @@ import { IdCard } from "@/lib/icons";
 var { width, height } = Dimensions.get("window");
 
 export default function HumanCard2({ item, handleClick }: { item: any, handleClick: any }) {
+  console.log("🚀 ~ HumanCard2 ~ item:", item)
   return (
     <View className="relative w-full h-full">
       <Image
