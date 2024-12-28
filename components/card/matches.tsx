@@ -47,7 +47,7 @@ export default function Matches() {
       // console.log("🚀 ~ uniquePairs:", uniquePairs)
 
       const mergedProfiles = [
-        ...DATE_DATA,
+        // ...DATE_DATA,
         ...Array.from(uniquePairs)
           .map((pair: string) => {
             const [user_id, target_user_id] = pair.split("---");
