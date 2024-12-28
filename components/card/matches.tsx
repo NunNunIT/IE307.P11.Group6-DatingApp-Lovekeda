@@ -3,15 +3,21 @@ import React from "react";
 import { DATE_DATA } from "@/constant";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
+import { useAuth } from "@/provider/AuthProvider";
 
 export default function Matches() {
+  const { session } = useAuth();
+
+  // Filter out the current user
+  const filteredData = DATE_DATA.filter((item) => item.id !== session?.user?.id);
+
   return (
     <View className="">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {DATE_DATA?.map((matches, index) => {
+        {filteredData?.map((matches, index) => {
           return (
             <TouchableOpacity
               key={index}

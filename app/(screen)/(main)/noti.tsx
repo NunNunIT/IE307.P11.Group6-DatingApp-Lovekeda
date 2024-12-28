@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
+import { DATE_DATA } from "@/constant";
 
 const mockData = [
   {
@@ -78,6 +79,8 @@ export default function NotiScreen() {
     }, 2000); // Thời gian tải giả lập
   }, []);
 
+  
+
   return (
     <View className="flex flex-1 p-4 bg-zinc-100 dark:bg-black">
       {isLoading ? (
@@ -86,15 +89,15 @@ export default function NotiScreen() {
         </View>
       ) : (
         <ScrollView className="flex flex-1">
-          {data.map((item) => (
+          {DATE_DATA.map((item) => (
             <Pressable
-              key={item._id}
-              onPress={() => router.push(`/notiDetail/${item._id}`)}
+              key={item.imgs[0]}
+              onPress={() => router.push(`/notiDetail/${item.imgs[0]}`)}
               className="flex flex-row rounded-md overflow-hidden gap-2 p-3 bg-zinc-50 dark:bg-zinc-900 shadow-lg mt-4"
             >
               <View className="w-1/4 items-center p-2">
                 <Image
-                  source={{ uri: item.img }}
+                  source={{ uri: item.imgs[0] }}
                   resizeMode="cover"
                   className="rounded-lg size-20"
                 />
@@ -102,10 +105,10 @@ export default function NotiScreen() {
 
               <View className="w-3/4 flex flex-col p-2">
                 <Text className="text-lg font-bold line-clamp-2 text-zinc-900 dark:text-zinc-100">
-                  {item.title}
+                  Bạn và <Text className="font-bold">{item.name}</Text> đã kết nối với nhau
                 </Text>
                 <Text className="text-base line-clamp-3 text-zinc-600 dark:text-zinc-500">
-                  {item.desc}
+                  Nhắn tin và tìm hiểu nhau ngay
                 </Text>
               </View>
             </Pressable>

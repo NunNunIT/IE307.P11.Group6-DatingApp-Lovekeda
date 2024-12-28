@@ -10,7 +10,7 @@ export const USER_DATA = [
     gender: "male",
     distance: "5m",
     age: "18",
-    bio: "Hiếu ngu dốt tìm gái",
+    bio: "Đẹp trai, nấu ăn giỏi, hát hay",
     city: "HCM",
     country: "VN",
     hobbies: ["nấu ăn", "âm nhạc"]
@@ -25,7 +25,7 @@ export const USER_DATA = [
     age: "18",
     gender: "male",
     distance: "5m",
-    bio: "Hello",
+    bio: "Hello mọi người đã đến chanel của mình",
     city: "HCM",
     country: "VN",
     hobbies: ["nấu ăn", "âm nhạc", "diễn kịch", "ngủ"]
@@ -40,11 +40,11 @@ export const USER_DATA = [
     age: "22",
     distance: "1m",
     gender: "male",
-    bio: "Tuấn tiền tỉ",
+    bio: "Siêu giàu",
 
     city: "HCM",
     country: "VN",
-    hobbies: ["giàu"]
+    hobbies: ["tiền"]
 
   },
   {
@@ -55,7 +55,7 @@ export const USER_DATA = [
     ],
     age: "30",
     gender: "male",
-    bio: "Tìm gái fwb",
+    bio: "Ăn uống",
 
     city: "HCM",
     distance: "1m",
@@ -105,7 +105,7 @@ export const USER_DATA = [
     gender: "female",
 
     city: "HCM",
-    bio: "Bio cuar ai do",
+    bio: "Liệu chàng trai nào có thể yêu mình",
     distance: "1m",
     country: "VN",
     hobbies: ["yêu đương", "điện thoại", "mua sắm"]
@@ -577,14 +577,14 @@ export const CHAT_DATA = [
 export const DATE_DATA = [
   {
     id: "cd013bd7-b878-4bbc-bd0a-64c7e7d30417",
-    name: "Number 1",
+    name: "Lê Trung Hiếu",
     imgs: [
       "https://www.baoduyenbabyhouse.com/wp-content/uploads/2022/02/20170416_171990fc8d382ebd682b7127a5ef0bb7_1492336881.jpg",
     ],
     gender: "male",
     distance: "5m",
     age: "18",
-    bio: "Hiếu ngu dốt tìm gái",
+    bio: "HEHE",
     city: "HCM",
     country: "VN",
     hobbies: ["nấu ăn", "âm nhạc"]
@@ -599,14 +599,14 @@ export const DATE_DATA = [
     age: "18",
     gender: "male",
     distance: "5m",
-    bio: "Hello",
+    bio: "Chạy deadline đi",
     city: "HCM",
     country: "VN",
     hobbies: ["nấu ăn", "âm nhạc", "diễn kịch", "ngủ"]
   },
   {
     id: "184dbb87-964a-4211-b728-f8d7cd070bd5",
-    name: "Lê Trung Hiếu",
+    name: "Tuấn tiền tỉ",
     imgs: [
       "https://tdmuflc.edu.vn/wp-content/uploads/2023/09/46-hinh-anh-trai-dep-che-mat-2.jpg",
       "https://www.google.com/url?sa=i&url=https%3A%2F%2Fsaostyle.vn%2Fdan-trai-dep-the-he-moi-vua-hoc-gioi-vua-da-tai%2F&psig=AOvVaw2CTxX-rU0VVeV7grlzC5I3&ust=1734764116034000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiQjYjjtYoDFQAAAAAdAAAAABAU",
@@ -629,7 +629,7 @@ export const DATE_DATA = [
     ],
     age: "30",
     gender: "male",
-    bio: "Tìm gái fwb",
+    bio: "Yêu màu hồng, ghét sự giả dối",
 
     city: "HCM",
     distance: "1m",
