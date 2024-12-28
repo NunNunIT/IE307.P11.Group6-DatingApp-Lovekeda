@@ -7,8 +7,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 
-const db = DATE_DATA;
-
 export default function MatchesScreen1() {
   const { session } = useAuth();
   const [data, setData] = useState<any[] | undefined>(undefined);
@@ -41,24 +39,41 @@ export default function MatchesScreen1() {
         ) {
           const key =
             like?.user_id && like?.target_user_id && like.user_id < like.target_user_id
-              ? `${like.user_id}-${like.target_user_id}`
-              : `${like.target_user_id}-${like.user_id}`;
+              ? `${like.user_id}---${like.target_user_id}`
+              : `${like.target_user_id}--${like.user_id}`;
           uniquePairs.add(key);
         }
       });
 
-      const mergedProfiles = Array.from(uniquePairs).map((pair: string) => {
-        const [user_id, target_user_id] = pair.split("-");
-        const profile = profiles.find(
-          p => p.user_id === user_id || p.user_id === target_user_id
-        );
-        return profile;
-      }).filter(Boolean); // Filter out null values
+      // console.log("🚀 ~ uniquePairs:", uniquePairs)
 
-      setData(mergedProfiles);
+      const mergedProfiles = [
+        ...DATE_DATA,
+        ...Array.from(uniquePairs)
+          .map((pair: string) => {
+            const [user_id, target_user_id] = pair.split("---");
+            const profile = profiles.find(
+              p => p.user_id === target_user_id && target_user_id !== session?.user.id
+            );
+            return profile;
+          })
+          .filter(Boolean) // Filter out null values
+      ]
+        .reduce((acc: Record<string, any>, item) => {
+          if (item && item.user_id && !acc[item.user_id]) {
+            acc[item.user_id] = {
+              name: item.name,
+              imgs: item.imgs,
+              user_id: item.user_id,
+            };
+          }
+          return acc;
+        }, {})
+
+      setData(Object.values(mergedProfiles));
 
     })()
-  });
+  }, []);
 
   return (
     <ScrollView className="flex-1 h-full bg-white dark:bg-black">
@@ -66,7 +81,7 @@ export default function MatchesScreen1() {
         {!data && <Spinner visible={true} />}
         {data?.map((item) => (
           <Pressable
-            key={item.id} // Use `id` for unique keys
+            key={item.user_id} // Use `id` for unique keys
             onPress={() => router.push(`/chatDetail/${item.id}`)}
             className="w-[48%] aspect-[3/4] overflow-hidden rounded-lg"
           >
