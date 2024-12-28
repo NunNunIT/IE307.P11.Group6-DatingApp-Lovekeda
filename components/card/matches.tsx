@@ -22,7 +22,7 @@ export default function Matches() {
             <TouchableOpacity
               key={index}
               className="flex items-center max-w-24 px-3"
-              onPress={() => router.push("/chatDetail/1")}
+              onPress={() => router.push(`/chatDetail/${matches.id}`)}
             >
               <Image
                 source={{ uri: matches.imgs[0] }}
