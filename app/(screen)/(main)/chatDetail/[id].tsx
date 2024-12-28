@@ -1,6 +1,7 @@
 import React, { useState, useLayoutEffect, useCallback } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Platform,
   SafeAreaView,
@@ -23,10 +24,21 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import colors from "@/config/colors";
 import { useAuth } from "@/provider/AuthProvider";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { Button } from "@/components/ui/button";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  User,
+  Home,
+  MessageCircle,
+  Heart,
+  Bell,
+  Settings,
+  Settings2,
+  // ChevronLeftIcon
+} from "@/lib/icons";
+import { ChevronLeftIcon, EllipsisHorizontalIcon } from "react-native-heroicons/solid";
 
 const isAndroid = Platform.OS === "android";
 
@@ -87,6 +99,7 @@ export default function Chat() {
           sender: me,
           user,
           receiver: other,
+          participants: [me, other],
           createdAt,
         });
 
@@ -111,7 +124,7 @@ export default function Chat() {
     <SafeAreaView
       className="justify-center items-center relative bg-white dark:bg-black"
       style={{
-        paddingTop: isAndroid ? hp(4) : 0,
+        paddingTop: isAndroid ? hp(8) : 0,
       }}
     >
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
@@ -121,25 +134,25 @@ export default function Chat() {
           </TouchableOpacity>
           <TouchableOpacity
             className="w-2/3 flex-row items-center"
-            onPress={() => router.push(`/profileDetail/${id}`)}
+            onPress={() => router.push(`/profileDetail/${other}`)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
-              <Image
+              {/* <Image
                 source={{ uri: userData?.imgs[0] }}
                 style={{
                   width: hp(4.5),
                   height: hp(4.5),
                 }}
                 className="rounded-full"
-              />
+              /> */}
             </View>
             <View className="justify-center items-start">
-              <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
+              {/* <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
                 {userData?.name}, {userData?.age}
-              </Text>
-              <Text className="text-xs text-neutral-400">
+              </Text> */}
+              {/* <Text className="text-xs text-neutral-400">
                 You matched today
-              </Text>
+              </Text> */}
             </View>
           </TouchableOpacity>
         </View>
