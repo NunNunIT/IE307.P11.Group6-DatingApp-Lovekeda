@@ -7,6 +7,8 @@ import DatesCard from "@/components/card/human";
 import Loading1 from "@/components/loading";
 import { useAuth } from "@/provider/AuthProvider";
 import { NEXTJS_SERVER } from '@/lib/constants';
+import { useDump } from "@/provider/DumpProvider";
+import { supabase } from "@/utils/supabase";
 
 const Tinder = () => {
   const [characters, setCharacters] = useState<any[]>([]);
@@ -15,7 +17,9 @@ const Tinder = () => {
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
-
+  const { value, setValue } = useDump();
+  const [page, setPage] = useState(1);
+  const { session, profile } = useAuth();
   const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
 
   const postSwipeData = async () => {
@@ -30,48 +34,88 @@ const Tinder = () => {
       });
       if (!res.ok) throw new Error('Failed to post swipe data');
       swipedUsersRef.current = [];
+      setValue((prev: any) => ({
+        ...prev,
+        liked: [
+          ...(prev.liked ?? []),
+          ...swipedUsersRef.current.filter(s => s.direction === 'right').map(s => s.userId)],
+      }))
     } catch (error) {
       console.error('Error posting swipe data:', error);
     }
   };
 
-  const fetchMoreUsers = useCallback(() => {
+  const fetchMoreUsers = useCallback((page: number) => {
     setIsLoading(true);
-    fetch(NEXTJS_SERVER + '/api/users/find')
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        
-        return res.json();
-      })
-      .then((payload) => {
-        // Initialize or append data based on whether it's the first fetch
-        setCharacters(prevCharacters => {
-          if (prevCharacters.length === 0) {
-            setCurrentIndex(payload.data.length - 1);
-            return payload.data;
-          }
-          const result = [...prevCharacters, ...payload.data]
-          setCurrentIndex(result.length - 1);
-          return result;
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
+    setIsFetchingMore(true);
+    (async () => {
+      const [
+        { data: profiles, error: errorProfile },
+        { data: locations, error: errorLocation }
+      ] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select("*"),
+        supabase
+          .from('locations')
+          .select("*")
+      ])
+
+      if (errorProfile || errorLocation) {
         setIsLoading(false);
         setIsFetchingMore(false);
+        return;
+      }
+
+      console.log("🚀 ~ locations:", locations)
+
+      // Merge profiles and locations
+      const mergedProfiles = profiles?.map(profile => {
+        const location = locations?.find(l => l.user_id === profile.user_id);
+        console.log("🚀 ~ mergedProfiles ~ location:", location)
+
+        return { ...profile, ...location };
       });
+
+      setCharacters(prevCharacters => [...(mergedProfiles ?? []), ...prevCharacters,]);
+      setIsLoading(false);
+      setIsFetchingMore(false);
+    })()
+    // fetch(NEXTJS_SERVER + '/api/users/find')
+    //   .then((res) => {
+    //     if (!res.ok) throw new Error("Network response was not ok");
+    //     return res.json();
+    //   })
+    //   .then((payload) => {
+    //     // Initialize or append data based on whether it's the first fetch
+    //     setCharacters(prevCharacters => {
+    //       if (prevCharacters.length === 0) {
+    //         setCurrentIndex(payload.data.length - 1);
+    //         return payload.data;
+    //       }
+    //       const result = [...prevCharacters, ...payload.data]
+    //       setCurrentIndex(result.length - 1);
+    //       return result;
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //     setIsFetchingMore(false);
+    //   });
   }, []);
 
   useEffect(() => {
     if (!isFetchingMore) return;
-    fetchMoreUsers();
+    fetchMoreUsers(page);
   }, [fetchMoreUsers, isFetchingMore]);
 
   useEffect(() => {
     if (currentIndex < 0) {
       setIsFetchingMore(true);
+      setPage(prev => prev + 1);
     }
   }, [currentIndex]);
 
@@ -121,8 +165,6 @@ const Tinder = () => {
       childRefs[currentIndex].current?.swipe(dir);
     }
   };
-
-  const { profile } = useAuth();
 
   const goBack = async () => {
     if (!canGoBack) return;

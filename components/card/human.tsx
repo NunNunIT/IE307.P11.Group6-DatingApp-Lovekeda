@@ -13,9 +13,13 @@ import Carousel from "../carousel/type1";
 import { Button } from "../ui/button";
 import { router } from "expo-router";
 import { IdCard } from "@/lib/icons";
+import { haversineDistance } from "@/lib/functions";
+import { useLocation } from "@/provider/LocationProvider";
 var { width, height } = Dimensions.get("window");
 
 export default function DatesCard({ item }: { item: any }) {
+  console.log("🚀 ~ DatesCard ~ item:", item)
+  const { location } = useLocation();
   return (
     <View className="relative h-full">
       <Carousel data={item.imgs} containerStyle="h-full">
@@ -48,9 +52,11 @@ export default function DatesCard({ item }: { item: any }) {
         onPress={() => router.push(`/profileDetail/${item.id}`)}
         className="absolute bottom-6 justify-start w-full items-start px-4"
       >
-        <Text className="bg-green-700 rounded-full p-1 px-3 text-white">
-          Cách bạn {item?.distance}
-        </Text>
+        {!!location && item.coordinates && <Text className="bg-green-700 rounded-full p-1 px-3 text-white">
+          Cách bạn {haversineDistance(
+            { lat: location[0], long: location[1] },
+            { lat: item.coordinates[0], long: item.coordinates[1] })?.toFixed(2)} km
+        </Text>}
         <View className="w-full flex flex-row justify-between items-center ">
           <Text className="text-2xl text-white font-bold">
             {item?.name}
@@ -85,7 +91,7 @@ export default function DatesCard({ item }: { item: any }) {
           {item?.bio}
         </Text>
         <View className="flex flex-row flex-wrap gap-2">
-          {item?.hobbies.map((hobby: any, index: any) => (
+          {item?.hobbies?.map((hobby: any, index: any) => (
             <Text key={index} className="bg-zinc-500 text-white rounded-full p-1 px-3">
               {hobby}
             </Text>
