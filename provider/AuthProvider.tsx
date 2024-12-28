@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           .from('locations')
           .select("display_address")
           .eq('user_id', user.id)
-      ])
+      ]);
 
       if (profileError) throw profileError;
       if (locationError) throw locationError;
