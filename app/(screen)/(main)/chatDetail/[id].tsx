@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback } from "react";
+import React, { useState, useLayoutEffect, useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -43,12 +43,24 @@ import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
 } from "react-native-heroicons/solid";
+import { supabase } from "@/utils/supabase";
 
 const isAndroid = Platform.OS === "android";
 
 export default function Chat() {
   const { session, profile } = useAuth();
   const { id: other } = useLocalSearchParams();
+  const [data, setData] = useState<any>(null);
+  useEffect(() => {
+    (async () => {
+
+      const {data, error} = await supabase.from("profiles").select("*").eq("user_id", other);
+      if (error) {return}
+      setData(data[0]);
+    })()
+  }, []);
+  console.log("EEEEE", data)
+
   const [messages, setMessages] = useState([]);
   // const navigation = useNavigation();
   const [imgs, setImgs] = useState<string[]>([]);
@@ -161,7 +173,7 @@ export default function Chat() {
     </Send>
   );
 
-  console.log(messages);
+  console.log("AAAAA", messages);
 
   return (
     <SafeAreaView
@@ -180,22 +192,22 @@ export default function Chat() {
             onPress={() => router.push(`/profileDetail/${other}`)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
-              {/* <Image
-                source={{ uri: userData?.imgs[0] }}
+              <Image
+                source={{ uri: data?.imgs[0] }}
                 style={{
                   width: hp(4.5),
                   height: hp(4.5),
                 }}
                 className="rounded-full"
-              /> */}
+              />
             </View>
             <View className="justify-center items-start">
-              {/* <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
-                {userData?.name}, {userData?.age}
-              </Text> */}
-              {/* <Text className="text-xs text-neutral-400">
+              <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
+                {data?.name}, {data?.age}
+              </Text> 
+              <Text className="text-xs text-neutral-400">
                 You matched today
-              </Text> */}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -242,24 +254,7 @@ export default function Chat() {
               }}
             />
 
-            {/* Image Upload Section */}
-            {/* <View
-              className="bottom-0"
-            >
-              <ImageUploadType1
-                imgs={imgs}
-                setImgs={setImgs}
-                triggerContent={
-                  <Button>
-                    <Text>Upload Image</Text>
-                  </Button>
-                }
-              />
-
-              {!!profile?.imgs?.[0] && (
-                <Image src={imgs[0]} className="w-10 h-10 rounded-full" />
-              )}
-            </View> */}
+        
           </View>
         )}
       </View>

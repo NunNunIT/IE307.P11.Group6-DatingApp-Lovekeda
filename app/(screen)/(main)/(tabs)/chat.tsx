@@ -213,61 +213,102 @@ import {
 import { database } from "@/config/firebase";
 import colors from "@/config/colors";
 import { DATE_DATA } from "@/constant";
+import { supabase } from "@/utils/supabase";
 
-const ChatItem = ({ item, onPress }: { item: any; onPress: any }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    className="w-full py-2 items-center flex-row border-b border-zinc-300 dark:border-zinc-600 px-4"
-  >
-    {/* Avatar */}
-    <View
-      className="w-[17%] justify-center"
-      style={{
-        width: hp(7),
-        height: hp(7),
-      }}
+const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log("ITEM", item);
+  console.log("OTHER", other);
+
+  useEffect(() => {
+    (async () => {
+      try {22
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", other);
+
+        if (error) {
+          setError("Lỗi khi tải dữ liệu.");
+          return;
+        }
+
+        setData(data?.[0] || null);
+      } catch (err) {
+        setError("Đã xảy ra lỗi.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [item.id]);
+  console.log("ATA222222", data);
+
+
+  if (loading) {
+    return (
+      <View className="flex-row items-center justify-center py-4">
+        <Text className="text-gray-500 dark:text-gray-400">Đang tải...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-row items-center justify-center py-4">
+        <Text className="text-red-500">{error}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      className="w-full py-2 items-center flex-row border-b border-zinc-300 dark:border-zinc-600 px-4"
     >
-      <Image
-        source={{ uri: item.imgs[0] }}
+      {/* Avatar */}
+      <View
+        className="w-[17%] justify-center"
         style={{
-          width: "90%",
-          height: "90%",
+          width: hp(7),
+          height: hp(7),
         }}
-        className="rounded-full"
-      />
-    </View>
+      >
+        <Image
+          source={{ uri: data?.imgs?.[0] || "https://via.placeholder.com/150" }}
+          style={{
+            width: "90%",
+            height: "90%",
+          }}
+          className="rounded-full"
+        />
+      </View>
 
-    {/* Information */}
-    <View className="w-[82%]" style={{ height: hp(6) }}>
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row justify-center">
-          <View className="flex-row">
-            <Text className="font-bold text-base text-black dark:text-white">
-              {item.name}
-            </Text>
-          </View>
-          {item.isOnline && (
-            <View className="justify-center items-center">
-              <View className="w-2 h-2 bg-teal-500 rounded-full ml-1"></View>
+      {/* Information */}
+      <View className="w-[82%]" style={{ height: hp(6) }}>
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row justify-center">
+            <View className="flex-row">
+              <Text className="font-bold text-base text-black dark:text-white">
+                {item.name}
+              </Text>
             </View>
-          )}
+          </View>
+          <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
+            {item.timeSent}
+          </Text>
         </View>
-        <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
-          {item.timeSent}
-        </Text>
+        <View>
+          <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
+            {!!item.text ? item.text : "No messages yet."}
+          </Text>
+        </View>
       </View>
-      <View>
-        <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
-          {item.lastMessage
-            ? item.lastMessage.length > 45
-              ? item.lastMessage.slice(0, 45) + "..."
-              : item.lastMessage
-            : "No messages yet."}
-        </Text>
-      </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 export default function ChatScreen() {
   const [isLoading, setIsLoading] = useState(true);
@@ -302,7 +343,7 @@ export default function ChatScreen() {
     return () => unsubscribe();
   }, [me]);
 
-  console.log(chatRoom);
+  console.log("MMMM", chatRoom);
 
   // Filter out the current user
   const filteredData = DATE_DATA.filter(
@@ -346,18 +387,19 @@ export default function ChatScreen() {
             paddingBottom: hp(5),
           }}
         >
-          {filteredData.slice(0, 3).map((item) => (
+          {chatRoom.slice(0, 3).map((item) => (
             <ChatItem
-              key={item.id}
+              key={item._id}
               item={item}
-              // onPress={() =>
-              //   router.push(
-              //     `/chatDetail/${
-              //       item.receiver !== me ? item.receiver : item.sender
-              //     }`
-              //   )
-              // }
-              onPress={() => router.push(`/chatDetail/${item.id}`)}
+              other={item.receiver !== me ? item.receiver : item.sender}
+              onPress={() =>
+                router.push(
+                  `/chatDetail/${
+                    item.receiver !== me ? item.receiver : item.sender
+                  }`
+                )
+              }
+              // onPress={() => router.push(`/chatDetail/${item.id}`)}
             />
           ))}
         </ScrollView>
