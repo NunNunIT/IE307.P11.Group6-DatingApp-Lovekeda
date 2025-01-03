@@ -1,245 +1,129 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { View, Image } from "react-native";
-import TinderCard from "react-tinder-card";
-import { HeartIcon, XMarkIcon } from "react-native-heroicons/solid";
-import { Button } from "@/components/ui/button";
-import DatesCard from "@/components/card/human";
-import Loading1 from "@/components/loading";
-import { useAuth } from "@/provider/AuthProvider";
-import { NEXTJS_SERVER } from '@/lib/constants';
-import { useDump } from "@/provider/DumpProvider";
-import { supabase } from "@/utils/supabase";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  Image,
+  ScrollView,
+} from "react-native";
+import { ProductCard } from "~/components/card/product";
+import { Text } from "~/components/ui/text";
+import { Carousel } from "react-native-ui-lib";
 
-const Tinder = () => {
-  const [characters, setCharacters] = useState<any[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastDirection, setLastDirection] = useState<string | undefined>();
-  const currentIndexRef = useRef(currentIndex);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
-  const { value } = useDump();
-  const [page, setPage] = useState(1);
-  const { session, profile } = useAuth();
-  const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
+const { width, height } = Dimensions.get("screen");
 
-  const postSwipeData = async () => {
+const decorate = [
+  { img: require("~/assets/images/decorate/1.png") },
+  { img: require("~/assets/images/decorate/2.png") },
+  { img: require("~/assets/images/decorate/3.png") },
+  { img: require("~/assets/images/decorate/4.png") },
+  { img: require("~/assets/images/decorate/5.png") },
+  { img: require("~/assets/images/decorate/6.png") },
+];
+
+export default function HomeScreen() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = async () => {
     try {
-      // console.log(swipedUsersRef.current);
-      const { data, error } = await supabase
-        .from('likes')
-        .insert(
-          swipedUsersRef.current
-            .filter(item => item.direction === 'right')
-            .map(s => ({
-              user_id: session?.user.id,
-              target_user_id: s.userId,
-            })));
-      // console.log("🚀 ~ postSwipeData ~ error:", error)
-      swipedUsersRef.current = [];
+      const response = await fetch("https://fakestoreapi.com/products");
+      const data = await response.json();
+      setProducts(data);
     } catch (error) {
-      // console.error('Error posting swipe data:', error);
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const fetchMoreUsers = useCallback((page: number) => {
-    setIsLoading(true);
-    setIsFetchingMore(true);
-    (async () => {
-      const [
-        { data: profiles, error: errorProfile },
-        { data: locations, error: errorLocation }
-      ] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select("*"),
-        supabase
-          .from('locations')
-          .select("*")
-      ])
-
-      if (errorProfile || errorLocation) {
-        setIsLoading(false);
-        setIsFetchingMore(false);
-        return;
-      }
-
-      // console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
-
-      // Merge profiles and locations
-      const mergedProfiles = profiles?.map(profile => {
-        const location = locations?.find(l => l.user_id === profile.user_id);
-        return { ...profile, ...location };
-      }).filter(item => item.user_id !== session?.user.id).filter((item: any) => {
-
-        return !value?.filter?.ageRange || !item.age ? true :
-          item.age >= value.filter.ageRange[0] &&
-          item.age <= value.filter.ageRange[1]
-      })
-        .filter((item: any) =>
-          !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
-            item.gender === value?.filter?.genderFind
-        );
-
-      setCharacters(prevCharacters => [...(mergedProfiles ?? []), ...prevCharacters,]);
-      setIsLoading(false);
-      setIsFetchingMore(false);
-    })()
-    // fetch(NEXTJS_SERVER + '/api/users/find')
-    //   .then((res) => {
-    //     if (!res.ok) throw new Error("Network response was not ok");
-    //     return res.json();
-    //   })
-    //   .then((payload) => {
-    //     // Initialize or append data based on whether it's the first fetch
-    //     setCharacters(prevCharacters => {
-    //       if (prevCharacters.length === 0) {
-    //         setCurrentIndex(payload.data.length - 1);
-    //         return payload.data;
-    //       }
-    //       const result = [...prevCharacters, ...payload.data]
-    //       setCurrentIndex(result.length - 1);
-    //       return result;
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //     setIsFetchingMore(false);
-    //   });
-  }, [value]);
 
   useEffect(() => {
-    if (!isFetchingMore) return;
-    fetchMoreUsers(page);
-  }, [fetchMoreUsers, isFetchingMore]);
+    fetchProducts();
+  }, []);
 
-  useEffect(() => {
-    if (currentIndex < 0) {
-      setIsFetchingMore(true);
-      setPage(prev => prev + 1);
-    }
-  }, [currentIndex]);
-
-  const childRefs = useMemo(
-    () =>
-      Array(characters.length)
-        .fill(0)
-        .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()),
-    [characters.length]
-  );
-
-  const updateCurrentIndex = (val: number) => {
-    setCurrentIndex(val);
-    currentIndexRef.current = val;
-  };
-
-  // const canGoBack = currentIndex < characters.length - 1;
-  const canSwipe = currentIndex >= 0;
-
-  const swiped = (direction: string, nameToDelete: string, index: number) => {
-    setLastDirection(direction);
-    updateCurrentIndex(index - 1);
-
-    // Store the swipe data
-    const swipedUser = characters[index];
-    if (swipedUser) {
-      swipedUsersRef.current.push({
-        userId: swipedUser.user_id,
-        direction: direction
-      });
-    }
-
-    // If this was the last card, post the swipe data
-    if (index === 0 && swipedUsersRef.current.length > 0) {
-      postSwipeData();
-    }
-  };
-
-  const outOfFrame = (name: string, idx: number) => {
-    if (currentIndexRef.current >= idx) {
-      childRefs[idx].current?.restoreCard();
-    }
-  };
-
-  const swipe = async (dir: "left" | "right") => {
-    if (canSwipe && currentIndex < characters.length) {
-      childRefs[currentIndex].current?.swipe(dir);
-    }
-  };
-
-  // const goBack = async () => {
-  //   if (!canGoBack) return;
-  //   const newIndex = currentIndex + 1;
-  //   updateCurrentIndex(newIndex);
-  //   await childRefs[newIndex].current?.restoreCard();
-  // };
-
-  const data = useMemo(() => characters
-    .filter(item => item.user_id !== session?.user.id).filter((item: any) => {
-
-      return !value?.filter?.ageRange || !item.age ? true :
-        item.age >= value.filter.ageRange[0] &&
-        item.age <= value.filter.ageRange[1]
-    })
-    .filter((item: any) =>
-      !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
-        item.gender === value?.filter?.genderFind
-    ), [characters, value]);
-
-  return (
-    <View className="relative flex-1 w-full h-full">
-      {isLoading || isFetchingMore || characters.length === 0 ? (
-        <View className="w-full h-full flex justify-center items-center">
-          <Loading1 />
-          <View className="absolute items-center justify-center">
-            <Image
-              source={{
-                uri: profile?.imgs?.[0] ??
-                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp"
-              }}
-              className="rounded-full size-28"
-            />
-          </View>
-        </View>
-      ) : (
-        <>
-          <View className="flex-1 w-full h-full">
-              {data.map((character, index) => (
-                <TinderCard
-                  key={character.name + index}
-                  ref={childRefs[index]}
-                  onSwipe={(dir) => swiped(dir, character.name, index)}
-                  onCardLeftScreen={() => outOfFrame(character.name, index)}
-                >
-                  <View className="absolute bg-white w-full shadow-lg">
-                    <DatesCard item={character} />
-                  </View>
-                </TinderCard>
-              ))}
-          </View>
-
-          <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
-            <Button
-              className="flex-1"
-              variant="secondary"
-              onPress={() => swipe("left")}
-            >
-              <XMarkIcon size={32} color={"#fe183c"} />
-            </Button>
-            <Button
-              className="flex-1"
-              variant="red"
-              onPress={() => swipe("right")}
-            >
-              <HeartIcon size={32} color={"#fff"} />
-            </Button>
-          </View>
-        </>
-      )}
+  const renderProduct = (item) => (
+    <View style={styles.productContainer}>
+      <ProductCard title={item.title} price={item.price} image={item.image} />
     </View>
   );
-};
 
-export default Tinder;
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <Carousel
+        autoplay
+        autoplayInterval={5000}
+        loop
+        initialPage={2}
+        pageWidth={width}
+        className="h-96"
+        allowAccessibleLayout
+      >
+        {decorate.map((item, index) => (
+          <Image
+            key={index}
+            source={item.img}
+            style={{ height: "100%", width: "100%", resizeMode: "cover" }}
+          />
+        ))}
+      </Carousel>
+
+      <Text className="text-red-500 text-3xl font-bold py-2 px-2">
+        Hot Deals🔥 ⏱️
+      </Text>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <View className="flex flex-row justify-between flex-wrap gap-8 px-2">
+          {products.slice(0, 6).map((product, index) => (
+            <ProductCard key={index} data={product} width={"w-[47%] min-[999px]:w-[20%]"} />
+          ))}
+        </View>
+      )}
+
+      <Image
+        source={require("~/assets/images/decorate/8.png")}
+        className="w-full h-96 object-contain mt-8"
+      />
+
+      <Text className="text-red-500 text-3xl font-bold py-2 px-2 mt-8">
+        New Arrivals ⏱️
+      </Text>
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          color="#0000ff"
+          style={{ marginTop: 20 }}
+        />
+      ) : (
+        <View className="flex flex-row flex-wrap gap-8 px-2 justify-between">
+          {products.slice(6, 12).map((product, index) => (
+            <ProductCard key={index} data={product} width={"w-[47%] min-[999px]:w-[20%]"} />
+          ))}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 16,
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    padding: 8,
+  },
+});

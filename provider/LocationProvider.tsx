@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/supabase/supabase";
 import { useAuth } from "./AuthProvider";
 import { NEXTJS_SERVER } from "@/lib/constants";
 

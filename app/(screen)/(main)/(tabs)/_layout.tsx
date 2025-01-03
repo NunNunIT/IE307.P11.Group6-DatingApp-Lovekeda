@@ -12,16 +12,12 @@ import {
   Bell,
   Settings,
   Settings2,
+  Component,
+  ShoppingCart,
 } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {
-  const { permissionStatus } = useLocation();
-  if (permissionStatus === "denied") {
-    return <Redirect href="/(screen)/(main)/permissionError" />;
-  }
-
   return (
     <Tabs
       screenOptions={{
@@ -29,7 +25,7 @@ export default function TabLayout() {
         headerShown: true,
         tabBarShowLabel: false,
         tabBarButton: HapticTab,
-        tabBarActiveTintColor: "#fe183c",
+        tabBarActiveTintColor: "#14b8a6",
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
@@ -42,7 +38,7 @@ export default function TabLayout() {
           <Image
             source={require("~/assets/images/logo2.png")}
             resizeMode="cover"
-            className="relative w-60 h-14 ml-2"
+            className="relative w-[120px] h-14 ml-2"
           />
         ),
         headerTitle: "",
@@ -52,36 +48,18 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color }) => <Home color={color} />,
-          headerRight: () => (
-            <View className="flex flex-row gap-3 mr-2">
-              <Button
-                size="icon"
-                variant="ghost"
-                onPress={() => router.push("/filter")}
-              >
-                <Settings2 className="size-6 text-black dark:text-white" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                onPress={() => router.push("/noti")}
-              >
-                <Bell className="size-6 text-black dark:text-white" />
-              </Button>
-            </View>
-          ),
         }}
       />
       <Tabs.Screen
-        name="matches"
+        name="categories"
         options={{
-          tabBarIcon: ({ color }) => <Heart color={color} />,
+          tabBarIcon: ({ color }) => <Component color={color} />,
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="cart"
         options={{
-          tabBarIcon: ({ color }) => <MessageCircle color={color} />,
+          tabBarIcon: ({ color }) => <ShoppingCart color={color} />,
         }}
       />
       <Tabs.Screen
@@ -90,13 +68,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <User color={color} />,
           headerRight: () => (
             <View className="flex flex-row gap-3 mr-2">
-              <Button
-                size="icon"
-                variant="ghost"
-                onPress={() => router.push("/noti")}
-              >
-                <Bell className="size-6 text-black dark:text-white" />
-              </Button>
               <Button
                 size="icon"
                 variant="ghost"

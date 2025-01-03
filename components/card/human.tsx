@@ -75,17 +75,6 @@ export default function DatesCard({ item }: { item: any }) {
           </Button>
         </View>
 
-        {/* Location */}
-        {/* <View className="flex-row justify-center items-center ">
-          <Text className="text-lg text-white font-regular">
-            {item?.city}
-            {", "}
-          </Text>
-          <Text className="text-lg text-white font-regular mr-2">
-            {item?.country}
-          </Text>
-        </View> */}
-
         <Text className="text-white text-xl mb-2">
           <Text className="text-xl">❝ </Text>
           {item?.bio}

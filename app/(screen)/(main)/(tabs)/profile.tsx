@@ -1,17 +1,56 @@
+import { useState, useCallback, useEffect } from "react";
 import { View, Image, ScrollView } from "react-native";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/provider/AuthProvider";
-import { HOBBY_OPTIONS } from "../editProfile";
+import { supabase } from "@/supabase/supabase"; // Import supabase
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect để reload dữ liệu
 
 export default function ProfileScreen() {
-  const { profile } = useAuth();
+  const { session } = useAuth();
+  const [profile, setProfile] = useState<ProfileFormData | null>(null);
+
+  const getProfile = useCallback(async () => {
+    if (!session) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        throw error;
+      }
+
+      setProfile(
+        data || {
+          first_name: "",
+          last_name: "",
+          username: "",
+          email: "",
+          phone: "",
+          house_number: "",
+          city: "",
+          imgs: [],
+        }
+      );
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setProfile(null);
+    }
+  }, [session]);
+
+  // Dùng useFocusEffect để reload dữ liệu mỗi khi quay lại trang ProfileScreen
+  useFocusEffect(
+    useCallback(() => {
+      getProfile();
+    }, [getProfile])
+  );
 
   return (
     <ScrollView
@@ -24,7 +63,11 @@ export default function ProfileScreen() {
       {/* Image */}
       <View className="relative m-3">
         <Image
-          source={{ uri: profile?.imgs?.[0] }}
+          source={{
+            uri:
+              profile?.imgs?.[0] ||
+              "https://img.freepik.com/premium-photo/close-up-smiling-confident-beautiful-brunette-girl-glasses-looking-happy_1258-19160.jpg",
+          }}
           className="rounded-full size-40"
         />
         <Button
@@ -39,19 +82,20 @@ export default function ProfileScreen() {
 
       <View className="w-full justify-center items-center flex-row">
         <Text className="text-black dark:text-white text-center font-bold text-xl">
-          {profile?.name}
-          {", "}
-        </Text>
-        <Text className="text-black dark:text-white text-center font-bold text-xl ">
-          {profile?.age}
+          {profile?.first_name} {profile?.last_name}
         </Text>
       </View>
 
       <View className="w-full justify-start items-start px-6 space-y-4 mt-6">
-        {/* User Bio */}
-        <Text className="text-black dark:text-white text-left font-medium text-sm">
-          {profile?.bio ? profile.bio : "Chưa có bio"}
-        </Text>
+        {/* User info */}
+        <View className="flex flex-col mt-6">
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
+            User Name
+          </Text>
+          <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
+            {profile?.username ?? "Chưa có tên"}
+          </Text>
+        </View>
 
         {/* User location */}
         <View className="flex flex-col mt-6">
@@ -59,46 +103,29 @@ export default function ProfileScreen() {
             Nơi sống
           </Text>
           <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
-            {profile?.display_address ?? "Phường Đông Hòa, Thành phố Dĩ An, Tỉnh Bình Dương, Việt Nam"}
+            {profile?.house_number}, {profile?.city ?? "Chưa có địa chỉ"}
           </Text>
         </View>
 
-        {/* User hobbies */}
+        {/* User contact info */}
         <View className="flex flex-col mt-6">
           <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
-            Sở thích
+            Liên hệ
           </Text>
-          <View className="flex-row mt-3 flex-wrap gap-2">
-            {profile?.hobbies?.map((hobby, index) => (
-              <View key={index} className="bg-pri-color rounded-3xl p-1 px-3">
-                {/* <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text> */}
-                <Text className="text-white dark:text-white">
-                  {HOBBY_OPTIONS.find((item) => item.value === hobby)?.label}
-                </Text>
-              </View>
-            ))}
-          </View>
+          <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
+            {profile?.phone ?? "Chưa có số điện thoại"}
+          </Text>
+        </View>
+
+        <View className="flex flex-col mt-6">
+          <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
+            Email
+          </Text>
+          <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
+            {profile?.email ?? "Chưa có email"}
+          </Text>
         </View>
       </View>
-
-      {/* <MultiChoicePicker
-        values={values}
-        onChange={setValues} // Ensure this matches the correct type
-        title="Chọn nhiều"
-        placeholder="Chọn nhiều giá trị"
-        options={options}
-        showSearch
-        // useDialogDefault
-      />
-
-      <SingleChoicePicker
-        value={value}
-        onChange={setValue} // Ensure this matches the correct type
-        title="Chọn một"
-        placeholder="Chọn một giá trị"
-        options={options}
-        showSearch
-      /> */}
     </ScrollView>
   );
 }

@@ -4,7 +4,7 @@ import { DATE_DATA } from "@/constant";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
 import { useAuth } from "@/provider/AuthProvider";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/supabase/supabase";
 
 export default function Matches() {
   const { session } = useAuth();

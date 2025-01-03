@@ -1,4 +1,3 @@
-import { LOCATION_API_URL_UNFORMATTED } from '@/constant';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -6,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
+export const LOCATION_API_URL_UNFORMATTED: string = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={}&lon={}`;
 
 export async function getRelativeLocation(
   coordinates: [number, number],

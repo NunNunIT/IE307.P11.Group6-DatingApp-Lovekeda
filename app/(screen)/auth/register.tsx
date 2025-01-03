@@ -16,7 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
 import { Lock, Mail, User } from '@/lib/icons';
 import { DEFAULT_REGISTER_FORM_VALUES, registerFormSchema } from '@/utils/form/register';
-import { supabase } from '@/utils/supabase';
+import { supabase } from '@/supabase/supabase';
 import { SafeAreaView } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import { cn } from '@/lib/utils';

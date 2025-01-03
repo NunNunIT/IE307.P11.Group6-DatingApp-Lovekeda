@@ -15,7 +15,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Mail, Lock } from "~/lib/icons";
-import { supabase } from "~/utils/supabase";
+import { supabase } from "@/supabase/supabase";
 
 // Định nghĩa schema Zod cho form
 const loginSchema = z.object({

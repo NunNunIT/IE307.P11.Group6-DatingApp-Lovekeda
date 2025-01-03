@@ -10,47 +10,18 @@ import { router } from "expo-router";
 //   GoogleSignin,
 //   statusCodes,
 // } from '@react-native-google-signin/google-signin';
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/supabase/supabase";
 
 const { width, height } = Dimensions.get("screen");
 
 const decorate = [
   { img: require("~/assets/images/decorate/1.png") },
-  { img: require("~/assets/images/decorate/9.png") },
+  { img: require("~/assets/images/decorate/2.png") },
   { img: require("~/assets/images/decorate/3.png") },
   { img: require("~/assets/images/decorate/4.png") },
+  { img: require("~/assets/images/decorate/5.png") },
   { img: require("~/assets/images/decorate/6.png") },
-  { img: require("~/assets/images/decorate/7.png") },
 ];
-
-const handleLoginGoogle = async () => {
-  try {
-    // await GoogleSignin.hasPlayServices();
-    // const userInfo = await GoogleSignin.signIn();
-    // if (!userInfo?.data?.idToken) return;
-    // const { data: dataLogin, error: errorLogin } = await supabase.auth.signInWithIdToken({
-    //   provider: 'google',
-    //   token: userInfo.data.idToken,
-    // });
-
-    // if (errorLogin) throw errorLogin;
-  } catch (error: any) {
-    // if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-    //   // user cancelled the login flow
-    // } else if (error.code === statusCodes.IN_PROGRESS) {
-    //   // operation (e.g. sign in) is in progress already
-    // } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-    //   // play services not available or outdated
-    // } else {
-    //   console.error('Sign-in error:', error);
-    // }
-  }
-};
-
-// GoogleSignin.configure({
-//   scopes: ['https://www.googleapis.com/auth/drive.readonly'],
-//   webClientId: process.env.EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID,
-// })
 
 export default function Login() {
   return (
@@ -100,37 +71,12 @@ export default function Login() {
               fontSize: hp(3.6),
               lineHeight: hp(4.6),
             }}
-            className="text-white font-bold text-center text-nowrap"
+            className="text-white font-bold text-center text-nowrap mb-8"
           >
-            Tìm bạn bè, người yêu
-          </Text>
-          <Text
-            style={{
-              fontSize: hp(3.6),
-              lineHeight: hp(4.6),
-            }}
-            className="text-white font-bold text-center mb-8"
-          >
-            thật dễ dàng
+            Mua sắm thả ga
           </Text>
 
           <View className="flex flex-col gap-4">
-            <Button
-              variant="none"
-              className="w-full rounded-full bg-white dark:bg-white active:bg-black"
-              onPress={handleLoginGoogle}
-            >
-              <View className="flex flex-row gap-3 justify-center items-center">
-                <Image
-                  source={require("~/assets/images/google.png")}
-                  className="aspect-square size-8 overflow-hidden rounded-full"
-                />
-                <Text className="text-sm text-zinc-900 group-active:text-white">
-                  Đăng nhập bằng Google
-                </Text>
-              </View>
-            </Button>
-
             <Button
               variant="none"
               className="w-full rounded-full items-center bg-zinc-600/90 active:bg-zinc-800"
