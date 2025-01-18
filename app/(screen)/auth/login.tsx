@@ -61,27 +61,8 @@ export default function LoginScreen() {
         return;
       }
 
-      console.log("🚀 ~ onSubmit ~ error:", error.message);
+      console.error("🚀 ~ onSubmit ~ error:", error.message);
     }
-    // const { email, password } = data;
-    // const { error } = await supabase.auth.signInWithPassword({
-    //   email,
-    //   password,
-    // });
-
-    // if (error) {
-    //   if (error.message.includes('Invalid login credentials')) {
-    //     setError('email', { type: 'manual', message: 'Invalid email or password' });
-    //     setError('password', { type: 'manual', message: 'Invalid email or password' });
-    //     return;
-    //   }
-
-    //   Alert.alert("Login Failed", error.message, [
-    //     { text: "OK", onPress: () => console.log("OK Pressed") },
-    //   ]);
-    // } else {
-    //   <Redirect href="/(screen)/(main)/(tabs)" />;
-    // }
   };
 
   return (

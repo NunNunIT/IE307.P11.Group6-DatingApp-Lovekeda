@@ -1,7 +1,12 @@
 import { auth } from "@/utils/firebase";
 import { Session } from "@supabase/supabase-js";
 import { SplashScreen } from "expo-router";
-import { signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  User,
+  UserCredential,
+} from "firebase/auth";
 import {
   useState,
   useEffect,
@@ -41,6 +46,10 @@ type AuthProps = {
     email: string;
     password: string;
   }) => Promise<UserCredential>;
+  registerWithPassword: (data: {
+    email: string;
+    password: string;
+  }) => Promise<UserCredential>
 };
 
 export const AuthContext = createContext<AuthProps | undefined>(undefined);
@@ -134,6 +143,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
+  const registerWithPassword = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
   // Log out the user
   const signOut = async () => {
     await Promise.all([
@@ -153,6 +172,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     profile,
     getProfile,
     loginWithPassword,
+    registerWithPassword
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

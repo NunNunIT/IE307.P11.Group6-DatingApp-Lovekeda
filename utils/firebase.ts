@@ -8,7 +8,6 @@ import { getFirestore } from "firebase/firestore";
 import { FIREBASE_CONFIG } from "@/constants/firebase";
 
 const app = getApps()?.[0] ?? initializeApp(FIREBASE_CONFIG);
-
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
