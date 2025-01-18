@@ -6,8 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-
-
 export async function getRelativeLocation(
   coordinates: [number, number],
   maxRetries = 3,

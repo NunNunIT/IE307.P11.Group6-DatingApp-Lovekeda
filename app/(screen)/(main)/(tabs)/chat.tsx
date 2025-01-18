@@ -210,7 +210,7 @@ import {
   orderBy,
   onSnapshot,
 } from "firebase/firestore";
-import { database } from "@/config/firebase";
+import { database } from "@/utils/firebase";
 import colors from "@/config/colors";
 import { DATE_DATA } from "@/constant";
 import { supabase } from "@/utils/supabase";

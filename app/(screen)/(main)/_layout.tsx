@@ -5,10 +5,8 @@ import { LocationProvider } from "@/provider/LocationProvider";
 import Spinner from "react-native-loading-spinner-overlay";
 
 export default function NotesLayoutScreen() {
-  const { isFetching, session, profile } = useAuth();
-  if (!session) {
-    return <Redirect href="/(screen)/auth" />;
-  }
+  const { isFetching, user, profile } = useAuth();
+  if (!user) return <Redirect href="/(screen)/auth" />;
 
   if (!isFetching && !profile?.is_complete_profile) {
     return <Redirect href="/(screen)/(set-up-profile)" />;
@@ -22,7 +20,7 @@ export default function NotesLayoutScreen() {
           name="(tabs)"
           options={{
             headerShown: false,
-            title: ""
+            title: "",
           }}
         />
         <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />

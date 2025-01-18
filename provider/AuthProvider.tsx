@@ -1,32 +1,35 @@
-// 21522436 - Nguyễn Thị Hồng Nhung
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { Session } from '@supabase/supabase-js';
-import { SplashScreen } from 'expo-router';
+import { auth } from "@/utils/firebase";
+import { Session } from "@supabase/supabase-js";
+import { SplashScreen } from "expo-router";
+import { signInWithEmailAndPassword, User, UserCredential } from "firebase/auth";
 import {
-  useState, useEffect,
-  createContext, PropsWithChildren,
+  useState,
+  useEffect,
+  createContext,
+  PropsWithChildren,
   useCallback,
-  useContext
-} from 'react';
+  useContext,
+} from "react";
 
-import { supabase } from '~/utils/supabase';
+import { supabase } from "~/utils/supabase";
 
 type AuthProps = {
+  user: User | null;
   session: Session | null;
   profile: {
-    age: number | null
-    bio: string | null
-    created_at: string
-    gender: string | null
-    genderFind: string | null
-    hobbies: string[] | null
-    id: number
-    imgs: string[] | null
-    is_complete_profile: boolean | null
-    name: string | null
-    purposeValue: string | null
-    user_id: string | null
-    display_address: string | null
+    age: number | null;
+    bio: string | null;
+    created_at: string;
+    gender: string | null;
+    genderFind: string | null;
+    hobbies: string[] | null;
+    id: number;
+    imgs: string[] | null;
+    is_complete_profile: boolean | null;
+    name: string | null;
+    purposeValue: string | null;
+    user_id: string | null;
+    display_address: string | null;
   } | null;
   getProfile?: any;
   setProfile?: any;
@@ -34,9 +37,13 @@ type AuthProps = {
   initialized?: boolean;
   signOut?: () => Promise<void>;
   setSession?: any;
+  loginWithPassword: (data: {
+    email: string;
+    password: string;
+  }) => Promise<UserCredential>;
 };
 
-export const AuthContext = createContext<Partial<AuthProps>>({});
+export const AuthContext = createContext<AuthProps | undefined>(undefined);
 
 export function useAuth() {
   const context = useContext(AuthContext);
@@ -45,22 +52,23 @@ export function useAuth() {
 }
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
+  const [user, setUser] = useState<User | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<{
-    age: number | null
-    bio: string | null
-    created_at: string
-    gender: string | null
-    genderFind: string | null
-    hobbies: string[] | null
-    id: number
-    imgs: string[] | null
-    is_complete_profile: boolean | null
-    name: string | null
-    purposeValue: string | null
-    user_id: string | null
-    display_address: string | null
+    age: number | null;
+    bio: string | null;
+    created_at: string;
+    gender: string | null;
+    genderFind: string | null;
+    hobbies: string[] | null;
+    id: number;
+    imgs: string[] | null;
+    is_complete_profile: boolean | null;
+    name: string | null;
+    purposeValue: string | null;
+    user_id: string | null;
+    display_address: string | null;
   } | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
@@ -71,21 +79,21 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       if (!user) return;
       const [
         { data: profile, error: profileError },
-        { data: location, error: locationError }
+        { data: location, error: locationError },
       ] = await Promise.all([
+        supabase.from("profiles").select().eq("user_id", user.id),
         supabase
-          .from('profiles')
-          .select()
-          .eq('user_id', user.id),
-        supabase
-          .from('locations')
+          .from("locations")
           .select("display_address")
-          .eq('user_id', user.id)
+          .eq("user_id", user.id),
       ]);
 
       if (profileError) throw profileError;
       if (locationError) throw locationError;
-      setProfile({ ...profile?.[0], display_address: location?.[0]?.display_address });
+      setProfile({
+        ...profile?.[0],
+        display_address: location?.[0]?.display_address,
+      });
     } finally {
       setIsFetching(false);
     }
@@ -107,6 +115,25 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
+  useEffect(() => {
+    const subscription = auth.onAuthStateChanged(async (user) => {
+      setUser(user);
+      setInitialized(true);
+    });
+
+    return subscription;
+  }, []);
+
+  const loginWithPassword = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
   // Log out the user
   const signOut = async () => {
     await Promise.all([
@@ -116,6 +143,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   };
 
   const value = {
+    user,
     session,
     initialized,
     isFetching,
@@ -124,6 +152,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     setProfile,
     profile,
     getProfile,
+    loginWithPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

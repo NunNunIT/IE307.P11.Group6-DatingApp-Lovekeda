@@ -2,6 +2,7 @@
 
 import { PasswordInput } from "@/components/customize-ui/password-input";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Redirect, useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
@@ -27,6 +28,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { loginWithPassword } = useAuth();
 
   const {
     control,
@@ -43,25 +45,43 @@ export default function LoginScreen() {
 
   // Hàm submit
   const onSubmit = async (data: LoginFormValues) => {
-    const { email, password } = data;
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        setError('email', { type: 'manual', message: 'Invalid email or password' });
-        setError('password', { type: 'manual', message: 'Invalid email or password' });
+    try {
+      const result = await loginWithPassword(data);
+      console.log("🚀 ~ onSubmit ~ result:", result);
+    } catch (error: any) {
+      if (error.message.includes("auth/invalid-credential")) {
+        setError("email", {
+          type: "manual",
+          message: "Invalid email or password",
+        });
+        setError("password", {
+          type: "manual",
+          message: "Invalid email or password",
+        });
         return;
       }
 
-      Alert.alert("Login Failed", error.message, [
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-      ]);
-    } else {
-      <Redirect href="/(screen)/(main)/(tabs)" />;
+      console.log("🚀 ~ onSubmit ~ error:", error.message);
     }
+    // const { email, password } = data;
+    // const { error } = await supabase.auth.signInWithPassword({
+    //   email,
+    //   password,
+    // });
+
+    // if (error) {
+    //   if (error.message.includes('Invalid login credentials')) {
+    //     setError('email', { type: 'manual', message: 'Invalid email or password' });
+    //     setError('password', { type: 'manual', message: 'Invalid email or password' });
+    //     return;
+    //   }
+
+    //   Alert.alert("Login Failed", error.message, [
+    //     { text: "OK", onPress: () => console.log("OK Pressed") },
+    //   ]);
+    // } else {
+    //   <Redirect href="/(screen)/(main)/(tabs)" />;
+    // }
   };
 
   return (
@@ -131,7 +151,8 @@ export default function LoginScreen() {
         <Button
           variant="ghost"
           className="flex flex-row w-full"
-          onPress={() => router.replace('/(screen)/auth/register')}>
+          onPress={() => router.replace("/(screen)/auth/register")}
+        >
           <Text>Chưa có tài khoản rồi? </Text>
           <Text className="font-bold underline">Đăng ký ngay</Text>
         </Button>

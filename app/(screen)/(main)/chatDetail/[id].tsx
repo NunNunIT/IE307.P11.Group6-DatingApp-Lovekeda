@@ -19,7 +19,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { auth, database } from "@/config/firebase";
+import { auth, database } from "@/utils/firebase";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import colors from "@/config/colors";
