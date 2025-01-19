@@ -212,7 +212,7 @@ import {
 } from "firebase/firestore";
 import { database } from "@/utils/firebase";
 import colors from "@/config/colors";
-import { DATE_DATA } from "@/constant";
+import { DATE_DATA } from "@/constants/data";
 import { supabase } from "@/utils/supabase";
 
 const ChatItem: React.FC<any> = ({ item, other, onPress }) => {

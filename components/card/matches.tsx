@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import { DATE_DATA } from "@/constant";
+import { DATE_DATA } from "@/constants/data";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
 import { useAuth } from "@/provider/AuthProvider";

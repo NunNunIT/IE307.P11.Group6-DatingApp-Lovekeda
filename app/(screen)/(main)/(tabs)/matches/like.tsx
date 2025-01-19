@@ -4,7 +4,7 @@ import HumanCard2 from "@/components/card/human2"; // Đảm bảo import đúng
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { GridView } from "react-native-ui-lib";
-import { LIKE_DATA } from "@/constant";
+import { LIKE_DATA } from "@/constants/data";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { useAuth } from "@/provider/AuthProvider";

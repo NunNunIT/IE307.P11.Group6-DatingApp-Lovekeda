@@ -1,7 +1,7 @@
 import HumanCard2 from "@/components/card/human2";
 import { Pressable, ScrollView, View } from "react-native";
 import { router } from "expo-router";
-import { DATE_DATA } from "@/constant";
+import { DATE_DATA } from "@/constants/data";
 import { useAuth } from "@/provider/AuthProvider";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";

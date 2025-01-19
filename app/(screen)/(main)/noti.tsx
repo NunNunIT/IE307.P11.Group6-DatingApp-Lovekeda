@@ -8,9 +8,9 @@ import {
   View,
 } from "react-native";
 import { router } from "expo-router";
-import { DATE_DATA } from "@/constant";
+import { DATE_DATA } from "@/constants/data";
 
-const mockData = [
+const MOCK_DATA = [
   {
     _id: "1",
     img: "https://via.placeholder.com/100",
@@ -69,12 +69,12 @@ const mockData = [
 
 export default function NotiScreen() {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<typeof MOCK_DATA>([]);
 
   useEffect(() => {
     // Giả lập quá trình tải dữ liệu
     setTimeout(() => {
-      setData(mockData);
+      setData(MOCK_DATA);
       setIsLoading(false);
     }, 2000); // Thời gian tải giả lập
   }, []);

@@ -1,4 +1,4 @@
-import { LOCATION_API_URL_UNFORMATTED } from '@/constant';
+import { LOCATION_API_URL_UNFORMATTED } from '@/constants/data';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
