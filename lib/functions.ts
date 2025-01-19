@@ -1,5 +1,5 @@
 import { BACKEND_API_URL, SECRET_KEY } from "@/constants/common";
-import { fetch } from "expo/fetch";
+import { fetch, FetchRequestInit } from "expo/fetch";
 
 type TPosition = {
   lat: number;
@@ -34,11 +34,11 @@ export function haversineDistance(
   return R * c;
 }
 
-export const customizeFetch: typeof fetch = async (url, init) => {
+export const customizeFetch = async (url: string, init?: FetchRequestInit): Promise<any> => {
   const res = await fetch(`${BACKEND_API_URL}${url}`, {
     ...init,
     headers: {
-      ...init?.headers,
+      ...(init?.headers ?? {}),
       "Content-Type": "application/json",
       "secret_key": SECRET_KEY,
     },

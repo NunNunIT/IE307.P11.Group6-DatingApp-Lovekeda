@@ -11,13 +11,12 @@ import { StateButton } from "@/components/customize-ui/state-button";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
-import { Lock, Mail, User } from "@/lib/icons";
+import { Lock, Mail } from "@/lib/icons";
 import {
   DEFAULT_REGISTER_FORM_VALUES,
   registerFormSchema,
 } from "@/utils/form/register";
 import { SafeAreaView } from "react-native";
-import Spinner from "react-native-loading-spinner-overlay";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/provider/AuthProvider";
 
@@ -47,7 +46,6 @@ export default function RegisterScreen() {
     <SafeAreaView
       className={cn(Platform.OS === "android" ? "pt-16" : "pt-0", "flex-1")}
     >
-      <Spinner visible={form.formState.isSubmitting} />
       <View className="px-6">
         <Form {...form}>
           <FormController

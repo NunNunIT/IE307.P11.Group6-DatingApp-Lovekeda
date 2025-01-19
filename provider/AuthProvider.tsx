@@ -82,13 +82,21 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   } | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
-  const getProfile = useCallback(async () => {
-    setIsFetching(true);
-    try {
-    } finally {
-      setIsFetching(false);
-    }
-  }, [setIsFetching, session, setProfile]);
+  const getProfile = useCallback(
+    async (uid: string) => {
+      setIsFetching(true);
+      try {
+        const data = await customizeFetch(`/users/${uid}`);
+        console.log("🚀 ~ getProfile ~ data:", data);
+        setProfile(data);
+      } catch (error: any) {
+        console.error("🚀 ~ getProfile ~ error", error?.message);
+      } finally {
+        setIsFetching(false);
+      }
+    },
+    [setIsFetching, user, setProfile]
+  );
 
   useEffect(() => {
     const subscription = auth.onAuthStateChanged(async (user) => {
@@ -107,7 +115,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     email: string;
     password: string;
   }) => {
-    return signInWithEmailAndPassword(auth, email, password);
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    const uid = result.user.uid;
+    await getProfile(uid);
+    return result;
   };
 
   const registerWithPassword = async ({
@@ -125,13 +136,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return result;
   };
 
-  const signOut = async () => {
-    await Promise.all([
-      auth.signOut(),
-      // supabase.auth.signOut(),
-      // GoogleSignin.signOut()
-    ]);
-  };
+  const signOut = async () => auth.signOut();
 
   const value = {
     user,
