@@ -16,7 +16,7 @@ import { useAuth } from "@/provider/AuthProvider";
 import { useDump } from "@/provider/DumpProvider";
 import { supabase } from "@/utils/supabase";
 
-const Tinder = () => {
+export default function Tinder() {
   const [characters, setCharacters] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
@@ -265,5 +265,3 @@ const Tinder = () => {
     </View>
   );
 };
-
-export default Tinder;

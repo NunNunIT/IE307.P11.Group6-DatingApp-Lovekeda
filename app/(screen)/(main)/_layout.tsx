@@ -14,14 +14,10 @@ export default function NotesLayoutScreen() {
 
   return (
     <LocationProvider>
-      <Spinner visible={isFetching} />
       <Stack>
         <Stack.Screen
           name="(tabs)"
-          options={{
-            headerShown: false,
-            title: "",
-          }}
+          options={{ headerShown: false, title: "" }}
         />
         <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />
         <Stack.Screen name="noti" options={{ title: "Thông báo" }} />
@@ -33,7 +29,7 @@ export default function NotesLayoutScreen() {
         />
         <Stack.Screen name="filter" options={{ title: "" }} />
         <Stack.Screen name="editProfile" options={{ title: "Sửa hồ sơ" }} />
-        <Stack.Screen name="permissionError" options={{ headerShown: false }} />
+        <Stack.Screen name="permission-error" options={{ headerShown: false }} />
       </Stack>
     </LocationProvider>
   );

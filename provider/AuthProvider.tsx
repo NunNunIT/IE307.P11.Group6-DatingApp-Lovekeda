@@ -49,7 +49,7 @@ type AuthProps = {
   registerWithPassword: (data: {
     email: string;
     password: string;
-  }) => Promise<UserCredential>
+  }) => Promise<UserCredential>;
 };
 
 export const AuthContext = createContext<AuthProps | undefined>(undefined);
@@ -108,21 +108,21 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   }, [setIsFetching, session, setProfile]);
 
-  useEffect(() => {
-    // Listen for changes to authentication state
-    const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setInitialized(false);
-      setSession(session);
-      if (session) {
-        await getProfile();
-      }
-      setInitialized(true);
-      SplashScreen.hideAsync();
-    });
-    return () => {
-      data.subscription.unsubscribe();
-    };
-  }, []);
+  // useEffect(() => {
+  //   // Listen for changes to authentication state
+  //   const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+  //     setInitialized(false);
+  //     setSession(session);
+  //     if (session) {
+  //       await getProfile();
+  //     }
+  //     setInitialized(true);
+  //     SplashScreen.hideAsync();
+  //   });
+  //   return () => {
+  //     data.subscription.unsubscribe();
+  //   };
+  // }, []);
 
   useEffect(() => {
     const subscription = auth.onAuthStateChanged(async (user) => {
@@ -156,7 +156,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   // Log out the user
   const signOut = async () => {
     await Promise.all([
-      supabase.auth.signOut(),
+      auth.signOut(),
+      // supabase.auth.signOut(),
       // GoogleSignin.signOut()
     ]);
   };
@@ -172,7 +173,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     profile,
     getProfile,
     loginWithPassword,
-    registerWithPassword
+    registerWithPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

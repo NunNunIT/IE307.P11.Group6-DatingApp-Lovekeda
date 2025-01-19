@@ -18,9 +18,8 @@ import { useLocation } from "@/provider/LocationProvider";
 
 export default function TabLayout() {
   const { permissionStatus } = useLocation();
-  if (permissionStatus === "denied") {
-    return <Redirect href="/(screen)/(main)/permissionError" />;
-  }
+  if (permissionStatus === "denied")
+    return <Redirect href="/(screen)/(main)/permission-error" />;
 
   return (
     <Tabs
