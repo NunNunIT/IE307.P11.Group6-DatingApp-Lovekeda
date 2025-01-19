@@ -1,12 +1,10 @@
-// 21522436 - Nguyễn Thị Hồng Nhung
-
 import { PasswordInput } from "@/components/customize-ui/password-input";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/provider/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { z } from "zod";
@@ -16,9 +14,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Mail, Lock } from "~/lib/icons";
-import { supabase } from "~/utils/supabase";
 
-// Định nghĩa schema Zod cho form
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email format"),
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -43,11 +39,9 @@ export default function LoginScreen() {
     },
   });
 
-  // Hàm submit
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const result = await loginWithPassword(data);
-      console.log("🚀 ~ onSubmit ~ result:", result);
+      await loginWithPassword(data);
     } catch (error: any) {
       if (error.message.includes("auth/invalid-credential")) {
         setError("email", {
@@ -60,8 +54,6 @@ export default function LoginScreen() {
         });
         return;
       }
-
-      console.error("🚀 ~ onSubmit ~ error:", error.message);
     }
   };
 

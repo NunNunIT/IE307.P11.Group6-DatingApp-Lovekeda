@@ -1,8 +1,7 @@
-import { BACKEND_API_URL } from "@/constants/common";
 import { customizeFetch } from "@/lib/functions";
 import { auth } from "@/utils/firebase";
 import { Session } from "@supabase/supabase-js";
-import { fetch } from "expo/fetch";
+import { SplashScreen } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -86,50 +85,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const getProfile = useCallback(async () => {
     setIsFetching(true);
     try {
-      const { user } = session ?? {};
-      if (!user) return;
-      const [
-        { data: profile, error: profileError },
-        { data: location, error: locationError },
-      ] = await Promise.all([
-        supabase.from("profiles").select().eq("user_id", user.id),
-        supabase
-          .from("locations")
-          .select("display_address")
-          .eq("user_id", user.id),
-      ]);
-
-      if (profileError) throw profileError;
-      if (locationError) throw locationError;
-      setProfile({
-        ...profile?.[0],
-        display_address: location?.[0]?.display_address,
-      });
     } finally {
       setIsFetching(false);
     }
   }, [setIsFetching, session, setProfile]);
 
-  // useEffect(() => {
-  //   // Listen for changes to authentication state
-  //   const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-  //     setInitialized(false);
-  //     setSession(session);
-  //     if (session) {
-  //       await getProfile();
-  //     }
-  //     setInitialized(true);
-  //     SplashScreen.hideAsync();
-  //   });
-  //   return () => {
-  //     data.subscription.unsubscribe();
-  //   };
-  // }, []);
-
   useEffect(() => {
     const subscription = auth.onAuthStateChanged(async (user) => {
       setUser(user);
       setInitialized(true);
+      SplashScreen.hideAsync();
     });
 
     return subscription;

@@ -12,17 +12,7 @@ import { useAuth } from "@/provider/AuthProvider";
 import Spinner from "react-native-loading-spinner-overlay";
 import { supabase } from "@/utils/supabase";
 import { Button } from "@/components/ui/button";
-
-export const GENDER_OPTIONS = [
-  { label: "Nam", value: "male" },
-  { label: "Nữ", value: "female" },
-  { label: "Khác", value: "other" },
-] as const;
-
-export const SEARCH_GENDER_OPTIONS = [
-  ...GENDER_OPTIONS.slice(0, 2),
-  { label: "Tất cả", value: "all" },
-] as const;
+import { GENDER_OPTIONS, SEARCH_GENDER_OPTIONS } from "@/constants/common";
 
 export default function ExampleOne() {
   const { colorScheme } = useColorScheme();

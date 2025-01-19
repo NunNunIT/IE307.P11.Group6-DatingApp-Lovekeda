@@ -7,42 +7,14 @@ import { AppState, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { ThemeProvider } from "~/provider/ThemeProvider";
-import { supabase } from "~/utils/supabase";
 import { AuthProvider } from "@/provider/AuthProvider";
 import { DumpProvider } from "@/provider/DumpProvider";
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
-};
+export { ErrorBoundary} from "expo-router";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
-
-// Prevent the splash screen from auto-hiding before getting the color scheme.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  // Check auth-auth-refresh
-  React.useEffect(() => {
-    const handleAppStateChange = () => {
-      if (AppState.currentState === "active") {
-        supabase.auth.startAutoRefresh();
-      } else {
-        supabase.auth.stopAutoRefresh();
-      }
-    };
-
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
-
-    return () => subscription.remove();
-  }, []);
-
   return (
     <DumpProvider>
       <GestureHandlerRootView className="flex flex-1">

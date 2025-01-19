@@ -6,13 +6,13 @@ import { Text } from "@/components/ui/text";
 import { Pressable } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Smile } from "@/lib/icons"
-import { SEARCH_GENDER_OPTIONS } from "../(set-up-profile)";
 import { useAuth } from "@/provider/AuthProvider";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import { router } from "expo-router";
 import { useDump } from "@/provider/DumpProvider";
+import { SEARCH_GENDER_OPTIONS } from "@/constants/common";
 
 export default function FilterScreen() {
   const [rangeAge, setRangeAge] = useState<[number, number]>([18, 30]);
