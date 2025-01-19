@@ -1,3 +1,6 @@
+import { BACKEND_API_URL, SECRET_KEY } from "@/constants/common";
+import { fetch } from "expo/fetch";
+
 type TPosition = {
   lat: number;
   long: number;
@@ -29,4 +32,17 @@ export function haversineDistance(
     Math.sin(dLat / 2) * Math.sin(dLat / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+export const customizeFetch: typeof fetch = async (url, init) => {
+  const res = await fetch(`${BACKEND_API_URL}${url}`, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      "Content-Type": "application/json",
+      "secret_key": SECRET_KEY,
+    },
+  })
+  const payload = await res.json();
+  return payload.data;
 }

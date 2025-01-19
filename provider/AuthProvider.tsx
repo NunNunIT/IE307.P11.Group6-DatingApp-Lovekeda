@@ -1,6 +1,8 @@
+import { BACKEND_API_URL } from "@/constants/common";
+import { customizeFetch } from "@/lib/functions";
 import { auth } from "@/utils/firebase";
 import { Session } from "@supabase/supabase-js";
-import { SplashScreen } from "expo-router";
+import { fetch } from "expo/fetch";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -150,10 +152,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     email: string;
     password: string;
   }) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    console.log("🚀 ~ AuthProvider ~ result.user.uid:", result.user.uid);
+    const body = JSON.stringify({ user_id: result.user.uid, email });
+    const data = await customizeFetch("/users", { method: "POST", body });
+    console.log("🚀 ~ AuthProvider ~ data:", data);
+    return result;
   };
 
-  // Log out the user
   const signOut = async () => {
     await Promise.all([
       auth.signOut(),
