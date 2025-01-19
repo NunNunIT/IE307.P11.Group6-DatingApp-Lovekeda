@@ -63,6 +63,7 @@ export function useAuth() {
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
+  const user_id = user?.uid;
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<{
@@ -108,6 +109,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return subscription;
   }, []);
 
+  useEffect(() => {
+    if (!user_id) return;
+    getProfile(user_id);
+  }, [user_id]);
+
   const loginWithPassword = async ({
     email,
     password,
@@ -136,7 +142,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return result;
   };
 
-  const signOut = async () => auth.signOut();
+  const signOut = async () => {
+    setProfile(null);
+    auth.signOut();
+  };
 
   const value = {
     user,

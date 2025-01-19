@@ -15,6 +15,7 @@ import Loading1 from "@/components/loading";
 import { useAuth } from "@/provider/AuthProvider";
 import { useDump } from "@/provider/DumpProvider";
 import { supabase } from "@/utils/supabase";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function Tinder() {
   const [characters, setCharacters] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function Tinder() {
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
   const { value } = useDump();
   const [page, setPage] = useState(1);
-  const { session, profile, user } = useAuth();
+  const { profile, user, isFetching } = useAuth();
   const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
 
   const postSwipeData = async () => {
@@ -35,7 +36,7 @@ export default function Tinder() {
         swipedUsersRef.current
           .filter((item) => item.direction === "right")
           .map((s) => ({
-            user_id: session?.user.id,
+            user_id: user!.uid,
             target_user_id: s.userId,
           }))
       );
@@ -75,7 +76,7 @@ export default function Tinder() {
             );
             return { ...profile, ...location };
           })
-          .filter((item) => item.user_id !== session?.user.id)
+          .filter((item) => item.user_id !== user!.uid)
           .filter((item: any) => {
             return !value?.filter?.ageRange || !item.age
               ? true
@@ -194,7 +195,7 @@ export default function Tinder() {
   const data = useMemo(
     () =>
       characters
-        .filter((item) => item.user_id !== session?.user.id)
+        .filter((item) => item.user_id !== user!.uid)
         .filter((item: any) => {
           return !value?.filter?.ageRange || !item.age
             ? true
@@ -213,6 +214,7 @@ export default function Tinder() {
 
   return (
     <View className="relative flex-1 w-full h-full">
+      <Spinner visible={isFetching} />
       {isLoading || isFetchingMore || characters.length === 0 ? (
         <View className="w-full h-full flex justify-center items-center">
           <Loading1 />
@@ -264,4 +266,4 @@ export default function Tinder() {
       )}
     </View>
   );
-};
+}

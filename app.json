@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "lovedeka",
+    "slug": "lovedeka",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "my-app",
+    "scheme": "lovedeka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
