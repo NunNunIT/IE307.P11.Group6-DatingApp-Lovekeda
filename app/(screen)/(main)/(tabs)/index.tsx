@@ -18,13 +18,75 @@ import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import { customizeFetch } from "@/lib/functions";
 
+function Skeleton() {
+  const { profile } = useAuth();
+
+  return (
+    <View className="w-full h-full flex justify-center items-center">
+      <Loading1 />
+      <View className="absolute items-center justify-center">
+        <Image
+          className="rounded-full size-28"
+          source={{
+            uri:
+              profile?.imgs?.[0] ??
+              "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
+function renderCharacterCards(
+  data: any[],
+  childRefs: any[],
+  swiped: (direction: string, nameToDelete: string, index: number) => void,
+  outOfFrame: (name: string, idx: number) => void,
+  swipe: (dir: "left" | "right") => Promise<void>
+): React.ReactNode {
+  return (
+    <>
+      <View className="flex-1 w-full h-full">
+        {data.map((character, index) => (
+          <TinderCard
+            key={character.name + index}
+            ref={childRefs[index]}
+            onSwipe={(dir) => swiped(dir, character.name, index)}
+            onCardLeftScreen={() => outOfFrame(character.name, index)}
+          >
+            <View className="absolute bg-white w-full shadow-lg">
+              <DatesCard item={character} />
+            </View>
+          </TinderCard>
+        ))}
+      </View>
+
+      <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
+        <Button
+          className="flex-1"
+          variant="secondary"
+          onPress={() => swipe("left")}
+        >
+          <XMarkIcon size={32} color={"#fe183c"} />
+        </Button>
+        <Button className="flex-1" variant="red" onPress={() => swipe("right")}>
+          <HeartIcon size={32} color={"#fff"} />
+        </Button>
+      </View>
+    </>
+  );
+}
+
 export default function Tinder() {
-  const [characters, setCharacters] = useState<any[]>([]);
+  const [characters, setCharacters] = useState<TProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  console.log("🚀 ~ Tinder ~ isLoading:", isLoading)
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
+  console.log("🚀 ~ Tinder ~ isFetchingMore:", isFetchingMore)
   const { value } = useDump();
   const [page, setPage] = useState(1);
   const { profile, user, isFetching } = useAuth();
@@ -48,9 +110,9 @@ export default function Tinder() {
 
   const fetchMoreUsers = useCallback(
     (page: number) => {
-      setIsLoading(true);
-      setIsFetchingMore(true);
       (async () => {
+        setIsLoading(true);
+        setIsFetchingMore(true);
         try {
           const data = await customizeFetch(
             `/users/find?limit=10&page=${page}&gender=${
@@ -66,7 +128,7 @@ export default function Tinder() {
             setCurrentIndex(result.length - 1);
             return result;
           });
-        } catch (error) {
+        } finally {
           setIsLoading(false);
           setIsFetchingMore(false);
         }
@@ -89,9 +151,9 @@ export default function Tinder() {
 
   const childRefs = useMemo(
     () =>
-      Array(characters.length)
-        .fill(0)
-        .map(() => createRef<React.ElementRef<typeof TinderCard>>()),
+      Array({ length: characters.length }).map(() =>
+        createRef<React.ElementRef<typeof TinderCard>>()
+      ),
     [characters.length]
   );
 
@@ -107,16 +169,14 @@ export default function Tinder() {
     setLastDirection(direction);
     updateCurrentIndex(index - 1);
 
-    // Store the swipe data
     const swipedUser = characters[index];
     if (swipedUser) {
       swipedUsersRef.current.push({
-        userId: swipedUser.user_id,
+        userId: swipedUser.user_id!,
         direction: direction,
       });
     }
 
-    // If this was the last card, post the swipe data
     if (index === 0 && swipedUsersRef.current.length > 0) {
       postSwipeData();
     }
@@ -142,76 +202,18 @@ export default function Tinder() {
   // };
 
   const data = useMemo(
-    () =>
-      characters
-        .filter((item) => item.user_id !== user!.uid)
-        .filter((item: any) => {
-          return !value?.filter?.ageRange || !item.age
-            ? true
-            : item.age >= value.filter.ageRange[0] &&
-                item.age <= value.filter.ageRange[1];
-        })
-        .filter((item: any) =>
-          !value?.filter?.genderFind ||
-          !item.gender ||
-          value?.filter?.genderFind === "all"
-            ? true
-            : item.gender === value?.filter?.genderFind
-        ),
+    () => characters.filter((item) => item.user_id !== user?.uid),
     [characters, value]
   );
+  console.log("🚀 ~ Tinder ~ data:", JSON.stringify(data, null, 2));
 
   return (
     <View className="relative flex-1 w-full h-full">
       <Spinner visible={isFetching} />
-      {isLoading || isFetchingMore || characters.length === 0 ? (
-        <View className="w-full h-full flex justify-center items-center">
-          <Loading1 />
-          <View className="absolute items-center justify-center">
-            <Image
-              source={{
-                uri:
-                  profile?.imgs?.[0] ??
-                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
-              }}
-              className="rounded-full size-28"
-            />
-          </View>
-        </View>
+      {isLoading || isFetchingMore || data.length === 0 ? (
+        <Skeleton />
       ) : (
-        <>
-          <View className="flex-1 w-full h-full">
-            {data.map((character, index) => (
-              <TinderCard
-                key={character.name + index}
-                ref={childRefs[index]}
-                onSwipe={(dir) => swiped(dir, character.name, index)}
-                onCardLeftScreen={() => outOfFrame(character.name, index)}
-              >
-                <View className="absolute bg-white w-full shadow-lg">
-                  <DatesCard item={character} />
-                </View>
-              </TinderCard>
-            ))}
-          </View>
-
-          <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
-            <Button
-              className="flex-1"
-              variant="secondary"
-              onPress={() => swipe("left")}
-            >
-              <XMarkIcon size={32} color={"#fe183c"} />
-            </Button>
-            <Button
-              className="flex-1"
-              variant="red"
-              onPress={() => swipe("right")}
-            >
-              <HeartIcon size={32} color={"#fff"} />
-            </Button>
-          </View>
-        </>
+        renderCharacterCards(data, childRefs, swiped, outOfFrame, swipe)
       )}
     </View>
   );
