@@ -39,7 +39,7 @@ function Skeleton() {
 }
 
 function renderCharacterCards(
-  data: any[],
+  data: TProfile[],
   childRefs: any[],
   swiped: (direction: string, nameToDelete: string, index: number) => void,
   outOfFrame: (name: string, idx: number) => void,
@@ -48,15 +48,15 @@ function renderCharacterCards(
   return (
     <>
       <View className="flex-1 w-full h-full">
-        {data.map((character, index) => (
+        {data.map((item, index) => (
           <TinderCard
-            key={character.name + index}
+            key={item.name + index}
             ref={childRefs[index]}
-            onSwipe={(dir) => swiped(dir, character.name, index)}
-            onCardLeftScreen={() => outOfFrame(character.name, index)}
+            onSwipe={(dir) => swiped(dir, item.name, index)}
+            onCardLeftScreen={() => outOfFrame(item.name, index)}
           >
             <View className="absolute bg-white w-full shadow-lg">
-              <DatesCard item={character} />
+              <DatesCard item={item} />
             </View>
           </TinderCard>
         ))}
@@ -81,27 +81,26 @@ function renderCharacterCards(
 export default function Tinder() {
   const [characters, setCharacters] = useState<TProfile[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastDirection, setLastDirection] = useState<string | undefined>();
   const currentIndexRef = useRef(currentIndex);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  console.log("🚀 ~ Tinder ~ isLoading:", isLoading)
   const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
-  console.log("🚀 ~ Tinder ~ isFetchingMore:", isFetchingMore)
   const { value } = useDump();
   const [page, setPage] = useState(1);
+  console.log("🚀 ~ Tinder ~ page:", page);
   const { profile, user, isFetching } = useAuth();
   const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
 
+  // TODO: change to customizeFetch
   const postSwipeData = async () => {
     try {
-      await supabase.from("likes").insert(
-        swipedUsersRef.current
-          .filter((item) => item.direction === "right")
-          .map((s) => ({
-            user_id: user!.uid,
-            target_user_id: s.userId,
-          }))
-      );
+      // await supabase.from("likes").insert(
+      //   swipedUsersRef.current
+      //     .filter((item) => item.direction === "right")
+      //     .map((s) => ({
+      //       user_id: user!.uid,
+      //       target_user_id: s.userId,
+      //     }))
+      // );
+      setPage((prev) => prev + 1);
       swipedUsersRef.current = [];
     } catch (error) {
       // console.error('Error posting swipe data:', error);
@@ -109,45 +108,35 @@ export default function Tinder() {
   };
 
   const fetchMoreUsers = useCallback(
-    (page: number) => {
-      (async () => {
-        setIsLoading(true);
-        setIsFetchingMore(true);
-        try {
-          const data = await customizeFetch(
-            `/users/find?limit=10&page=${page}&gender=${
-              profile?.genderFind ?? "all"
-            }&age=${profile?.ageRange?.join("-") ?? "all"}`
+    async (page: number) => {
+      setIsFetchingMore(true);
+      try {
+        const url = `/users/find?limit=10&page=${page}&gender=${
+          profile?.genderFind ?? "all"
+        }&age=${profile?.ageRange?.join("-") ?? "all"}`;
+        const data: TProfile[] = await customizeFetch(url);
+        setCharacters((prevCharacters) => {
+          const filteredData = data.filter(
+            (item) => item.user_id !== user!.uid
           );
-          setCharacters((prevCharacters) => {
-            if (prevCharacters.length === 0) {
-              setCurrentIndex(data.length - 1);
-              return data;
-            }
-            const result = [...prevCharacters, ...data];
-            setCurrentIndex(result.length - 1);
-            return result;
-          });
-        } finally {
-          setIsLoading(false);
-          setIsFetchingMore(false);
-        }
-      })();
+          const result = [...prevCharacters, ...filteredData];
+          setCurrentIndex(result.length - 1);
+          return result;
+        });
+      } catch (error) {
+        console.error("Error fetching more users:", error);
+      } finally {
+        setIsFetchingMore(false);
+      }
     },
     [value]
   );
 
   useEffect(() => {
-    if (!isFetchingMore) return;
+    if (currentIndex >= 0) return;
+    setPage((prev) => prev + 1);
     fetchMoreUsers(page);
-  }, [fetchMoreUsers, isFetchingMore]);
-
-  useEffect(() => {
-    if (currentIndex < 0) {
-      setIsFetchingMore(true);
-      setPage((prev) => prev + 1);
-    }
-  }, [currentIndex]);
+  }, [currentIndex, setPage, fetchMoreUsers]);
 
   const childRefs = useMemo(
     () =>
@@ -156,6 +145,7 @@ export default function Tinder() {
       ),
     [characters.length]
   );
+  console.log("🚀 ~ Tinder ~ childRefs:", childRefs);
 
   const updateCurrentIndex = (val: number) => {
     setCurrentIndex(val);
@@ -166,7 +156,6 @@ export default function Tinder() {
   const canSwipe = currentIndex >= 0;
 
   const swiped = (direction: string, nameToDelete: string, index: number) => {
-    setLastDirection(direction);
     updateCurrentIndex(index - 1);
 
     const swipedUser = characters[index];
@@ -183,9 +172,8 @@ export default function Tinder() {
   };
 
   const outOfFrame = (name: string, idx: number) => {
-    if (currentIndexRef.current >= idx) {
-      childRefs[idx].current?.restoreCard();
-    }
+    if (currentIndexRef.current < idx) return;
+    childRefs[idx].current?.restoreCard();
   };
 
   const swipe = async (dir: "left" | "right") => {
@@ -194,23 +182,12 @@ export default function Tinder() {
     }
   };
 
-  // const goBack = async () => {
-  //   if (!canGoBack) return;
-  //   const newIndex = currentIndex + 1;
-  //   updateCurrentIndex(newIndex);
-  //   await childRefs[newIndex].current?.restoreCard();
-  // };
-
-  const data = useMemo(
-    () => characters.filter((item) => item.user_id !== user?.uid),
-    [characters, value]
-  );
-  console.log("🚀 ~ Tinder ~ data:", JSON.stringify(data, null, 2));
+  const data = useMemo(() => characters, [characters, value]);
 
   return (
     <View className="relative flex-1 w-full h-full">
       <Spinner visible={isFetching} />
-      {isLoading || isFetchingMore || data.length === 0 ? (
+      {isFetchingMore || data.length === 0 ? (
         <Skeleton />
       ) : (
         renderCharacterCards(data, childRefs, swiped, outOfFrame, swipe)

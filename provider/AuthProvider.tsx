@@ -58,7 +58,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       setIsFetching(true);
       try {
         const data = await customizeFetch(`/users/${uid}`);
-        console.log("🚀 ~ getProfile ~ data:", data);
         setProfile(data);
       } catch (error: any) {
         console.error("🚀 ~ getProfile ~ error", error?.message);
@@ -105,10 +104,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     password: string;
   }) => {
     const result = await createUserWithEmailAndPassword(auth, email, password);
-    console.log("🚀 ~ AuthProvider ~ result.user.uid:", result.user.uid);
     const body = JSON.stringify({ user_id: result.user.uid, email });
-    const data = await customizeFetch("/users", { method: "POST", body });
-    console.log("🚀 ~ AuthProvider ~ data:", data);
+    await customizeFetch("/users", { method: "POST", body });
     return result;
   };
 

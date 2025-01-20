@@ -26,7 +26,7 @@ export default function NotesLayoutScreen() {
           options={{ title: "", headerShown: false }}
         />
         <Stack.Screen name="filter" options={{ title: "" }} />
-        <Stack.Screen name="editProfile" options={{ title: "Sửa hồ sơ" }} />
+        <Stack.Screen name="edit-profile" options={{ title: "Sửa hồ sơ" }} />
         <Stack.Screen name="permission-error" options={{ headerShown: false }} />
       </Stack>
     </LocationProvider>

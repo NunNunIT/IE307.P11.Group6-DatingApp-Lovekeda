@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
@@ -12,56 +12,20 @@ import {
   SegmentedControlItemProps,
   TextField,
 } from "react-native-ui-lib";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
 import { useAuth } from "@/provider/AuthProvider";
 import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
-import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
 import MultiChoicePicker from "@/components/select/multiChoice";
-import { GENDER_OPTIONS } from "@/constants/common";
+import { GENDER_OPTIONS, HOBBY_OPTIONS } from "@/constants/common";
 
 const { width } = Dimensions.get("window");
 
 const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
 };
-
-export const HOBBY_OPTIONS = [
-  { label: "Sở thích 1", value: "hobby 1" },
-  { label: "Sở thích 2", value: "hobby 2" },
-  { label: "Sở thích 3", value: "hobby 3" },
-  { label: "Sở thích 4", value: "hobby 4" },
-  { label: "Sở thích 5", value: "hobby 5" },
-  { label: "Sở thích 6", value: "hobby 6" },
-  { label: "Nấu ăn", value: "cook" },
-  { label: "Âm nhạc", value: "music" },
-  { label: "Mua sắm", value: "shopping" },
-  { label: "Ngủ", value: "sleep" },
-  { label: "Xem phim", value: "movie" },
-  { label: "Đọc sách", value: "reading" },
-  { label: "Chụp ảnh", value: "photography" },
-  { label: "Du lịch", value: "travel" },
-  { label: "Hội họa", value: "painting" },
-  { label: "Thể dục thể thao", value: "sports" },
-  { label: "Làm vườn", value: "gardening" },
-  { label: "Chơi game", value: "gaming" },
-  { label: "Viết lách", value: "writing" },
-  { label: "Học ngoại ngữ", value: "language learning" },
-  { label: "Chơi nhạc cụ", value: "instrument" },
-  { label: "Câu cá", value: "fishing" },
-  { label: "Leo núi", value: "hiking" },
-  { label: "Yoga", value: "yoga" },
-  { label: "Tập gym", value: "gym" },
-  { label: "Cắm trại", value: "camping" },
-  { label: "Thiền", value: "meditation" },
-  { label: "Khiêu vũ", value: "dancing" },
-  { label: "Sưu tầm đồ cổ", value: "antique collecting" },
-  { label: "Xếp hình", value: "puzzle" },
-];
 
 export default function FilterScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -337,10 +301,10 @@ export default function FilterScreen() {
               values={hobbies}
               onChange={(value) =>
                 setHobbies(value.map((item) => item.toString()))
-              } // Ensure this matches the correct type
+              }
               // title="Sở thích"
               placeholder="Chọn nhiều giá trị"
-              options={HOBBY_OPTIONS}
+              options={[...HOBBY_OPTIONS]}
               showSearch
               // useDialogDefault
             />

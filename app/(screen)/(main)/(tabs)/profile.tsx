@@ -8,7 +8,7 @@ import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
 import { useAuth } from "@/provider/AuthProvider";
-import { HOBBY_OPTIONS } from "../editProfile";
+import { HOBBY_OPTIONS } from "@/constants/common";
 
 export default function ProfileScreen() {
   const { profile } = useAuth();
@@ -59,7 +59,8 @@ export default function ProfileScreen() {
             Nơi sống
           </Text>
           <Text className="text-black dark:text-white flex-row mt-3 flex-wrap gap-2">
-            {profile?.display_address ?? "Phường Đông Hòa, Thành phố Dĩ An, Tỉnh Bình Dương, Việt Nam"}
+            {profile?.location ??
+              "Phường Đông Hòa, Thành phố Dĩ An, Tỉnh Bình Dương, Việt Nam"}
           </Text>
         </View>
 

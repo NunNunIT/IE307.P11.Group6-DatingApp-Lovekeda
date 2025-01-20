@@ -1,13 +1,13 @@
 type TProfile = {
   _id: number;
-  user_id: string | null;
-  name: string | null;
-  age: number | null;
-  bio: string | null;
-  gender: string | null;
-  hobbies: string[] | null;
-  imgs: string[] | null;
-  is_complete_profile: boolean | null;
+  user_id: string;
+  name: string;
+  age: number;
+  bio: string;
+  gender: string;
+  hobbies: string[];
+  imgs: string[];
+  is_complete_profile: boolean;
   purposeValue: string | null;
   locate?: { type: string; coordinates: number[] };
   location: string | null;
