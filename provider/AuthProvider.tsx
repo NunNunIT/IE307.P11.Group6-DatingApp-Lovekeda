@@ -17,26 +17,27 @@ import {
   useContext,
 } from "react";
 
-import { supabase } from "~/utils/supabase";
+type TProfile = {
+  _id: number;
+  user_id: string | null;
+  name: string | null;
+  age: number | null;
+  bio: string | null;
+  gender: string | null;
+  hobbies: string[] | null;
+  imgs: string[] | null;
+  is_complete_profile: boolean | null;
+  purposeValue: string | null;
+  locate?: { type: string; coordinates: number[] };
+  location: string | null;
+  genderFind: string | null;
+  ageRange: number[] | null;
+}
 
 type AuthProps = {
   user: User | null;
   session: Session | null;
-  profile: {
-    age: number | null;
-    bio: string | null;
-    created_at: string;
-    gender: string | null;
-    genderFind: string | null;
-    hobbies: string[] | null;
-    id: number;
-    imgs: string[] | null;
-    is_complete_profile: boolean | null;
-    name: string | null;
-    purposeValue: string | null;
-    user_id: string | null;
-    display_address: string | null;
-  } | null;
+  profile: TProfile | null;
   getProfile?: any;
   setProfile?: any;
   isFetching?: boolean;
@@ -66,21 +67,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const user_id = user?.uid;
   const [isFetching, setIsFetching] = useState<boolean>(true);
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<{
-    age: number | null;
-    bio: string | null;
-    created_at: string;
-    gender: string | null;
-    genderFind: string | null;
-    hobbies: string[] | null;
-    id: number;
-    imgs: string[] | null;
-    is_complete_profile: boolean | null;
-    name: string | null;
-    purposeValue: string | null;
-    user_id: string | null;
-    display_address: string | null;
-  } | null>(null);
+  const [profile, setProfile] = useState<TProfile | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
   const getProfile = useCallback(

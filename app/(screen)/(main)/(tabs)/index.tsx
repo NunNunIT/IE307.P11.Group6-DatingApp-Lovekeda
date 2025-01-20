@@ -16,6 +16,7 @@ import { useAuth } from "@/provider/AuthProvider";
 import { useDump } from "@/provider/DumpProvider";
 import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
+import { customizeFetch } from "@/lib/functions";
 
 export default function Tinder() {
   const [characters, setCharacters] = useState<any[]>([]);
@@ -31,7 +32,6 @@ export default function Tinder() {
 
   const postSwipeData = async () => {
     try {
-      // console.log(swipedUsersRef.current);
       await supabase.from("likes").insert(
         swipedUsersRef.current
           .filter((item) => item.direction === "right")
@@ -40,7 +40,6 @@ export default function Tinder() {
             target_user_id: s.userId,
           }))
       );
-      // console.log("🚀 ~ postSwipeData ~ error:", error)
       swipedUsersRef.current = [];
     } catch (error) {
       // console.error('Error posting swipe data:', error);
@@ -52,76 +51,26 @@ export default function Tinder() {
       setIsLoading(true);
       setIsFetchingMore(true);
       (async () => {
-        const [
-          { data: profiles, error: errorProfile },
-          { data: locations, error: errorLocation },
-        ] = await Promise.all([
-          supabase.from("profiles").select("*"),
-          supabase.from("locations").select("*"),
-        ]);
-
-        if (errorProfile || errorLocation) {
+        try {
+          const data = await customizeFetch(
+            `/users/find?limit=10&page=${page}&gender=${
+              profile?.genderFind ?? "all"
+            }&age=${profile?.ageRange?.join("-") ?? "all"}`
+          );
+          setCharacters((prevCharacters) => {
+            if (prevCharacters.length === 0) {
+              setCurrentIndex(data.length - 1);
+              return data;
+            }
+            const result = [...prevCharacters, ...data];
+            setCurrentIndex(result.length - 1);
+            return result;
+          });
+        } catch (error) {
           setIsLoading(false);
           setIsFetchingMore(false);
-          return;
         }
-
-        // console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
-
-        // Merge profiles and locations
-        const mergedProfiles = profiles
-          ?.map((profile) => {
-            const location = locations?.find(
-              (l) => l.user_id === profile.user_id
-            );
-            return { ...profile, ...location };
-          })
-          .filter((item) => item.user_id !== user!.uid)
-          .filter((item: any) => {
-            return !value?.filter?.ageRange || !item.age
-              ? true
-              : item.age >= value.filter.ageRange[0] &&
-                  item.age <= value.filter.ageRange[1];
-          })
-          .filter((item: any) =>
-            !value?.filter?.genderFind ||
-            !item.gender ||
-            value?.filter?.genderFind === "all"
-              ? true
-              : item.gender === value?.filter?.genderFind
-          );
-
-        setCharacters((prevCharacters) => [
-          ...(mergedProfiles ?? []),
-          ...prevCharacters,
-        ]);
-        setIsLoading(false);
-        setIsFetchingMore(false);
       })();
-      // fetch(NEXTJS_SERVER + '/api/users/find')
-      //   .then((res) => {
-      //     if (!res.ok) throw new Error("Network response was not ok");
-      //     return res.json();
-      //   })
-      //   .then((payload) => {
-      //     // Initialize or append data based on whether it's the first fetch
-      //     setCharacters(prevCharacters => {
-      //       if (prevCharacters.length === 0) {
-      //         setCurrentIndex(payload.data.length - 1);
-      //         return payload.data;
-      //       }
-      //       const result = [...prevCharacters, ...payload.data]
-      //       setCurrentIndex(result.length - 1);
-      //       return result;
-      //     });
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   })
-      //   .finally(() => {
-      //     setIsLoading(false);
-      //     setIsFetchingMore(false);
-      //   });
     },
     [value]
   );

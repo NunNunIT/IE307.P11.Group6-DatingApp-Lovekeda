@@ -13,6 +13,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { Button } from "@/components/ui/button";
 import { GENDER_OPTIONS, SEARCH_GENDER_OPTIONS } from "@/constants/common";
 import { customizeFetch } from "@/lib/functions";
+import { cn } from "@/lib/utils";
 
 export default function SetUpProfileScreen() {
   const { colorScheme } = useColorScheme();
@@ -25,11 +26,11 @@ export default function SetUpProfileScreen() {
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { isFetching, session, signOut, profile, getProfile, user } = useAuth();
+  const { isFetching, signOut, profile, getProfile, user } = useAuth();
   const user_id = user!.uid;
   useEffect(() => {
-    (async () => getProfile?.(user_id))();
-  }, []);
+    (async () => getProfile(user_id))();
+  }, [user_id]);
 
   useEffect(() => {
     if (profile?.name) setName(profile.name);
@@ -65,10 +66,6 @@ export default function SetUpProfileScreen() {
 
   const onNextStep2 = async () => {
     setIsSubmitting(true);
-    console.log("🚀 ~ onNextStep2 ~ body:", {
-      genderFind,
-      purposeValue,
-    });
     await customizeFetch(`/users/${user_id}`, {
       method: "PATCH",
       body: JSON.stringify({
@@ -241,12 +238,13 @@ function renderSetUpProfileStepTwo(
             {["friends", "dating"].map((purpose) => (
               <Pressable
                 key={purpose}
-                className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${
+                onPress={() => setPurposeValue(purpose)}
+                className={cn(
+                  "h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2",
                   purposeValue === purpose
                     ? "border-pri-color bg-white dark:bg-zinc-900"
                     : "border-zinc-200 dark:border-zinc-800"
-                }`}
-                onPress={() => setPurposeValue(purpose)}
+                )}
               >
                 <Text className="text-2xl">
                   {purpose === "friends" ? "👋" : "❤️"}
