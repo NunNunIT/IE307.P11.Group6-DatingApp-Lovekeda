@@ -28,8 +28,8 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
 };
 
 export default function FilterScreen() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
-  const { session, profile, getProfile } = useAuth();
+  const { colorScheme } = useColorScheme();
+  const { user, profile, getProfile } = useAuth();
   const [name, setName] = useState<string>(profile?.name ?? "");
   const [gender, setGender] = useState<string>(profile?.gender ?? "other");
   const [age, setAge] = useState<string>(profile?.age?.toString() ?? "");
@@ -76,22 +76,17 @@ export default function FilterScreen() {
   );
 
   const submitHandler = async () => {
-    if (!session) return;
+    if (!user) return;
     setIsSubmitting(true);
     try {
-      // console.log("imgs", imgs)
-      // const imgsFirebase = await uploadToFireBase(imgs[0], "haha");
-      // console.log("imgsFirebase", imgsFirebase)
-
-      // 2. Chuẩn bị dữ liệu người dùng
       const userData = {
         name,
         age: Number(age),
         bio,
         gender,
-        imgs: imgs, // imgsFirebase
+        imgs,
         hobbies,
-        user_id: session.user.id,
+        user_id: user.uid,
       };
 
       await supabase
@@ -105,14 +100,6 @@ export default function FilterScreen() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const CustomThumb = () => {
-    return (
-      <View className="!size-6 rounded-full shadow-2xl shadow-pri-color border-3 border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-white">
-        <Text></Text>
-      </View>
-    );
   };
 
   const onDelete = (indexToRemove: number) => {

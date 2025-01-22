@@ -21,7 +21,6 @@ export default function ProfileScreen() {
         alignItems: "center",
       }}
     >
-      {/* Image */}
       <View className="relative m-3">
         <Image
           source={{ uri: profile?.imgs?.[0] }}
@@ -31,7 +30,7 @@ export default function ProfileScreen() {
           className="rounded-full absolute -bottom-2 -right-2 p-6"
           variant="secondary"
           size="icon"
-          onPress={() => router.push("/editProfile")}
+          onPress={() => router.push("/edit-profile")}
         >
           <Pen className="text-zinc-500 dark:text-zinc-100" strokeWidth={1.5} />
         </Button>
@@ -48,12 +47,10 @@ export default function ProfileScreen() {
       </View>
 
       <View className="w-full justify-start items-start px-6 space-y-4 mt-6">
-        {/* User Bio */}
         <Text className="text-black dark:text-white text-left font-medium text-sm">
           {profile?.bio ? profile.bio : "Chưa có bio"}
         </Text>
 
-        {/* User location */}
         <View className="flex flex-col mt-6">
           <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
             Nơi sống
@@ -64,7 +61,6 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {/* User hobbies */}
         <View className="flex flex-col mt-6">
           <Text className="text-zinc-800 dark:text-zinc-200 font-bold">
             Sở thích
@@ -72,7 +68,6 @@ export default function ProfileScreen() {
           <View className="flex-row mt-3 flex-wrap gap-2">
             {profile?.hobbies?.map((hobby, index) => (
               <View key={index} className="bg-pri-color rounded-3xl p-1 px-3">
-                {/* <Text className="text-white dark:text-white">{HOBBY_OPTIONS.find(item => item.value === hobby)?.label}</Text> */}
                 <Text className="text-white dark:text-white">
                   {HOBBY_OPTIONS.find((item) => item.value === hobby)?.label}
                 </Text>
