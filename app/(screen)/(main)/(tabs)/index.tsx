@@ -99,7 +99,7 @@ export default function Tinder() {
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [likeQueue, setLikeQueue] = useState<
-    Array<{ user_id: string; target_user_id: string }>
+    Array<{ target_user_id: string; emotion: string }>
   >([]);
 
   const buildUrl = useCallback(
@@ -185,8 +185,8 @@ export default function Tinder() {
           setLikeQueue((prev) => [
             ...prev,
             {
-              user_id: user!.uid,
               target_user_id: swipedUser.user_id,
+              emotion: "like",
             },
           ]);
         }
