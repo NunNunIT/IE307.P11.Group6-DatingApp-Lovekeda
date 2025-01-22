@@ -117,7 +117,7 @@ export default function Tinder() {
     try {
       await customizeFetch("/users/swipe-batch", {
         method: "POST",
-        body: JSON.stringify({ userId: user.uid, swipes: likeQueue }),
+        body: JSON.stringify({ user_id: user.uid, swipes: likeQueue }),
       });
       setLikeQueue([]);
     } catch (error) {
