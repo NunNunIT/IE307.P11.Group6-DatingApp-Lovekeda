@@ -45,12 +45,17 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-function Skeleton({ profileImage = "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp" }) {
+function Skeleton({
+  profileImage = "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
+}) {
   return (
     <View className="w-full h-full flex justify-center items-center">
       <Loading1 />
       <View className="absolute items-center justify-center">
-        <Image className="rounded-full size-28" source={{ uri: profileImage }} />
+        <Image
+          className="rounded-full size-28"
+          source={{ uri: profileImage }}
+        />
       </View>
     </View>
   );
@@ -64,10 +69,20 @@ const SwipeButtons = ({
   disabled: boolean;
 }) => (
   <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
-    <Button className="flex-1" variant="secondary" onPress={() => onSwipe("left")} disabled={disabled}>
+    <Button
+      className="flex-1"
+      variant="secondary"
+      onPress={() => onSwipe("left")}
+      disabled={disabled}
+    >
       <XMarkIcon size={32} color="#fe183c" />
     </Button>
-    <Button className="flex-1" variant="red" onPress={() => onSwipe("right")} disabled={disabled}>
+    <Button
+      className="flex-1"
+      variant="red"
+      onPress={() => onSwipe("right")}
+      disabled={disabled}
+    >
       <HeartIcon size={32} color="#fff" />
     </Button>
   </View>
@@ -83,21 +98,26 @@ export default function Tinder() {
   const [page, setPage] = useState(1);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
-  const [likeQueue, setLikeQueue] = useState<Array<{user_id: string; target_user_id: string}>>([]);
+  const [likeQueue, setLikeQueue] = useState<
+    Array<{ user_id: string; target_user_id: string }>
+  >([]);
 
-  const buildUrl = useCallback((page: number) => {
-    const gender = profile?.genderFind ?? "all";
-    const ageRange = profile?.ageRange?.join("-") ?? "all";
-    return `/users/find?limit=${BATCH_SIZE}&page=${page}&gender=${gender}&age=${ageRange}`;
-  }, [profile?.genderFind, profile?.ageRange]);
+  const buildUrl = useCallback(
+    (page: number) => {
+      const gender = profile?.genderFind ?? "all";
+      const ageRange = profile?.ageRange?.join("-") ?? "all";
+      return `/users/find?limit=${BATCH_SIZE}&page=${page}&gender=${gender}&age=${ageRange}`;
+    },
+    [profile?.genderFind, profile?.ageRange]
+  );
 
   const postLikes = useCallback(async () => {
-    if (likeQueue.length === 0) return;
+    if (!user?.uid || likeQueue.length === 0) return;
 
     try {
-      await customizeFetch("/likes", {
+      await customizeFetch("/users/swipe-batch", {
         method: "POST",
-        body: JSON.stringify(likeQueue),
+        body: JSON.stringify({ userId: user.uid, swipes: likeQueue }),
       });
       setLikeQueue([]);
     } catch (error) {
@@ -118,7 +138,7 @@ export default function Tinder() {
       setIsFetchingData(true);
       const url = buildUrl(page);
       const data: TProfile[] = await customizeFetch(url);
-      const filteredData = data.filter(item => item.user_id !== user?.uid);
+      const filteredData = data.filter((item) => item.user_id !== user?.uid);
 
       if (filteredData.length === 0) {
         setHasMoreData(false);
@@ -126,10 +146,13 @@ export default function Tinder() {
       }
 
       dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
 
       if (state.currentIndex === null) {
-        dispatch({ type: "SET_CURRENT_INDEX", payload: filteredData.length - 1 });
+        dispatch({
+          type: "SET_CURRENT_INDEX",
+          payload: filteredData.length - 1,
+        });
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -145,29 +168,39 @@ export default function Tinder() {
   }, [user?.uid, profile]);
 
   useEffect(() => {
-    if (!isFetchingData && hasMoreData && state.characters.length <= FETCH_THRESHOLD) {
+    if (
+      !isFetchingData &&
+      hasMoreData &&
+      state.characters.length <= FETCH_THRESHOLD
+    ) {
       fetchUsers();
     }
   }, [state.characters.length, isFetchingData, hasMoreData]);
 
-  const handleSwipe = useCallback((direction: string, index: number) => {
-    const swipedUser = state.characters[index];
-    if (swipedUser) {
-      if (direction === 'right') {
-        setLikeQueue(prev => [...prev, {
-          user_id: user!.uid,
-          target_user_id: swipedUser.user_id,
-        }]);
-      }
-      
-      dispatch({ type: "REMOVE_CHARACTER", payload: index });
-      dispatch({ type: "SET_CURRENT_INDEX", payload: index - 1 });
-    }
+  const handleSwipe = useCallback(
+    (direction: string, index: number) => {
+      const swipedUser = state.characters[index];
+      if (swipedUser) {
+        if (direction === "right") {
+          setLikeQueue((prev) => [
+            ...prev,
+            {
+              user_id: user!.uid,
+              target_user_id: swipedUser.user_id,
+            },
+          ]);
+        }
 
-    if (state.characters.length <= FETCH_THRESHOLD && hasMoreData) {
-      fetchUsers();
-    }
-  }, [state.characters, user?.uid, hasMoreData]);
+        dispatch({ type: "REMOVE_CHARACTER", payload: index });
+        dispatch({ type: "SET_CURRENT_INDEX", payload: index - 1 });
+      }
+
+      if (state.characters.length <= FETCH_THRESHOLD && hasMoreData) {
+        fetchUsers();
+      }
+    },
+    [state.characters, user?.uid, hasMoreData]
+  );
 
   useEffect(() => {
     return () => {
