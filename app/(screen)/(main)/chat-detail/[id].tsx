@@ -26,7 +26,7 @@ import {
 } from "firebase/firestore";
 import { database } from "@/utils/firebase";
 import { FontAwesome } from "@expo/vector-icons";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { Button } from "@/components/ui/button";

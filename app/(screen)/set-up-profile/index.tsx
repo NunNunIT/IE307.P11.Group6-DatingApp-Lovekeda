@@ -8,7 +8,7 @@ import { View, Text, Pressable } from "react-native";
 import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextField } from "react-native-ui-lib";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import Spinner from "react-native-loading-spinner-overlay";
 import { Button } from "@/components/ui/button";
 import { GENDER_OPTIONS, SEARCH_GENDER_OPTIONS } from "@/constants/common";

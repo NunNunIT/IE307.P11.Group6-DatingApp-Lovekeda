@@ -1,7 +1,7 @@
 import DarkModeSwitch from "@/components/darkModeOption/switch";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
-import { useLocation } from "@/provider/LocationProvider";
+import { useLocation } from "@/providers/LocationProvider";
 import { Redirect } from "expo-router";
 import React, { useEffect } from "react";
 import { View } from "react-native";

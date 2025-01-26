@@ -2,7 +2,7 @@ import HumanCard2 from "@/components/card/human2";
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useCallback, useState } from "react";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
 import { useFocusEffect } from "expo-router";
 

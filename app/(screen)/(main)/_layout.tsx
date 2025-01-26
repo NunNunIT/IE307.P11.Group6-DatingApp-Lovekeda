@@ -1,7 +1,7 @@
 import { Redirect, Stack } from "expo-router";
 import React from "react";
-import { useAuth } from "~/provider/AuthProvider";
-import { LocationProvider } from "@/provider/LocationProvider";
+import { useAuth } from "@/providers/AuthProvider";
+import { LocationProvider } from "@/providers/LocationProvider";
 
 export default function NotesLayoutScreen() {
   const { isFetching, user, profile } = useAuth();

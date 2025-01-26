@@ -12,7 +12,7 @@ import Carousel from "../carousel/type1";
 import { Button } from "../ui/button";
 import { router } from "expo-router";
 import { IdCard } from "@/lib/icons";
-import { useLocation } from "@/provider/LocationProvider";
+import { useLocation } from "@/providers/LocationProvider";
 import { haversineDistance } from "@/lib/functions";
 const { width, height } = Dimensions.get("window");
 

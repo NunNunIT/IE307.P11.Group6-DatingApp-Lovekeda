@@ -14,7 +14,7 @@ import {
 } from "react-native-ui-lib";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { router } from "expo-router";
 import { bindAll } from "lodash";
 import MultiChoicePicker from "@/components/select/multiChoice";

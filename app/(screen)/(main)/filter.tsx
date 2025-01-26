@@ -6,11 +6,11 @@ import { Text } from "@/components/ui/text";
 import { Pressable } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Smile } from "@/lib/icons";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 import Spinner from "react-native-loading-spinner-overlay";
 import { router } from "expo-router";
-import { useDump } from "@/provider/DumpProvider";
+import { useDump } from "@/providers/DumpProvider";
 import { SEARCH_GENDER_OPTIONS } from "@/constants/common";
 import { customizeFetch } from "@/lib/functions";
 

@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "@/lib/icons";
 import { router } from "expo-router";
 import Matches from "@/components/card/matches";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import {
   collection,
   query,

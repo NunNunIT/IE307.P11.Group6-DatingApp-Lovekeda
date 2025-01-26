@@ -14,7 +14,7 @@ import {
   Settings2,
 } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "@/provider/LocationProvider";
+import { useLocation } from "@/providers/LocationProvider";
 
 export default function TabLayout() {
   const { permissionStatus } = useLocation();

@@ -1,4 +1,4 @@
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { Redirect, Slot } from "expo-router";
 
 export default function SetUpProfileLayout() {

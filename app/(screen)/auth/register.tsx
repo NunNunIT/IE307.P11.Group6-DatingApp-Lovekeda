@@ -18,7 +18,7 @@ import {
 } from "@/utils/form/register";
 import { SafeAreaView } from "react-native";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function RegisterScreen() {
   const { registerWithPassword } = useAuth();

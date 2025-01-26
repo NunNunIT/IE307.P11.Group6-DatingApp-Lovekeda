@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { useColorScheme } from "nativewind";
 import { View } from "react-native";
-import { useAuth } from "~/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();

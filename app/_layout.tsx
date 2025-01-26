@@ -5,9 +5,9 @@ import { Slot, SplashScreen } from "expo-router";
 import * as React from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-import { ThemeProvider } from "~/provider/ThemeProvider";
-import { AuthProvider } from "@/provider/AuthProvider";
-import { DumpProvider } from "@/provider/DumpProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { DumpProvider } from "@/providers/DumpProvider";
 
 export { ErrorBoundary} from "expo-router";
 

@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import React, { useCallback, useState } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router, useFocusEffect } from "expo-router";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
 
 export default function Matches() {

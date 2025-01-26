@@ -1,6 +1,6 @@
 import { PasswordInput } from "@/components/customize-ui/password-input";
 import { Separator } from "@/components/ui/separator";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";

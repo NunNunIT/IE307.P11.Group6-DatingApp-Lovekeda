@@ -13,7 +13,7 @@ import { HeartIcon, XMarkIcon } from "react-native-heroicons/solid";
 import { Button } from "@/components/ui/button";
 import DatesCard from "@/components/card/human";
 import Loading1 from "@/components/loading";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
 
 const BATCH_SIZE = 10;

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { router } from "expo-router";
 import { Pen } from "@/lib/icons";
 import { Text } from "@/components/ui/text";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { HOBBY_OPTIONS } from "@/constants/common";
 
 export default function ProfileScreen() {

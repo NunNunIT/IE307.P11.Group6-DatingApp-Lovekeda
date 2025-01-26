@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { customizeFetch } from "@/lib/functions";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import { Text } from "@/components/ui/text";
 
 export default function MatchesScreen() {
