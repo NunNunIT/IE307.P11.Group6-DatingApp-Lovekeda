@@ -42,7 +42,11 @@ interface TinderCardRef {
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_CHARACTERS":
-      return { ...state, characters: action.payload, currentIndex: action.payload.length - 1 };
+      return {
+        ...state,
+        characters: action.payload,
+        currentIndex: action.payload.length - 1,
+      };
     case "ADD_CHARACTERS":
       return {
         ...state,
@@ -67,7 +71,10 @@ function Skeleton({ profileImage }: { profileImage?: string }) {
     <View className="w-full h-full flex justify-center items-center">
       <Loading1 />
       <View className="absolute items-center justify-center">
-        <Image className="rounded-full size-28" source={{ uri: profileImage }} />
+        <Image
+          className="rounded-full size-28"
+          source={{ uri: profileImage }}
+        />
       </View>
     </View>
   );
@@ -109,10 +116,10 @@ const buildUrl = (currentPage: number, profile: TProfile | null) => {
 
   const url = `/users/find?limit=${BATCH_SIZE}&page=${currentPage}&gender=${gender}&age=${ageRange}&distance=${distance}`;
 
-  // if (profile.locate?.coordinates) {
-  //   const [long, lat] = profile.locate.coordinates;
-  //   return url + `&long=${long}&lat=${lat}`;
-  // }
+  if (profile.locate?.coordinates) {
+    const [long, lat] = profile.locate.coordinates;
+    return url + `&long=${long}&lat=${lat}`;
+  }
 
   return url;
 };
@@ -169,39 +176,44 @@ export default function Tinder() {
     }
   }, [profile?.user_id, likeQueue]);
 
-  const fetchUsers = useCallback(
-    async () => {
-      if (!profile || !hasMoreData || isFetchingData) return;
+  const fetchUsers = useCallback(async () => {
+    if (
+      !profile ||
+      !hasMoreData ||
+      isFetchingData ||
+      state.characters.length >= 2
+    )
+      return;
 
-      const url = buildUrl(page, profile);
-      if (!url) return;
+    const url = buildUrl(page, profile);
+    if (!url) return;
 
-      try {
-        setIsFetchingData(true);
-        const data: TProfile[] = await customizeFetch(url);
-        const filteredData = data.filter(
-          (item) => item.user_id !== profile.user_id
-        );
+    try {
+      setIsFetchingData(true);
+      const data: TProfile[] = await customizeFetch(url);
+      const filteredData = data.filter(
+        (item) => item.user_id !== profile.user_id
+      );
 
-        if (filteredData.length === 0) {
-          setHasMoreData(false);
-          return;
-        }
-
-        dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
-        setPage((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setIsFetchingData(false);
+      if (filteredData.length === 0) {
+        setHasMoreData(false);
+        return;
       }
-    },
-    [profile, page, hasMoreData, isFetchingData]
-  );
+
+      dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
+      setPage((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsFetchingData(false);
+    }
+  }, [profile, page, hasMoreData, isFetchingData, state.characters.length]);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    if (state.characters.length < 2) {
+      fetchUsers();
+    }
+  }, [state.characters.length, fetchUsers]);
 
   const handleSwipe = useCallback(
     async (direction: TDirection, index: number) => {

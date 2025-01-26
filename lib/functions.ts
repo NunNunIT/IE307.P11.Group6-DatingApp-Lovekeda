@@ -44,7 +44,7 @@ export const customizeFetch = async (url: string, init?: FetchRequestInit): Prom
       "secret_key": SECRET_KEY,
     },
   })
-  if (!res.ok) 
+  if (!res.ok)
     throw new Error("Failed to fetch data");
   const payload = await res.json();
   return payload.data;

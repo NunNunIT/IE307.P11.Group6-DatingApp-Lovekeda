@@ -16,7 +16,7 @@ export const LocationProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { user } = useAuth();
+  const { user, getProfile } = useAuth();
   const [location, setLocation] = useState<[number, number] | null>(null);
   const [permissionStatus, setPermissionStatus] =
     useState<TPermissionStatus>("pending");
@@ -42,6 +42,7 @@ export const LocationProvider = ({
         location: display_name,
       }),
     });
+    await getProfile(user.uid);
   };
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 import { customizeFetch } from "@/lib/functions";
 import { auth } from "@/utils/firebase";
-import { Session } from "@supabase/supabase-js";
 import { SplashScreen } from "expo-router";
 import {
   createUserWithEmailAndPassword,
@@ -19,14 +18,12 @@ import {
 
 type AuthProps = {
   user: User | null;
-  session: Session | null;
   profile: TProfile | null;
   getProfile?: any;
   setProfile?: any;
   isFetching?: boolean;
   initialized?: boolean;
   signOut?: () => Promise<void>;
-  setSession?: any;
   loginWithPassword: (data: {
     email: string;
     password: string;
@@ -49,7 +46,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
   const user_id = user?.uid;
   const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<TProfile | null>(null);
   const [initialized, setInitialized] = useState<boolean>(false);
 
@@ -116,11 +112,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   const value = {
     user,
-    session,
     initialized,
     isFetching,
     signOut,
-    setSession,
     setProfile,
     profile,
     getProfile,

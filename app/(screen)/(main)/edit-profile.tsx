@@ -29,7 +29,7 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
 
 export default function FilterScreen() {
   const { colorScheme } = useColorScheme();
-  const { user, profile, getProfile } = useAuth();
+  const { profile, getProfile } = useAuth();
   const [name, setName] = useState<string>(profile?.name ?? "");
   const [gender, setGender] = useState<string>(profile?.gender ?? "other");
   const [age, setAge] = useState<string>(profile?.age?.toString() ?? "");
@@ -75,8 +75,8 @@ export default function FilterScreen() {
     SegmentedControl.presets.DEFAULT
   );
 
-  const submitHandler = async () => {
-    if (!user) return;
+  const submitHandler = useCallback(async () => {
+    if (!profile) return;
     setIsSubmitting(true);
     try {
       const userData = {
@@ -86,23 +86,22 @@ export default function FilterScreen() {
         gender,
         imgs,
         hobbies,
-        user_id: user.uid,
       };
 
-      await customizeFetch(`/users/${user.uid}`, {
+      await customizeFetch(`/users/${profile.user_id}`, {
         method: "PATCH",
         body: JSON.stringify(userData),
       });
 
-      await getProfile();
+      await getProfile(profile.user_id);
       setIsSubmitting(false);
-      router.back();
+      router.replace("/(screen)/(main)/(tabs)/profile");
     } catch (error) {
       // console.error("Error submitting data:", error.message);
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [profile, name, age, bio, gender, imgs, hobbies, getProfile]);
 
   const onDelete = (indexToRemove: number) => {
     setImgs((prevImgs) =>

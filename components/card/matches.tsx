@@ -3,102 +3,57 @@ import React, { useEffect, useState } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router } from "expo-router";
 import { useAuth } from "@/provider/AuthProvider";
+import { customizeFetch } from "@/lib/functions";
 
 export default function Matches() {
-  const { session } = useAuth();
-  const [data, setData] = useState<any[] | undefined>(undefined);
+  const { profile } = useAuth();
+  const [data, setData] = useState<TProfile[] | undefined>(undefined);
 
   useEffect(() => {
+    if (!profile) return;
     (async () => {
-      // const [
-      //   { data: likes, error: errorLikes },
-      //   { data: profiles, error: errorProfile }
-      // ] = await Promise.all([
-      //   supabase
-      //     .from('likes')
-      //     .select("*"),
-      //   supabase
-      //     .from('profiles')
-      //     .select("*")
-      // ])
-      // if (errorLikes || errorProfile) {
-      //   return;
-      // }
-      // // Filter and merge profiles based on symmetric `user_id` and `target_user_id`
-      // const uniquePairs = new Set<string>();
-      // likes.forEach(like => {
-      //   if (
-      //     like?.user_id === session?.user.id ||
-      //     like?.target_user_id === session?.user.id
-      //   ) {
-      //     const key =
-      //       like?.user_id && like?.target_user_id && like.user_id < like.target_user_id
-      //         ? `${like.user_id}---${like.target_user_id}`
-      //         : `${like.target_user_id}--${like.user_id}`;
-      //     uniquePairs.add(key);
-      //   }
-      // });
-      // // console.log("🚀 ~ uniquePairs:", uniquePairs)
-      // const mergedProfiles = [
-      //   // ...DATE_DATA,
-      //   ...Array.from(uniquePairs)
-      //     .map((pair: string) => {
-      //       const [user_id, target_user_id] = pair.split("---");
-      //       const profile = profiles.find(
-      //         p => p.user_id === target_user_id && target_user_id !== session?.user.id
-      //       );
-      //       return profile;
-      //     })
-      //     .filter(Boolean) // Filter out null values
-      // ]
-      //   .reduce((acc: Record<string, any>, item) => {
-      //     if (item && item.user_id && !acc[item.user_id]) {
-      //       acc[item.user_id] = {
-      //         name: item.name,
-      //         imgs: item.imgs,
-      //         user_id: item.user_id,
-      //       };
-      //     }
-      //     return acc;
-      //   }, {})
-      // setData(Object.values(mergedProfiles));
+      const data = await customizeFetch(`/users/${profile.user_id}/matches`);
+      setData(data);
     })();
-  }, []);
+  }, [profile]);
 
   return (
     <View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {data?.map((matches, index) => {
-          return (
-            <TouchableOpacity
-              key={index}
-              className="flex items-center max-w-24 px-3"
-              onPress={() =>
-                router.push({
-                  pathname: "/chat-detail/:id",
-                  params: { id: matches.id },
-                })
-              }
-            >
-              <Image
-                source={{ uri: matches.imgs[0] }}
-                resizeMode="cover"
-                className="rounded-full w-full aspect-square size-16"
-              />
-              <Text
-                className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base text-nowrap line-clamp-1"
-                style={{
-                  fontSize: hp(1.6),
-                }}
-              >
-                {Array.isArray(matches.name)
-                  ? matches.name?.split(" ").slice(-1)
-                  : matches.name}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {data?.map((matches, index) => renderItem(index, matches))}
       </ScrollView>
     </View>
   );
+}
+
+function renderItem(index: number, matches: TProfile): React.JSX.Element {
+  return (
+    <TouchableOpacity
+      key={index}
+      className="flex items-center max-w-24 px-3"
+      onPress={moveToChatDetail(matches)}
+    >
+      <Image
+        source={{ uri: matches.imgs[0] }}
+        resizeMode="cover"
+        className="rounded-full w-full aspect-square size-16"
+      />
+      <Text
+        className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base text-nowrap line-clamp-1"
+        style={{ fontSize: hp(1.6) }}
+      >
+        {Array.isArray(matches.name)
+          ? matches.name?.split(" ").slice(-1)
+          : matches.name}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+function moveToChatDetail(matches: TProfile) {
+  return () =>
+    router.push({
+      pathname: "/chat-detail/:id",
+      params: { id: matches.user_id },
+    });
 }
