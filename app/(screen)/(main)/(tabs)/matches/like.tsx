@@ -5,37 +5,29 @@ import { useCallback, useState } from "react";
 import { useAuth } from "@/provider/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
 import { useFocusEffect } from "expo-router";
-import Spinner from "react-native-loading-spinner-overlay";
 
 export default function LikeScreen() {
   const { profile } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<TProfile[] | undefined>(undefined);
 
   useFocusEffect(
     useCallback(() => {
       if (!profile) return;
       (async () => {
-        try {
-          setIsLoading(true);
-          const data = await customizeFetch(`/users/${profile.user_id}/likes`);
-          setData(data);
-        } finally {
-          setIsLoading(false);
-        }
+        const data = await customizeFetch(`/users/${profile.user_id}/likes`);
+        setData(data);
       })();
     }, [])
   );
 
   return (
     <ScrollView className="flex-1 h-full bg-white dark:bg-black">
-      {renderContent(isLoading, data)}
+      {renderContent(data)}
     </ScrollView>
   );
 }
 
-function renderContent(isLoading: boolean, data: TProfile[] | undefined) {
-  if (isLoading) return <Spinner visible />;
+function renderContent(data: TProfile[] | undefined) {
   if (!data?.length)
     return (
       <View className="flex-1 justify-center items-center p-4">
