@@ -20,7 +20,7 @@ export default function Matches() {
   );
 
   return (
-    <View>
+    <View className="pt-4">
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {data?.map((match, index) => renderItem(index, match))}
       </ScrollView>

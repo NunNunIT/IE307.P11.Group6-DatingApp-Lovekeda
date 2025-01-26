@@ -12,6 +12,7 @@ import {
 import {
   Actions,
   GiftedChat,
+  IMessage,
   InputToolbar,
   Send,
 } from "react-native-gifted-chat";
@@ -49,20 +50,6 @@ export default function Chat() {
       setData(data);
     })();
   }, []);
-
-  interface IMessage {
-    _id: string | number;
-    createdAt: Date;
-    text: string;
-    image?: string;
-    sender: string;
-    receiver: string;
-    user: {
-      id: string | number;
-      avatar?: string;
-      name?: string;
-    };
-  }
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [imgs, setImgs] = useState<string[]>([]);
@@ -117,8 +104,6 @@ export default function Chat() {
           participants: [me, other],
           createdAt,
         });
-
-        // Clear images after successful send
 
         setImgs([]);
       } catch (error) {
@@ -175,9 +160,7 @@ export default function Chat() {
   return (
     <SafeAreaView
       className="justify-center items-center relative bg-white dark:bg-black"
-      style={{
-        paddingTop: isAndroid ? hp(4) : 0,
-      }}
+      style={{ paddingTop: isAndroid ? hp(4) : 0 }}
     >
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
         <View className="w-2/3 flex flex-row justify-start items-center">
@@ -186,15 +169,12 @@ export default function Chat() {
           </TouchableOpacity>
           <TouchableOpacity
             className="w-2/3 flex-row items-center"
-            onPress={() => router.push(`/profile-detail/${other}`)}
+            onPress={moveToProfileDetail(other)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
               <Image
                 source={{ uri: data?.imgs[0] }}
-                style={{
-                  width: hp(4.5),
-                  height: hp(4.5),
-                }}
+                style={{ width: hp(4.5), height: hp(4.5) }}
                 className="rounded-full"
               />
             </View>
@@ -264,4 +244,8 @@ export default function Chat() {
       </View>
     </SafeAreaView>
   );
+}
+
+function moveToProfileDetail(other: string | string[]) {
+  return () => router.push(`/profile-detail/${other}`);
 }
