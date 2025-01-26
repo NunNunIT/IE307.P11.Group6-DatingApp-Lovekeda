@@ -22,21 +22,21 @@ export default function Matches() {
   return (
     <View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {data?.map((matches, index) => renderItem(index, matches))}
+        {data?.map((match, index) => renderItem(index, match))}
       </ScrollView>
     </View>
   );
 }
 
-function renderItem(index: number, matches: TProfile): React.JSX.Element {
+function renderItem(index: number, match: TProfile): React.JSX.Element {
   return (
     <TouchableOpacity
       key={index}
       className="flex items-center max-w-24 px-3"
-      onPress={moveToChatDetail(matches)}
+      onPress={moveToChatDetail(match)}
     >
       <Image
-        source={{ uri: matches.imgs[0] }}
+        source={{ uri: match.imgs[0] }}
         resizeMode="cover"
         className="rounded-full w-full aspect-square size-16"
       />
@@ -44,18 +44,18 @@ function renderItem(index: number, matches: TProfile): React.JSX.Element {
         className="mt-2 text-zinc-800 dark:text-zinc-200 font-medium text-base text-nowrap line-clamp-1"
         style={{ fontSize: hp(1.6) }}
       >
-        {Array.isArray(matches.name)
-          ? matches.name?.split(" ").slice(-1)
-          : matches.name}
+        {Array.isArray(match.name)
+          ? match.name?.split(" ").slice(-1)
+          : match.name}
       </Text>
     </TouchableOpacity>
   );
 }
 
-function moveToChatDetail(matches: TProfile) {
+function moveToChatDetail(match: TProfile) {
   return () =>
     router.push({
-      pathname: "/chat-detail/:id",
-      params: { id: matches.user_id },
+      pathname: "/chat-detail/[id]",
+      params: { id: match.user_id },
     });
 }

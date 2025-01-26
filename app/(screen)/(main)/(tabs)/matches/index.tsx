@@ -54,7 +54,7 @@ function renderContent(data: TProfile[] | undefined) {
 function moveToChatDetail(item: TProfile) {
   return () =>
     router.push({
-      pathname: "/chat-detail/:id",
+      pathname: "/chat-detail/[id]",
       params: { id: item.user_id },
     });
 }

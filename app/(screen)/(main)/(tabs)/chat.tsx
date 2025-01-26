@@ -28,11 +28,8 @@ import { customizeFetch } from "@/lib/functions";
 
 const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
   const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  console.log("ITEM", item);
-  console.log("OTHER", other);
 
   useEffect(() => {
     (async () => {
@@ -42,13 +39,12 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
       } catch (err) {
         setError("Đã xảy ra lỗi.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     })();
   }, [item.id]);
-  console.log("ATA222222", data);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-row items-center justify-center py-4">
         <Text className="text-gray-500 dark:text-gray-400">Đang tải...</Text>
@@ -165,9 +161,7 @@ export default function ChatScreen() {
         const seenParticipants = new Set();
 
         chats.forEach((chat) => {
-          const participantsKey = chat.participants
-            .sort() // Chuẩn hóa danh sách người tham gia
-            .join(","); // Tạo chuỗi khóa duy nhất cho mỗi danh sách người tham gia
+          const participantsKey = chat.participants.sort().join(",");
 
           if (!seenParticipants.has(participantsKey)) {
             seenParticipants.add(participantsKey);
@@ -189,65 +183,89 @@ export default function ChatScreen() {
 
   console.log(chatRoom);
 
-  // Filter out the current user
   const filteredData = DATE_DATA.filter(
-    (item) => item.user_id !== session?.user?.id
+    (item) => item.user_id !== profile!.user_id
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-black py-4">
-      {/* Matches Component */}
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
       <Matches />
 
-      {/* Search Bar */}
       <View className="my-2 px-4">
         <Input
           placeholder="Search"
           placeholderTextColor={"gray"}
           className="rounded-full"
           startIcon={
-            <Search className="size-6 ml-2 text-zinc-500 dark:text-zinc-600" />
+            <Search className="size-6 ml-1 text-zinc-500 dark:text-zinc-600" />
           }
         />
       </View>
 
-      {/* Chat List Header */}
       <Text className="uppercase font-semibold text-zinc-500 tracking-wider py-2 px-4">
         Trò chuyện
       </Text>
 
-      {/* Loading State */}
-      {isLoading ? (
-        <View className="flex-1 justify-center items-center px-4">
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Đang tải danh sách...
-          </Text>
-        </View>
-      ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{
-            paddingBottom: hp(5),
-          }}
-        >
-          {chatRoom.slice(0, 3).map((item) => (
-            <ChatItem
-              key={item.id}
-              item={item}
-              other={item.receiver !== me ? item.receiver : item.sender}
-              onPress={() =>
-                router.push({
-                  pathname: "/chatDetail/:id",
-                  params: {
-                    id: item.receiver !== me ? item.receiver : item.sender,
-                  },
-                })
-              }
-            />
-          ))}
-        </ScrollView>
-      )}
+      {renderContent(isLoading, chatRoom, me)}
     </SafeAreaView>
   );
+}
+
+function renderContent(
+  isLoading: boolean,
+  chatRoom: {
+    id: string;
+    participants: string[];
+    createdAt: any;
+    receiver: string;
+    sender: string;
+    text?: string;
+  }[],
+  me: string
+): React.ReactNode {
+  if (isLoading)
+    return (
+      <View className="flex-1 justify-center items-center px-4">
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          Đang tải danh sách...
+        </Text>
+      </View>
+    );
+
+  return (
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={{ paddingBottom: hp(5) }}
+    >
+      {chatRoom.slice(0, 3).map((item) => (
+        <ChatItem
+          key={item.id}
+          item={item}
+          other={item.receiver !== me ? item.receiver : item.sender}
+          onPress={moveToProfileDetail(item, me)}
+        />
+      ))}
+    </ScrollView>
+  );
+}
+
+function moveToProfileDetail(
+  item: {
+    id: string;
+    participants: string[];
+    createdAt: any;
+    receiver: string;
+    sender: string;
+    text?: string;
+  },
+  me: string
+) {
+  return () =>
+    router.push({
+      pathname: "/chat-detail/[id]",
+      params: {
+        id: item.receiver !== me ? item.receiver : item.sender,
+      },
+    });
 }

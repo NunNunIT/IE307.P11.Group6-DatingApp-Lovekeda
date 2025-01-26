@@ -69,10 +69,8 @@ export default function Chat() {
   const [isLoading, setIsLoading] = useState(true);
   const me = profile!.user_id;
 
-  // Fetch messages
   useLayoutEffect(() => {
     const collectionRef = collection(database, "chats");
-
     const q = query(
       collectionRef,
       where("sender", "in", [me, other]),
@@ -98,7 +96,6 @@ export default function Chat() {
     return unsubscribe;
   }, [me, other]);
 
-  // Handle sending messages
   const onSend = useCallback(
     async (messages: IMessage[] = []) => {
       try {
@@ -126,13 +123,11 @@ export default function Chat() {
         setImgs([]);
       } catch (error) {
         console.error("Failed to send message:", error);
-        // Revert optimistic update
         setMessages((previousMessages: IMessage[]) =>
           previousMessages.filter(
             (msg: IMessage) => msg._id !== messages[0]._id
           )
         );
-        // Show error to user
         Alert.alert("Error", "Failed to send message. Please try again.");
       }
     },
@@ -176,8 +171,6 @@ export default function Chat() {
       <FontAwesome name="send" size={24} color="blue" style={{ margin: 5 }} />
     </Send>
   );
-
-  console.log("AAAAA", messages);
 
   return (
     <SafeAreaView

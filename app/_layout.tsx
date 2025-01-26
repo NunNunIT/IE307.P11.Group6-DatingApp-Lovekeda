@@ -3,7 +3,6 @@ import "~/global.css";
 import { PortalHost } from "@rn-primitives/portal";
 import { Slot, SplashScreen } from "expo-router";
 import * as React from "react";
-import { AppState, Platform, StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { ThemeProvider } from "~/provider/ThemeProvider";
@@ -20,7 +19,6 @@ export default function RootLayout() {
       <GestureHandlerRootView className="flex flex-1">
         <ThemeProvider>
           <AuthProvider>
-            {/* <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} /> */}
             <Slot />
             <PortalHost />
           </AuthProvider>
