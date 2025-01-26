@@ -1,28 +1,31 @@
 import HumanCard2 from "@/components/card/human2";
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useAuth } from "@/provider/AuthProvider";
-import Spinner from "react-native-loading-spinner-overlay";
 import { customizeFetch } from "@/lib/functions";
+import { useFocusEffect } from "expo-router";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default function LikeScreen() {
   const { profile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<TProfile[] | undefined>(undefined);
 
-  useEffect(() => {
-    if (!profile) return;
-    (async () => {
-      try {
-        setIsLoading(true);
-        const data = await customizeFetch(`/users/${profile.user_id}/likes`);
-        setData(data);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!profile) return;
+      (async () => {
+        try {
+          setIsLoading(true);
+          const data = await customizeFetch(`/users/${profile.user_id}/likes`);
+          setData(data);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
+    }, [])
+  );
 
   return (
     <ScrollView className="flex-1 h-full bg-white dark:bg-black">

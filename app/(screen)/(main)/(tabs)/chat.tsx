@@ -112,23 +112,25 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
 };
 
 export default function ChatScreen() {
+  const { profile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const [chatRoom, setChatRoom] = useState<Array<{
-    id: string;
-    participants: string[];
-    createdAt: any;
-    receiver: string;
-    sender: string;
-    text?: string;
-  }>>([]);
-  const { session } = useAuth();
-  const me = session?.user?.id;
+  const [chatRoom, setChatRoom] = useState<
+    Array<{
+      id: string;
+      participants: string[];
+      createdAt: any;
+      receiver: string;
+      sender: string;
+      text?: string;
+    }>
+  >([]);
+  const me = profile!.user_id;
 
   useLayoutEffect(() => {
     const collectionRef = collection(database, "chats");
     const q = query(
       collectionRef,
-      where("participants", "array-contains", me), // Fetch all chats involving the current user
+      where("participants", "array-contains", me),
       orderBy("createdAt", "desc")
     );
 
@@ -142,13 +144,24 @@ export default function ChatScreen() {
           receiver: string;
           sender: string;
           text?: string;
-        }> = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        } as any));
+        }> = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as any)
+        );
 
-        // Loại bỏ các bản ghi trùng lặp
-        const uniqueChats: React.SetStateAction<{ id: string; participants: string[]; createdAt: any; receiver: string; sender: string; text?: string; }[]> = [];
+        const uniqueChats: React.SetStateAction<
+          {
+            id: string;
+            participants: string[];
+            createdAt: any;
+            receiver: string;
+            sender: string;
+            text?: string;
+          }[]
+        > = [];
         const seenParticipants = new Set();
 
         chats.forEach((chat) => {

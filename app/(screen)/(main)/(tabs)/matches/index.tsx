@@ -1,7 +1,7 @@
 import HumanCard2 from "@/components/card/human2";
 import { Pressable, ScrollView, View } from "react-native";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
 import { customizeFetch } from "@/lib/functions";
 import { useAuth } from "@/provider/AuthProvider";
@@ -12,18 +12,21 @@ export default function MatchesScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<TProfile[] | undefined>(undefined);
 
-  useEffect(() => {
-    if (!profile) return;
-    (async () => {
-      try {
-        setIsLoading(true);
-        const data = await customizeFetch(`/users/${profile.user_id}/matches`);
-        setData(data);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (!profile) return;
+      const { user_id } = profile;
+      (async () => {
+        try {
+          setIsLoading(true);
+          const data = await customizeFetch(`/users/${user_id}/matches`);
+          setData(data);
+        } finally {
+          setIsLoading(false);
+        }
+      })();
+    }, [])
+  );
 
   return (
     <ScrollView className="flex-1 h-full bg-white dark:bg-black">

@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import DatesCard from "@/components/card/human";
 import Loading1 from "@/components/loading";
 import { useAuth } from "@/provider/AuthProvider";
-import Spinner from "react-native-loading-spinner-overlay";
 import { customizeFetch } from "@/lib/functions";
 
 const BATCH_SIZE = 10;
@@ -50,7 +49,7 @@ const reducer = (state: State, action: Action): State => {
     case "ADD_CHARACTERS":
       return {
         ...state,
-        characters: [...state.characters, ...action.payload],
+        characters: [...action.payload, ...state.characters],
       };
     case "SET_CURRENT_INDEX":
       return { ...state, currentIndex: action.payload };
@@ -162,13 +161,12 @@ export default function Tinder() {
   const postLikes = useCallback(async () => {
     if (!profile?.user_id || likeQueue.length === 0) return;
 
+    const { user_id } = profile;
+
     try {
       await customizeFetch("/users/swipe-batch", {
         method: "POST",
-        body: JSON.stringify({
-          user_id: profile.user_id,
-          swipes: likeQueue,
-        }),
+        body: JSON.stringify({ user_id, swipes: likeQueue }),
       });
       setLikeQueue([]);
     } catch (error) {
@@ -242,33 +240,40 @@ export default function Tinder() {
 
   return (
     <View className="relative flex-1 w-full h-full">
-      <Spinner visible={isFetching} />
-      {state.characters.length === 0 ? (
-        <Skeleton profileImage={profile?.imgs?.[0]} />
-      ) : (
-        <>
-          <View className="flex-1 w-full h-full">
-            {state.characters.map((character, index) => (
-              <TinderCard
-                key={character.user_id}
-                ref={arrayRef[index]}
-                onSwipe={(dir) => handleSwipe(dir, index)}
-                preventSwipe={["up", "down"]}
-              >
-                <View className="absolute bg-white w-full shadow-lg">
-                  <DatesCard item={character} />
-                </View>
-              </TinderCard>
-            ))}
-          </View>
-          <SwipeButtons
-            onSwipe={async (dir) =>
-              handleSwipe(dir, Math.max(state.currentIndex, 0))
-            }
-            disabled={state.currentIndex < 0}
-          />
-        </>
-      )}
+      {renderContent(state, profile, arrayRef, handleSwipe)}
     </View>
+  );
+}
+
+function renderContent(
+  state: State,
+  profile: TProfile | null,
+  arrayRef: React.RefObject<TinderCardRef>[],
+  handleSwipe: (direction: TDirection, index: number) => Promise<void>
+): React.ReactNode {
+  if (state.characters.length === 0)
+    return <Skeleton profileImage={profile?.imgs?.[0]} />;
+
+  return (
+    <>
+      <View className="flex-1 w-full h-full">
+        {state.characters.map((character, index) => (
+          <TinderCard
+            key={character.user_id}
+            ref={arrayRef[index]}
+            onSwipe={(dir) => handleSwipe(dir, index)}
+            preventSwipe={["up", "down"]}
+          >
+            <View className="absolute bg-white w-full shadow-lg">
+              <DatesCard item={character} />
+            </View>
+          </TinderCard>
+        ))}
+      </View>
+      <SwipeButtons
+        onSwipe={(dir) => handleSwipe(dir, Math.max(state.currentIndex, 0))}
+        disabled={state.currentIndex < 0}
+      />
+    </>
   );
 }

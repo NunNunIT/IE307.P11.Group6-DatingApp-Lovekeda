@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback, useEffect } from "react";
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,7 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Actions, GiftedChat, InputToolbar, Send } from "react-native-gifted-chat";
+import {
+  Actions,
+  GiftedChat,
+  InputToolbar,
+  Send,
+} from "react-native-gifted-chat";
 import {
   collection,
   addDoc,
@@ -18,47 +23,32 @@ import {
   where,
   onSnapshot,
 } from "firebase/firestore";
-import { signOut } from "firebase/auth";
-import { auth, database } from "@/utils/firebase";
-import { useNavigation } from "@react-navigation/native";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
-import colors from "@/config/colors";
+import { database } from "@/utils/firebase";
+import { FontAwesome } from "@expo/vector-icons";
 import { useAuth } from "@/provider/AuthProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { Button } from "@/components/ui/button";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import {
-  User,
-  Home,
-  MessageCircle,
-  Heart,
-  Bell,
-  Settings,
-  Settings2,
-  ImageIcon,
-  // ChevronLeftIcon
-} from "@/lib/icons";
+import { ImageIcon } from "@/lib/icons";
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
 } from "react-native-heroicons/solid";
+import { customizeFetch } from "@/lib/functions";
 
 const isAndroid = Platform.OS === "android";
 
 export default function Chat() {
-  const { session, profile } = useAuth();
+  const { profile } = useAuth();
   const { id: other } = useLocalSearchParams();
-  const [data, setData] = useState<any>(null);
-  useEffect(() => {
-    // (async () => {
-
-    //   const {data, error} = await supabase.from("profiles").select("*").eq("user_id", other);
-    //   if (error) {return}
-    //   setData(data[0]);
-    // })()
+  const [data, setData] = useState<TProfile | undefined>(undefined);
+  useLayoutEffect(() => {
+    (async () => {
+      const data = await customizeFetch(`/users/${other}`);
+      setData(data);
+    })();
   }, []);
-  console.log("EEEEE", data)
 
   interface IMessage {
     _id: string | number;
@@ -68,17 +58,16 @@ export default function Chat() {
     sender: string;
     receiver: string;
     user: {
-      _id: string | number;
+      id: string | number;
       avatar?: string;
       name?: string;
     };
   }
-  
+
   const [messages, setMessages] = useState<IMessage[]>([]);
-  // const navigation = useNavigation();
   const [imgs, setImgs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const me = session?.user?.id; // Current user id
+  const me = profile!.user_id;
 
   // Fetch messages
   useLayoutEffect(() => {
@@ -97,13 +86,13 @@ export default function Chat() {
           _id: doc.data()._id,
           createdAt: doc.data().createdAt.toDate(),
           text: doc.data().text,
-          image: doc.data().image || null, // Handle image messages
+          image: doc.data().image || null,
           sender: doc.data().sender,
           receiver: doc.data().receiver,
           user: doc.data().user,
         }))
       );
-      setIsLoading(false); // Ngừng trạng thái tải khi dữ liệu đã sẵn sàng
+      setIsLoading(false);
     });
 
     return unsubscribe;
@@ -139,7 +128,9 @@ export default function Chat() {
         console.error("Failed to send message:", error);
         // Revert optimistic update
         setMessages((previousMessages: IMessage[]) =>
-          previousMessages.filter((msg: IMessage) => msg._id !== messages[0]._id)
+          previousMessages.filter(
+            (msg: IMessage) => msg._id !== messages[0]._id
+          )
         );
         // Show error to user
         Alert.alert("Error", "Failed to send message. Please try again.");
@@ -217,7 +208,7 @@ export default function Chat() {
             <View className="justify-center items-start">
               <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
                 {data?.name}, {data?.age}
-              </Text> 
+              </Text>
               <Text className="text-xs text-neutral-400">
                 You matched today
               </Text>
@@ -251,21 +242,21 @@ export default function Chat() {
               showAvatarForEveryMessage={false}
               showUserAvatar={false}
               onSend={(messages) => {
-                const customMessages = messages.map(msg => ({
+                const customMessages = messages.map((msg) => ({
                   ...msg,
                   sender: me,
-                  receiver: other
+                  receiver: other,
                 }));
                 onSend(customMessages as IMessage[]);
               }}
               messagesContainerStyle={{
-              backgroundColor: "#fff",
+                backgroundColor: "#fff",
               }}
               textInputProps={{
                 style: {
                   backgroundColor: "#fff",
                   borderRadius: 20,
-                }
+                },
               }}
               renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
               renderActions={(props) => <CustomActions {...props} />}
@@ -275,8 +266,6 @@ export default function Chat() {
                 avatar: "https://i.pravatar.cc/500",
               }}
             />
-
-        
           </View>
         )}
       </View>
