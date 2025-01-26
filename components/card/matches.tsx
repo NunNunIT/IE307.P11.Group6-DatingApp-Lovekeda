@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { router, useFocusEffect } from "expo-router";
 import { useAuth } from "@/provider/AuthProvider";
@@ -9,13 +9,15 @@ export default function Matches() {
   const { profile } = useAuth();
   const [data, setData] = useState<TProfile[] | undefined>(undefined);
 
-  useFocusEffect(() => {
-    if (!profile) return;
-    (async () => {
-      const data = await customizeFetch(`/users/${profile.user_id}/matches`);
-      setData(data);
-    })();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      if (!profile) return;
+      (async () => {
+        const data = await customizeFetch(`/users/${profile.user_id}/matches`);
+        setData(data);
+      })();
+    }, [profile])
+  );
 
   return (
     <View>
