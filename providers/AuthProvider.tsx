@@ -12,15 +12,14 @@ import {
   useEffect,
   createContext,
   PropsWithChildren,
-  useCallback,
   useContext,
 } from "react";
+import useSWR from "swr";
 
 type AuthProps = {
   user: User | null;
-  profile: TProfile | null;
+  profile: TProfile | undefined;
   getProfile?: any;
-  setProfile?: any;
   isFetching?: boolean;
   initialized?: boolean;
   signOut?: () => Promise<void>;
@@ -45,24 +44,12 @@ export function useAuth() {
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
   const user_id = user?.uid;
-  const [isFetching, setIsFetching] = useState<boolean>(true);
-  const [profile, setProfile] = useState<TProfile | null>(null);
+  const {
+    data: profile,
+    isLoading: isFetching,
+    mutate: getProfile,
+  } = useSWR<TProfile>(user_id ? `/users/${user_id}` : null, customizeFetch);
   const [initialized, setInitialized] = useState<boolean>(false);
-
-  const getProfile = useCallback(
-    async (uid: string) => {
-      setIsFetching(true);
-      try {
-        const data = await customizeFetch(`/users/${uid}`);
-        setProfile(data);
-      } catch (error: any) {
-        console.error("🚀 ~ getProfile ~ error", error?.message);
-      } finally {
-        setIsFetching(false);
-      }
-    },
-    [setIsFetching, user, setProfile]
-  );
 
   useEffect(() => {
     const subscription = auth.onAuthStateChanged(async (user) => {
@@ -76,7 +63,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     if (!user_id) return;
-    getProfile(user_id);
+    getProfile();
   }, [user_id]);
 
   const loginWithPassword = async ({
@@ -87,8 +74,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     password: string;
   }) => {
     const result = await signInWithEmailAndPassword(auth, email, password);
-    const uid = result.user.uid;
-    await getProfile(uid);
+    await getProfile();
     return result;
   };
 
@@ -106,7 +92,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   };
 
   const signOut = async () => {
-    setProfile(null);
     auth.signOut();
   };
 
@@ -115,7 +100,6 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     initialized,
     isFetching,
     signOut,
-    setProfile,
     profile,
     getProfile,
     loginWithPassword,

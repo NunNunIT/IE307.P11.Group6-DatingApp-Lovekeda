@@ -3,9 +3,7 @@ import React, {
   useCallback,
   useState,
   useEffect,
-  createRef,
-  useMemo,
-  RefObject,
+  useRef,
 } from "react";
 import { View, Image } from "react-native";
 import TinderCard from "react-tinder-card";
@@ -84,7 +82,7 @@ const SwipeButtons = ({
   disabled,
 }: {
   onSwipe: (dir: TDirection) => Promise<void>;
-  disabled: boolean;
+  disabled?: boolean;
 }) => (
   <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
     <Button
@@ -129,16 +127,11 @@ export default function Tinder() {
     currentIndex: -1,
     isLoading: true,
   });
-  const arrayRef = useMemo<RefObject<TinderCardRef>[]>(
-    () =>
-      Array(state.characters.length)
-        .fill(null)
-        .map(() => createRef()),
-    [state.characters.length]
-  );
 
-  const { profile, isFetching } = useAuth();
-  const [page, setPage] = useState(1);
+  const topCardRef = useRef<TinderCardRef | null>(null); // Single ref for the top card
+
+  const { profile } = useAuth();
+  const [page, setPage] = useState(0);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [likeQueue, setLikeQueue] = useState<
@@ -149,7 +142,7 @@ export default function Tinder() {
     if (!profile) return;
 
     dispatch({ type: "SET_CHARACTERS", payload: [] });
-    setPage(1);
+    setPage(0);
     setHasMoreData(true);
   }, [
     profile?.genderFind,
@@ -214,13 +207,12 @@ export default function Tinder() {
   }, [state.characters.length, fetchUsers]);
 
   const handleSwipe = useCallback(
-    async (direction: TDirection, index: number) => {
-      if (!profile) return;
+    async (direction: TDirection) => {
+      if (!profile || !topCardRef.current) return;
 
-      const currentRef = arrayRef[index];
-      if (currentRef?.current) await currentRef.current?.swipe(direction);
+      await topCardRef.current.swipe(direction);
 
-      const swipedUser = state.characters[index];
+      const swipedUser = state.characters[state.characters.length - 1];
       if (swipedUser && direction === "right") {
         setLikeQueue((prev) => [
           ...prev,
@@ -228,10 +220,16 @@ export default function Tinder() {
         ]);
       }
 
-      dispatch({ type: "REMOVE_CHARACTER", payload: index });
-      dispatch({ type: "SET_CURRENT_INDEX", payload: index - 1 });
+      dispatch({
+        type: "REMOVE_CHARACTER",
+        payload: state.characters.length - 1,
+      });
+      dispatch({
+        type: "SET_CURRENT_INDEX",
+        payload: state.characters.length - 2,
+      });
     },
-    [arrayRef, state.characters, profile]
+    [state.characters, profile]
   );
 
   useEffect(() => {
@@ -240,40 +238,27 @@ export default function Tinder() {
 
   return (
     <View className="relative flex-1 w-full h-full">
-      {renderContent(state, profile, arrayRef, handleSwipe)}
+      {state.characters.length === 0 ? (
+        <Skeleton profileImage={profile?.imgs?.[0]} />
+      ) : (
+        <>
+          <View className="flex-1 w-full h-full">
+            {state.characters.map((character, index) => (
+              <TinderCard
+                key={character.user_id}
+                ref={index === state.characters.length - 1 ? topCardRef : null}
+                onSwipe={(dir) => handleSwipe(dir)}
+                preventSwipe={["up", "down"]}
+              >
+                <View className="absolute bg-white w-full shadow-lg">
+                  <DatesCard item={character} />
+                </View>
+              </TinderCard>
+            ))}
+          </View>
+          <SwipeButtons onSwipe={handleSwipe} />
+        </>
+      )}
     </View>
-  );
-}
-
-function renderContent(
-  state: State,
-  profile: TProfile | null,
-  arrayRef: React.RefObject<TinderCardRef>[],
-  handleSwipe: (direction: TDirection, index: number) => Promise<void>
-): React.ReactNode {
-  if (state.characters.length === 0)
-    return <Skeleton profileImage={profile?.imgs?.[0]} />;
-
-  return (
-    <>
-      <View className="flex-1 w-full h-full">
-        {state.characters.map((character, index) => (
-          <TinderCard
-            key={character.user_id}
-            ref={arrayRef[index]}
-            onSwipe={(dir) => handleSwipe(dir, index)}
-            preventSwipe={["up", "down"]}
-          >
-            <View className="absolute bg-white w-full shadow-lg">
-              <DatesCard item={character} />
-            </View>
-          </TinderCard>
-        ))}
-      </View>
-      <SwipeButtons
-        onSwipe={(dir) => handleSwipe(dir, Math.max(state.currentIndex, 0))}
-        disabled={state.currentIndex < 0}
-      />
-    </>
   );
 }

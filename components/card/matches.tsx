@@ -1,22 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
-import React, { useCallback, useState } from "react";
+import { ReactNode } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
+import useSWR from "swr";
 
 export default function Matches() {
   const { profile } = useAuth();
-  const [data, setData] = useState<TProfile[] | undefined>(undefined);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!profile) return;
-      (async () => {
-        const data = await customizeFetch(`/users/${profile.user_id}/matches`);
-        setData(data);
-      })();
-    }, [profile])
+  const { data } = useSWR<TProfile[]>(
+    `/users/${profile?.user_id}/matches`,
+    customizeFetch
   );
 
   return (
@@ -28,7 +22,7 @@ export default function Matches() {
   );
 }
 
-function renderItem(index: number, match: TProfile): React.JSX.Element {
+function renderItem(index: number, match: TProfile): ReactNode {
   return (
     <TouchableOpacity
       key={index}

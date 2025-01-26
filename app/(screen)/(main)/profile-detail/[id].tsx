@@ -2,46 +2,22 @@ import Carousel from "@/components/carousel/type1";
 import { Text } from "@/components/ui/text";
 import { customizeFetch } from "@/lib/functions";
 import { Stack, useLocalSearchParams } from "expo-router";
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import {
-  Dimensions,
-  Image,
-  View,
-  ActivityIndicator,
-  ScrollView,
-} from "react-native";
+import React from "react";
+import { Dimensions, Image, View, ScrollView } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
+import useSWR from "swr";
 
 const { width } = Dimensions.get("window");
 
 export default function ProfileDetailScreen() {
   const { id } = useLocalSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<TProfile | undefined>(undefined);
-  const [location, setLocation] = useState<string | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    (async () => {
-      try {
-        setIsLoading(true);
-        const data = await customizeFetch(`/users/${id}`);
-        setData(data);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!data?.locate?.coordinates) return;
-      const coordinates = data.locate.coordinates;
-      const { display_name } = await customizeFetch(
-        `/common/location?lat=${coordinates[1]}&long=${coordinates[0]}`
-      );
-      setLocation(display_name);
-    })();
-  }, []);
+  const { isLoading, data } = useSWR<TProfile>(`/users/${id}`, customizeFetch);
+  const { data: location } = useSWR<{ display_name: string }>(
+    data?.locate?.coordinates
+      ? `/common/location?lat=${data.locate.coordinates[1]}&long=${data.locate.coordinates[0]}`
+      : null,
+    customizeFetch
+  );
 
   const isLoadingData = isLoading || !data;
 
@@ -69,7 +45,7 @@ export default function ProfileDetailScreen() {
               </Text>
 
               <Text className="text-lg text-zinc-900 dark:text-white font-regular">
-                {location ?? "Đang tải..."}
+                {location?.display_name ?? "Đang tải..."}
               </Text>
             </View>
 
@@ -94,6 +70,7 @@ export default function ProfileDetailScreen() {
                 ))}
               </View>
             </View>
+
             {/* Đừng có mà xóa */}
             <View className="pb-20" />
           </View>

@@ -33,7 +33,9 @@ export const LocationProvider = ({
     setPermissionStatus("granted");
     if (!user) return;
 
-    const location = await customizeFetch(`/common/location?lat=${coordinates[1]}&long=${coordinates[0]}`);
+    const location = await customizeFetch(
+      `/common/location?lat=${coordinates[1]}&long=${coordinates[0]}`
+    );
     const { display_name } = location;
     await customizeFetch(`/users/${user.uid}`, {
       method: "PATCH",
@@ -42,7 +44,7 @@ export const LocationProvider = ({
         location: display_name,
       }),
     });
-    await getProfile(user.uid);
+    await getProfile();
   };
 
   useEffect(() => {

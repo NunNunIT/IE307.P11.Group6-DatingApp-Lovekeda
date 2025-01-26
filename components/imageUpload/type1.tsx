@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import {
-  Camera,
   CameraView,
   CameraType,
   FlashMode,
@@ -20,24 +19,19 @@ import {
 } from "@/lib/icons";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 interface ImageUploadType1Props {
   multiUpload?: boolean;
   imgs: string[];
-  setImgs: (imgs: string[]) => void;
+  setImgs: Dispatch<SetStateAction<string[]>>;
   triggerContent?: JSX.Element;
-  // imagePreview?: (item: string) => JSX.Element;
-  // renderImgs?: any
 }
 
 export default function ImageUploadType1({
@@ -45,18 +39,12 @@ export default function ImageUploadType1({
   imgs = [],
   setImgs,
   triggerContent,
-}: // imagePreview,
-// renderImgs,
-ImageUploadType1Props) {
+}: ImageUploadType1Props) {
   const [cameraVisible, setCameraVisible] = useState(false);
   const cameraRef = useRef<CameraView | null>(null);
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [flashMode, setFlashMode] = useState<FlashMode>("off");
-
-  // useEffect(() => {
-  //   console.log(imgs);
-  // }, [imgs]);
 
   const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
@@ -76,14 +64,15 @@ ImageUploadType1Props) {
     });
 
     if (!result.canceled && result.assets?.[0]?.uri) {
-      setImgs((prev: string[]) => [...prev, result.assets[0].uri]); // Ensure prev is typed
+      setImgs((prev) => [...prev, result.assets[0].uri]);
     }
   };
 
   const takePhoto = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
-      setImgs((prev: string[]) => [...prev, photo.uri]); // Ensure prev is typed
+      if (!photo?.uri) return;
+      setImgs((prev) => [...prev, photo.uri]);
       setCameraVisible(false);
     }
   };
@@ -113,10 +102,6 @@ ImageUploadType1Props) {
     );
   };
 
-  // const renderImage = (img: string) => {
-  //   return imagePreview(img);
-  // };
-
   return (
     <View className="flex-1 justify-center items-center">
       <Dialog>
@@ -125,13 +110,21 @@ ImageUploadType1Props) {
           <DialogHeader>
             <DialogTitle>Đăng tải hình ảnh</DialogTitle>
             <View className="flex flex-col justify-center items-center gap-6 mt-6">
-              <Button variant="secondary" className="w-full" onPress={pickImage}>
+              <Button
+                variant="secondary"
+                className="w-full"
+                onPress={pickImage}
+              >
                 <View className="flex flex-row gap-2">
                   <ImageIcon className="text-black dark:text-white size-6" />
                   <Text className="">Chọn Ảnh</Text>
                 </View>
               </Button>
-              <Button variant="secondary" className="w-full" onPress={() => setCameraVisible(true)}>
+              <Button
+                variant="secondary"
+                className="w-full"
+                onPress={() => setCameraVisible(true)}
+              >
                 <View className="flex flex-row gap-2">
                   <CameraIcon className="text-black dark:text-white size-6" />
                   <Text className="">Mở camera</Text>
@@ -186,16 +179,6 @@ ImageUploadType1Props) {
           </CameraView>
         </View>
       </Modal>
-
-      {/* {imgs.length > 0 && (
-        <View className="flex flex-row">
-          {imgs.map((img, index) => (
-            <React.Fragment key={index}>{renderImage(img)}</React.Fragment>
-          ))}
-        </View>
-      )} */}
-
-      {/* {renderImgs} */}
     </View>
   );
 }

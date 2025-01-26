@@ -26,11 +26,8 @@ export default function SetUpProfileScreen() {
   const [imgs, setImgs] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { isFetching, signOut, profile, getProfile, user } = useAuth();
-  const user_id = user!.uid;
-  useEffect(() => {
-    (async () => getProfile(user_id))();
-  }, [user_id]);
+  const { isFetching, signOut, profile, getProfile } = useAuth();
+  const user_id = profile!.user_id;
 
   useEffect(() => {
     if (profile?.name) setName(profile.name);
@@ -60,7 +57,7 @@ export default function SetUpProfileScreen() {
         bio,
       }),
     });
-    await getProfile?.();
+    await getProfile();
     setIsSubmitting(false);
   };
 
@@ -73,7 +70,7 @@ export default function SetUpProfileScreen() {
         purposeValue,
       }),
     });
-    await getProfile?.();
+    await getProfile();
     setIsSubmitting(false);
   };
 
@@ -87,7 +84,7 @@ export default function SetUpProfileScreen() {
       method: "PATCH",
       body: JSON.stringify({ imgs, is_complete_profile: true }),
     });
-    await getProfile?.();
+    await getProfile();
     setIsSubmitting(false);
     router.replace("/(screen)/(main)/(tabs)");
   };

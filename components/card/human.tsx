@@ -1,6 +1,5 @@
 import {
   Dimensions,
-  TouchableWithoutFeedback,
   Image,
   Text,
   View,
@@ -22,7 +21,7 @@ const moveToProfileDetail = (id: string) =>
     params: { id },
   });
 
-export default function DatesCard({ item }: { item: TProfile }) {
+export default function Tinder({ item }: { item: TProfile }) {
   const { location } = useLocation();
   const isShowDistanceBadge = !!location && item?.locate?.coordinates;
   const distance = haversineDistance(

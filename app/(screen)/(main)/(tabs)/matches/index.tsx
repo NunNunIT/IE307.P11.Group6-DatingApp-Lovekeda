@@ -1,24 +1,16 @@
 import HumanCard2 from "@/components/card/human2";
 import { Pressable, ScrollView, View } from "react-native";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router } from "expo-router";
 import { customizeFetch } from "@/lib/functions";
 import { useAuth } from "@/providers/AuthProvider";
 import { Text } from "@/components/ui/text";
+import useSWR from "swr";
 
 export default function MatchesScreen() {
   const { profile } = useAuth();
-  const [data, setData] = useState<TProfile[] | undefined>(undefined);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!profile) return;
-      const { user_id } = profile;
-      (async () => {
-        const data = await customizeFetch(`/users/${user_id}/matches`);
-        setData(data);
-      })();
-    }, [])
+  const { data } = useSWR<TProfile[]>(
+    `/users/${profile?.user_id}/matches`,
+    customizeFetch
   );
 
   return (

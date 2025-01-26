@@ -52,7 +52,17 @@ export default function FilterScreen() {
         hobbies: profile?.hobbies,
       });
     setIsDirtyFields(isDirty);
-  }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
+  }, [
+    profile,
+    setIsDirtyFields,
+    name,
+    gender,
+    bio,
+    age,
+    bindAll,
+    imgs,
+    hobbies,
+  ]);
 
   useEffect(() => {
     if (!profile) return;
@@ -65,13 +75,10 @@ export default function FilterScreen() {
   }, [profile]);
 
   const onChangeIndex = useCallback((index: number) => {
-    console.warn(
-      "Index " + index + " of the second segmentedControl was pressed"
-    );
     setTab(index);
   }, []);
 
-  const [screenPreset, setScreenPreset] = useState(
+  const [screenPreset] = useState(
     SegmentedControl.presets.DEFAULT
   );
 
@@ -93,7 +100,7 @@ export default function FilterScreen() {
         body: JSON.stringify(userData),
       });
 
-      await getProfile(profile.user_id);
+      await getProfile();
       setIsSubmitting(false);
       router.replace("/(screen)/(main)/(tabs)/profile");
     } catch (error) {

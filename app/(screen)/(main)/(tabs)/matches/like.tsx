@@ -1,23 +1,15 @@
 import HumanCard2 from "@/components/card/human2";
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
-import { useCallback, useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
 import { customizeFetch } from "@/lib/functions";
-import { useFocusEffect } from "expo-router";
+import useSWR from "swr";
 
 export default function LikeScreen() {
   const { profile } = useAuth();
-  const [data, setData] = useState<TProfile[] | undefined>(undefined);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!profile) return;
-      (async () => {
-        const data = await customizeFetch(`/users/${profile.user_id}/likes`);
-        setData(data);
-      })();
-    }, [])
+  const { data } = useSWR<TProfile[]>(
+    `/users/${profile?.user_id}/likes`,
+    customizeFetch
   );
 
   return (

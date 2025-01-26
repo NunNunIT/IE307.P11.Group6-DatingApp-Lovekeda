@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -37,37 +37,37 @@ import {
   EllipsisHorizontalIcon,
 } from "react-native-heroicons/solid";
 import { customizeFetch } from "@/lib/functions";
+import useSWRSubscription from "swr/subscription";
+import useSWR from "swr";
 
 const isAndroid = Platform.OS === "android";
 
 export default function Chat() {
   const { profile } = useAuth();
   const { id: other } = useLocalSearchParams();
-  const [data, setData] = useState<TProfile | undefined>(undefined);
-  useLayoutEffect(() => {
-    (async () => {
-      const data = await customizeFetch(`/users/${other}`);
-      setData(data);
-    })();
-  }, []);
+  const { data: otherProfile } = useSWR<TProfile>(
+    `/users/${other}`,
+    customizeFetch
+  );
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [imgs, setImgs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const me = profile!.user_id;
 
-  useLayoutEffect(() => {
-    const collectionRef = collection(database, "chats");
-    const q = query(
-      collectionRef,
-      where("sender", "in", [me, other]),
-      where("receiver", "in", [me, other]),
-      orderBy("createdAt", "desc")
-    );
+  const { data: realTimeMessages } = useSWRSubscription(
+    ["chats", me, other],
+    (key, { next }) => {
+      const collectionRef = collection(database, "chats");
+      const q = query(
+        collectionRef,
+        where("sender", "in", [me, other]),
+        where("receiver", "in", [me, other]),
+        orderBy("createdAt", "desc")
+      );
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setMessages(
-        querySnapshot.docs.map((doc) => ({
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const messages = querySnapshot.docs.map((doc) => ({
           _id: doc.data()._id,
           createdAt: doc.data().createdAt.toDate(),
           text: doc.data().text,
@@ -75,13 +75,20 @@ export default function Chat() {
           sender: doc.data().sender,
           receiver: doc.data().receiver,
           user: doc.data().user,
-        }))
-      );
-      setIsLoading(false);
-    });
+        }));
+        next(null, messages);
+        setIsLoading(false);
+      });
 
-    return unsubscribe;
-  }, [me, other]);
+      return () => unsubscribe();
+    }
+  );
+
+  useEffect(() => {
+    if (realTimeMessages) {
+      setMessages(realTimeMessages);
+    }
+  }, [realTimeMessages]);
 
   const onSend = useCallback(
     async (messages: IMessage[] = []) => {
@@ -91,9 +98,6 @@ export default function Chat() {
         );
 
         const { _id, createdAt, text, user } = messages[0];
-        const validAvatar =
-          profile?.imgs?.[0] ?? "https://example.com/default-avatar.png";
-
         await addDoc(collection(database, "chats"), {
           _id,
           text,
@@ -173,14 +177,14 @@ export default function Chat() {
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
               <Image
-                source={{ uri: data?.imgs[0] }}
+                source={{ uri: otherProfile?.imgs[0] }}
                 style={{ width: hp(4.5), height: hp(4.5) }}
                 className="rounded-full"
               />
             </View>
             <View className="justify-center items-start">
               <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
-                {data?.name}, {data?.age}
+                {otherProfile?.name}, {otherProfile?.age}
               </Text>
               <Text className="text-xs text-neutral-400">
                 You matched today
@@ -236,7 +240,8 @@ export default function Chat() {
               renderSend={(props) => <CustomSend {...props} />}
               user={{
                 _id: me,
-                avatar: "https://i.pravatar.cc/500",
+                name: profile!.name,
+                avatar: profile!.imgs[0],
               }}
             />
           </View>

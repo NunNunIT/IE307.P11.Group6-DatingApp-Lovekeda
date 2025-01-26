@@ -49,7 +49,7 @@ export default function FilterScreen() {
         method: "PATCH",
         body: JSON.stringify(data),
       });
-      await getProfile(user.uid);
+      await getProfile();
       router.back();
     } finally {
       setIsSubmitting(false);
@@ -89,7 +89,6 @@ export default function FilterScreen() {
       <Spinner visible={isSubmitting} />
       <ScrollView className="flex-1">
         <View className="h-full p-4 gap-4 flex flex-col mb-16">
-          {/* Độ tuổi */}
           <View className="relative flex flex-col justify-between gap-6 rounded-lg bg-white dark:bg-zinc-900 shadow p-4">
             <View className="flex flex-row justify-between">
               <Text className="text-lg font-bold">Độ tuổi</Text>
@@ -110,7 +109,6 @@ export default function FilterScreen() {
             </View>
           </View>
 
-          {/* Khoảng cách */}
           <View className="relative flex flex-col justify-between gap-6 rounded-lg bg-white dark:bg-zinc-900 shadow p-4">
             <View className="flex flex-row justify-between">
               <Text className="text-lg font-bold">Khoảng cách tối đa (km)</Text>
@@ -131,39 +129,43 @@ export default function FilterScreen() {
             </View>
           </View>
 
-          {/* Mục đích tìm kiếm */}
           <View className="relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-4">
             <Text className="text-lg font-bold">Mục đích tìm kiếm</Text>
             <View className="flex flex-row gap-2">
               {["friends", "dating"].map((purpose) => (
                 <Pressable
                   key={purpose}
-                  className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${purposeValue === purpose
-                    ? "border-pri-color bg-white dark:bg-zinc-950"
-                    : "border-zinc-200 dark:border-zinc-800"
-                    }`}
+                  className={cn(
+                    "h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2",
+                    purposeValue === purpose
+                      ? "border-pri-color bg-white dark:bg-zinc-950"
+                      : "border-zinc-200 dark:border-zinc-800"
+                  )}
                   onPress={() => setPurposeValue(purpose)}
                 >
                   <Text className="text-2xl">
                     {purpose === "friends" ? "👋" : "❤️"}
                   </Text>
-                  <Text className="">{purpose === "friends" ? "Tìm bạn" : "Tìm người yêu"}</Text>
+                  <Text className="">
+                    {purpose === "friends" ? "Tìm bạn" : "Tìm người yêu"}
+                  </Text>
                 </Pressable>
               ))}
             </View>
           </View>
 
-          {/* Giới tính */}
           <View className="relative flex flex-col rounded-lg gap-6 bg-white dark:bg-zinc-900 shadow p-4">
             <Text className="text-lg font-bold">Đang tìm kiếm</Text>
             <View className="flex flex-row gap-2">
               {SEARCH_GENDER_OPTIONS.map(({ label, value: gender }) => (
                 <Pressable
                   key={gender}
-                  className={`h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2 ${genderFind === gender
-                    ? "border-pri-color bg-white dark:bg-zinc-950"
-                    : "border-zinc-200 dark:border-zinc-800"
-                    }`}
+                  className={cn(
+                    "h-24 w-full flex-1 flex flex-col justify-center items-center rounded-lg border-2",
+                    genderFind === gender
+                      ? "border-pri-color bg-white dark:bg-zinc-950"
+                      : "border-zinc-200 dark:border-zinc-800"
+                  )}
                   onPress={() => setGenderFind(gender)}
                 >
                   {gender === "female" ? (
@@ -179,8 +181,12 @@ export default function FilterScreen() {
             </View>
           </View>
 
-          {/* Nút Submit */}
-          <Button onPress={submitHandler} className="mt-4" variant="red" disabled={!isDirtyFields}>
+          <Button
+            onPress={submitHandler}
+            className="mt-4"
+            variant="red"
+            disabled={!isDirtyFields}
+          >
             <Text>Xác nhận</Text>
           </Button>
         </View>
