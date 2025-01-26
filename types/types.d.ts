@@ -12,5 +12,7 @@ type TProfile = {
   locate?: { type: string; coordinates: number[] };
   location: string | null;
   genderFind: string | null;
-  ageRange: number[] | null;
+  ageRange: [number, number] | null;
+  filterDistance: number | null;
+  distance: number | null;
 };

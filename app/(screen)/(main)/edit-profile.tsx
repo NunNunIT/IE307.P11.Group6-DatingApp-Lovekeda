@@ -15,11 +15,11 @@ import {
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
 import { useAuth } from "@/provider/AuthProvider";
-import { supabase } from "@/utils/supabase";
 import { router } from "expo-router";
 import { bindAll } from "lodash";
 import MultiChoicePicker from "@/components/select/multiChoice";
 import { GENDER_OPTIONS, HOBBY_OPTIONS } from "@/constants/common";
+import { customizeFetch } from "@/lib/functions";
 
 const { width } = Dimensions.get("window");
 
@@ -89,10 +89,12 @@ export default function FilterScreen() {
         user_id: user.uid,
       };
 
-      await supabase
-        .from("profiles")
-        .upsert(userData, { onConflict: "user_id" });
-      await getProfile?.();
+      await customizeFetch(`/users/${user.uid}`, {
+        method: "PATCH",
+        body: JSON.stringify(userData),
+      });
+
+      await getProfile();
       setIsSubmitting(false);
       router.back();
     } catch (error) {

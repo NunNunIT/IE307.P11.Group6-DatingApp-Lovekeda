@@ -35,7 +35,7 @@ export function haversineDistance(
 }
 
 export const customizeFetch = async (url: string, init?: FetchRequestInit): Promise<any> => {
-  console.log("🚀 ~ customizeFetch ~ url:", url)
+  console.log("🚀 ~ customizeFetch ~ url:", init?.method ?? "GET", url);
   const res = await fetch(`${BACKEND_API_URL}${url}`, {
     ...init,
     headers: {

@@ -1,4 +1,12 @@
-import React, { useReducer, useCallback, useState, useEffect } from "react";
+import React, {
+  useReducer,
+  useCallback,
+  useState,
+  useEffect,
+  createRef,
+  useMemo,
+  RefObject,
+} from "react";
 import { View, Image } from "react-native";
 import TinderCard from "react-tinder-card";
 import { HeartIcon, XMarkIcon } from "react-native-heroicons/solid";
@@ -10,27 +18,36 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { customizeFetch } from "@/lib/functions";
 
 const BATCH_SIZE = 10;
-const FETCH_THRESHOLD = 2;
 
 type State = {
   characters: TProfile[];
-  currentIndex: number | null;
+  currentIndex: number;
   isLoading: boolean;
 };
 
 type Action =
   | { type: "SET_CHARACTERS"; payload: TProfile[] }
   | { type: "ADD_CHARACTERS"; payload: TProfile[] }
-  | { type: "SET_CURRENT_INDEX"; payload: number | null }
+  | { type: "SET_CURRENT_INDEX"; payload: number }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "REMOVE_CHARACTER"; payload: number };
+
+type TDirection = "left" | "right" | "up" | "down";
+
+interface TinderCardRef {
+  swipe: (dir?: TDirection) => Promise<void>;
+  restoreCard: () => Promise<void>;
+}
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_CHARACTERS":
-      return { ...state, characters: action.payload };
+      return { ...state, characters: action.payload, currentIndex: action.payload.length - 1 };
     case "ADD_CHARACTERS":
-      return { ...state, characters: [...state.characters, ...action.payload] };
+      return {
+        ...state,
+        characters: [...state.characters, ...action.payload],
+      };
     case "SET_CURRENT_INDEX":
       return { ...state, currentIndex: action.payload };
     case "SET_LOADING":
@@ -45,17 +62,12 @@ const reducer = (state: State, action: Action): State => {
   }
 };
 
-function Skeleton({
-  profileImage = "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp",
-}) {
+function Skeleton({ profileImage }: { profileImage?: string }) {
   return (
     <View className="w-full h-full flex justify-center items-center">
       <Loading1 />
       <View className="absolute items-center justify-center">
-        <Image
-          className="rounded-full size-28"
-          source={{ uri: profileImage }}
-        />
+        <Image className="rounded-full size-28" source={{ uri: profileImage }} />
       </View>
     </View>
   );
@@ -65,7 +77,7 @@ const SwipeButtons = ({
   onSwipe,
   disabled,
 }: {
-  onSwipe: (dir: "left" | "right") => Promise<void>;
+  onSwipe: (dir: TDirection) => Promise<void>;
   disabled: boolean;
 }) => (
   <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
@@ -88,13 +100,38 @@ const SwipeButtons = ({
   </View>
 );
 
+const buildUrl = (currentPage: number, profile: TProfile | null) => {
+  if (!profile) return null;
+
+  const gender = profile.genderFind ?? "all";
+  const ageRange = profile.ageRange?.join("-") ?? "all";
+  const distance = profile.filterDistance;
+
+  const url = `/users/find?limit=${BATCH_SIZE}&page=${currentPage}&gender=${gender}&age=${ageRange}&distance=${distance}`;
+
+  // if (profile.locate?.coordinates) {
+  //   const [long, lat] = profile.locate.coordinates;
+  //   return url + `&long=${long}&lat=${lat}`;
+  // }
+
+  return url;
+};
+
 export default function Tinder() {
   const [state, dispatch] = useReducer(reducer, {
     characters: [],
-    currentIndex: null,
+    currentIndex: -1,
     isLoading: true,
   });
-  const { profile, user, isFetching } = useAuth();
+  const arrayRef = useMemo<RefObject<TinderCardRef>[]>(
+    () =>
+      Array(state.characters.length)
+        .fill(null)
+        .map(() => createRef()),
+    [state.characters.length]
+  );
+
+  const { profile, isFetching } = useAuth();
   const [page, setPage] = useState(1);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
@@ -102,127 +139,107 @@ export default function Tinder() {
     Array<{ target_user_id: string; emotion: string }>
   >([]);
 
-  const buildUrl = useCallback(
-    (page: number) => {
-      const gender = profile?.genderFind ?? "all";
-      const ageRange = profile?.ageRange?.join("-") ?? "all";
-      return `/users/find?limit=${BATCH_SIZE}&page=${page}&gender=${gender}&age=${ageRange}`;
-    },
-    [profile?.genderFind, profile?.ageRange]
-  );
+  useEffect(() => {
+    if (!profile) return;
+
+    dispatch({ type: "SET_CHARACTERS", payload: [] });
+    setPage(1);
+    setHasMoreData(true);
+  }, [
+    profile?.genderFind,
+    profile?.ageRange,
+    profile?.filterDistance,
+    profile?.locate?.coordinates,
+  ]);
 
   const postLikes = useCallback(async () => {
-    if (!user?.uid || likeQueue.length === 0) return;
+    if (!profile?.user_id || likeQueue.length === 0) return;
 
     try {
       await customizeFetch("/users/swipe-batch", {
         method: "POST",
-        body: JSON.stringify({ user_id: user.uid, swipes: likeQueue }),
+        body: JSON.stringify({
+          user_id: profile.user_id,
+          swipes: likeQueue,
+        }),
       });
       setLikeQueue([]);
     } catch (error) {
       console.error("Error posting likes:", error);
     }
-  }, [likeQueue]);
+  }, [profile?.user_id, likeQueue]);
 
-  useEffect(() => {
-    if (likeQueue.length >= BATCH_SIZE) {
-      postLikes();
-    }
-  }, [likeQueue, postLikes]);
+  const fetchUsers = useCallback(
+    async () => {
+      if (!profile || !hasMoreData || isFetchingData) return;
 
-  const fetchUsers = useCallback(async () => {
-    if (isFetchingData || !hasMoreData) return;
+      const url = buildUrl(page, profile);
+      if (!url) return;
 
-    try {
-      setIsFetchingData(true);
-      const url = buildUrl(page);
-      const data: TProfile[] = await customizeFetch(url);
-      const filteredData = data.filter((item) => item.user_id !== user?.uid);
+      try {
+        setIsFetchingData(true);
+        const data: TProfile[] = await customizeFetch(url);
+        const filteredData = data.filter(
+          (item) => item.user_id !== profile.user_id
+        );
 
-      if (filteredData.length === 0) {
-        setHasMoreData(false);
-        return;
-      }
-
-      dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
-      setPage((prev) => prev + 1);
-
-      if (state.currentIndex === null) {
-        dispatch({
-          type: "SET_CURRENT_INDEX",
-          payload: filteredData.length - 1,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setIsFetchingData(false);
-    }
-  }, [user?.uid, buildUrl, page, state.currentIndex]);
-
-  useEffect(() => {
-    if (user?.uid && profile) {
-      fetchUsers();
-    }
-  }, [user?.uid, profile]);
-
-  useEffect(() => {
-    if (
-      !isFetchingData &&
-      hasMoreData &&
-      state.characters.length <= FETCH_THRESHOLD
-    ) {
-      fetchUsers();
-    }
-  }, [state.characters.length, isFetchingData, hasMoreData]);
-
-  const handleSwipe = useCallback(
-    (direction: string, index: number) => {
-      const swipedUser = state.characters[index];
-      if (swipedUser) {
-        if (direction === "right") {
-          setLikeQueue((prev) => [
-            ...prev,
-            {
-              target_user_id: swipedUser.user_id,
-              emotion: "like",
-            },
-          ]);
+        if (filteredData.length === 0) {
+          setHasMoreData(false);
+          return;
         }
 
-        dispatch({ type: "REMOVE_CHARACTER", payload: index });
-        dispatch({ type: "SET_CURRENT_INDEX", payload: index - 1 });
-      }
-
-      if (state.characters.length <= FETCH_THRESHOLD && hasMoreData) {
-        fetchUsers();
+        dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
+        setPage((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      } finally {
+        setIsFetchingData(false);
       }
     },
-    [state.characters, user?.uid, hasMoreData]
+    [profile, page, hasMoreData, isFetchingData]
   );
 
   useEffect(() => {
-    return () => {
-      if (likeQueue.length > 0) {
-        postLikes();
-      }
-    };
-  }, [likeQueue, postLikes]);
+    fetchUsers();
+  }, [fetchUsers]);
 
-  const showSkeleton = isFetchingData || state.characters.length === 0;
+  const handleSwipe = useCallback(
+    async (direction: TDirection, index: number) => {
+      if (!profile) return;
+
+      const currentRef = arrayRef[index];
+      if (currentRef?.current) await currentRef.current?.swipe(direction);
+
+      const swipedUser = state.characters[index];
+      if (swipedUser && direction === "right") {
+        setLikeQueue((prev) => [
+          ...prev,
+          { target_user_id: swipedUser.user_id, emotion: "like" },
+        ]);
+      }
+
+      dispatch({ type: "REMOVE_CHARACTER", payload: index });
+      dispatch({ type: "SET_CURRENT_INDEX", payload: index - 1 });
+    },
+    [arrayRef, state.characters, profile]
+  );
+
+  useEffect(() => {
+    if (likeQueue.length >= BATCH_SIZE) postLikes();
+  }, [likeQueue, postLikes]);
 
   return (
     <View className="relative flex-1 w-full h-full">
       <Spinner visible={isFetching} />
-      {showSkeleton ? (
+      {state.characters.length === 0 ? (
         <Skeleton profileImage={profile?.imgs?.[0]} />
       ) : (
         <>
           <View className="flex-1 w-full h-full">
             {state.characters.map((character, index) => (
               <TinderCard
-                key={`${character.user_id}-${index}`}
+                key={character.user_id}
+                ref={arrayRef[index]}
                 onSwipe={(dir) => handleSwipe(dir, index)}
                 preventSwipe={["up", "down"]}
               >
@@ -233,8 +250,10 @@ export default function Tinder() {
             ))}
           </View>
           <SwipeButtons
-            onSwipe={async (dir) => handleSwipe(dir, state.currentIndex!)}
-            disabled={state.currentIndex === null || state.currentIndex < 0}
+            onSwipe={async (dir) =>
+              handleSwipe(dir, Math.max(state.currentIndex, 0))
+            }
+            disabled={state.currentIndex < 0}
           />
         </>
       )}

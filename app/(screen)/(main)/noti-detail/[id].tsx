@@ -21,9 +21,9 @@ const mockData = {
 
 export default function NotiDetail() {
   const router = useRouter();
-  const { id } = useLocalSearchParams(); // Correct hook to extract params
+  const { id } = useLocalSearchParams();
 
-  const detail = mockData[id as keyof typeof mockData];
+  const detail = mockData[id as unknown as keyof typeof mockData];
 
   if (!detail) {
     return (
@@ -47,13 +47,12 @@ export default function NotiDetail() {
       <Text className="text-base text-zinc-800 dark:text-zinc-200">
         {detail.description}
       </Text>
-      {/* <Button title="Go Back" onPress={() => router.back()} /> */}
     </ScrollView>
   );
 }
 
 export const config = {
   options: {
-    headerShown: false, // Tắt header
+    headerShown: false,
   },
 };

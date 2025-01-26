@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { supabase } from "@/utils/supabase";
 import { useAuth } from "./AuthProvider";
-import { NEXTJS_SERVER } from "@/lib/constants";
+import { customizeFetch } from "@/lib/functions";
 
 type TPermissionStatus = "pending" | "granted" | "denied";
 
@@ -29,33 +28,20 @@ export const LocationProvider = ({
     }
 
     const { coords } = await Location.getCurrentPositionAsync({});
-    const coordinates = [coords.latitude, coords.longitude] as [number, number];
+    const coordinates = [coords.longitude, coords.latitude] as [number, number];
     setLocation(coordinates);
     setPermissionStatus("granted");
     if (!user) return;
 
-    const location = await fetch(
-      `${NEXTJS_SERVER}/api/common/location?lat=${coordinates[0]}&long=${coordinates[1]}`
-    )
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((payload) => {
-        return payload.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    const location = await customizeFetch(`/common/location?lat=${coordinates[1]}&long=${coordinates[0]}`);
     const { display_name } = location;
-    await supabase.from("locations").upsert(
-      {
-        coordinates,
-        display_address: display_name,
-        user_id: user.uid,
-      },
-      { onConflict: "user_id" }
-    );
+    await customizeFetch(`/users/${user.uid}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        locate: { type: "Point", coordinates },
+        location: display_name,
+      }),
+    });
   };
 
   useEffect(() => {

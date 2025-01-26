@@ -1,12 +1,10 @@
-// 21522436 - Nguyễn Thị Hồng Nhung
 import Matches from "@/components/card/matches";
-import HumanCard2 from "@/components/card/human2"; // Đảm bảo import đúng nơi
+import HumanCard2 from "@/components/card/human2";
 import { ScrollView, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { GridView } from "react-native-ui-lib";
 import { LIKE_DATA } from "@/constants/data";
 import { useEffect, useState } from "react";
-import { supabase } from "@/utils/supabase";
 import { useAuth } from "@/provider/AuthProvider";
 
 // const db = LIKE_DATA
@@ -16,33 +14,33 @@ export default function LikeScreen() {
   const [data, setData] = useState<any[] | undefined>(undefined);
 
   useEffect(() => {
-    (async () => {
-      const [
-        { data: likes, error: errorLikes },
-        { data: profiles, error: errorProfile },
-      ] = await Promise.all([
-        supabase.from("likes").select("*"),
-        supabase.from("profiles").select("*"),
-      ]);
+    // (async () => {
+    //   const [
+    //     { data: likes, error: errorLikes },
+    //     { data: profiles, error: errorProfile },
+    //   ] = await Promise.all([
+    //     supabase.from("likes").select("*"),
+    //     supabase.from("profiles").select("*"),
+    //   ]);
 
-      if (errorLikes || errorProfile) {
-        return;
-      }
+    //   if (errorLikes || errorProfile) {
+    //     return;
+    //   }
 
-      const mergedProfiles = [
-        ...new Set(
-          likes
-            .filter((like) => like.target_user_id === session?.user.id)
-            .map((like) => like.user_id)
-        ),
-      ].map((like_user_id) => {
-        const profile = profiles.find((p) => p.user_id === like_user_id);
-        return profile;
-      });
+    //   const mergedProfiles = [
+    //     ...new Set(
+    //       likes
+    //         .filter((like) => like.target_user_id === session?.user.id)
+    //         .map((like) => like.user_id)
+    //     ),
+    //   ].map((like_user_id) => {
+    //     const profile = profiles.find((p) => p.user_id === like_user_id);
+    //     return profile;
+    //   });
 
-      setData(mergedProfiles);
-    })();
-  });
+    //   setData(mergedProfiles);
+    // })();
+  }, []);
 
   return (
     <ScrollView className="flex-1 h-full bg-white dark:bg-black">

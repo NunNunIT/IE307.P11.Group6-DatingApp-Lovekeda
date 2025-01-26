@@ -43,7 +43,6 @@ import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
 } from "react-native-heroicons/solid";
-import { supabase } from "@/utils/supabase";
 
 const isAndroid = Platform.OS === "android";
 
@@ -52,16 +51,30 @@ export default function Chat() {
   const { id: other } = useLocalSearchParams();
   const [data, setData] = useState<any>(null);
   useEffect(() => {
-    (async () => {
+    // (async () => {
 
-      const {data, error} = await supabase.from("profiles").select("*").eq("user_id", other);
-      if (error) {return}
-      setData(data[0]);
-    })()
+    //   const {data, error} = await supabase.from("profiles").select("*").eq("user_id", other);
+    //   if (error) {return}
+    //   setData(data[0]);
+    // })()
   }, []);
   console.log("EEEEE", data)
 
-  const [messages, setMessages] = useState([]);
+  interface IMessage {
+    _id: string | number;
+    createdAt: Date;
+    text: string;
+    image?: string;
+    sender: string;
+    receiver: string;
+    user: {
+      _id: string | number;
+      avatar?: string;
+      name?: string;
+    };
+  }
+  
+  const [messages, setMessages] = useState<IMessage[]>([]);
   // const navigation = useNavigation();
   const [imgs, setImgs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +111,7 @@ export default function Chat() {
 
   // Handle sending messages
   const onSend = useCallback(
-    async (messages = []) => {
+    async (messages: IMessage[] = []) => {
       try {
         setMessages((previousMessages) =>
           GiftedChat.append(previousMessages, messages)
@@ -125,8 +138,8 @@ export default function Chat() {
       } catch (error) {
         console.error("Failed to send message:", error);
         // Revert optimistic update
-        setMessages((previousMessages) =>
-          previousMessages.filter((msg) => msg._id !== messages[0]._id)
+        setMessages((previousMessages: IMessage[]) =>
+          previousMessages.filter((msg: IMessage) => msg._id !== messages[0]._id)
         );
         // Show error to user
         Alert.alert("Error", "Failed to send message. Please try again.");
@@ -189,7 +202,7 @@ export default function Chat() {
           </TouchableOpacity>
           <TouchableOpacity
             className="w-2/3 flex-row items-center"
-            onPress={() => router.push(`/profileDetail/${other}`)}
+            onPress={() => router.push(`/profile-detail/${other}`)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
               <Image
@@ -237,13 +250,22 @@ export default function Chat() {
               messages={messages}
               showAvatarForEveryMessage={false}
               showUserAvatar={false}
-              onSend={(messages) => onSend(messages)}
+              onSend={(messages) => {
+                const customMessages = messages.map(msg => ({
+                  ...msg,
+                  sender: me,
+                  receiver: other
+                }));
+                onSend(customMessages as IMessage[]);
+              }}
               messagesContainerStyle={{
               backgroundColor: "#fff",
               }}
-              textInputStyle={{
-                backgroundColor: "#fff",
-                borderRadius: 20,
+              textInputProps={{
+                style: {
+                  backgroundColor: "#fff",
+                  borderRadius: 20,
+                }
               }}
               renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
               renderActions={(props) => <CustomActions {...props} />}

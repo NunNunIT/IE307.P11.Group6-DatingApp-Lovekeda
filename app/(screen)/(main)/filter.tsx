@@ -5,47 +5,51 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Smile } from "@/lib/icons"
+import { Smile } from "@/lib/icons";
 import { useAuth } from "@/provider/AuthProvider";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/utils/supabase";
 import Spinner from "react-native-loading-spinner-overlay";
 import { router } from "expo-router";
 import { useDump } from "@/provider/DumpProvider";
 import { SEARCH_GENDER_OPTIONS } from "@/constants/common";
+import { customizeFetch } from "@/lib/functions";
 
 export default function FilterScreen() {
-  const [rangeAge, setRangeAge] = useState<[number, number]>([18, 30]);
-  const [valueDistance, setValueDistance] = useState<number>(10);
-  const [genderFind, setGenderFind] = useState<string>("");
-  const [purposeValue, setPurposeValue] = useState<string>("");
+  const [ageRange, setAgeRange] = useState<[number, number]>([18, 30]);
+  const [filterDistance, setFilterDistance] = useState<number>(10);
+  const [genderFind, setGenderFind] = useState<string>("all");
+  const [purposeValue, setPurposeValue] = useState<string>("friends");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDirtyFields, setIsDirtyFields] = useState<boolean>(false);
-  const { session, profile, getProfile } = useAuth();
+  const { user, profile, getProfile } = useAuth();
   const { setValue } = useDump();
 
   const submitHandler = async () => {
-    if (!session) return;
+    if (!user) return;
     setIsSubmitting(true);
     setValue((prev: any) => ({
       ...(prev ?? {}),
       filter: {
-        ageRange: rangeAge,
-        distance: valueDistance,
+        ageRange,
+        filterDistance,
         genderFind,
         purposeValue,
-      }
-    }))
+      },
+    }));
+
     const data = {
+      ageRange,
+      filterDistance,
       genderFind,
       purposeValue,
-      user_id: session.user.id,
     };
 
     try {
-      await supabase.from("profiles")
-        .upsert(data, { onConflict: "user_id" });
-      await getProfile?.();
+      await customizeFetch(`/users/${user.uid}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      });
+      await getProfile(user.uid);
       router.back();
     } finally {
       setIsSubmitting(false);
@@ -53,34 +57,32 @@ export default function FilterScreen() {
   };
 
   useEffect(() => {
-    const isDirty = JSON.stringify({
-      ageRange: rangeAge,
-      distance: valueDistance,
-      genderFind: genderFind,
-      purposeValue: purposeValue,
-    }) !== JSON.stringify({
-      ageRange: rangeAge,
-      distance: valueDistance,
-      genderFind: profile?.genderFind,
-      purposeValue: profile?.purposeValue,
-    });
+    const isDirty =
+      ageRange[0] !== profile?.ageRange?.[0] ||
+      ageRange[1] !== profile?.ageRange?.[1] ||
+      filterDistance !== profile?.filterDistance ||
+      genderFind !== profile?.genderFind ||
+      purposeValue !== profile?.purposeValue;
+
     setIsDirtyFields(isDirty);
-  }, [profile, setIsDirtyFields, rangeAge, valueDistance, genderFind, purposeValue]);
+  }, [profile, ageRange, filterDistance, genderFind, purposeValue]);
 
   useEffect(() => {
     if (!profile) return;
     setGenderFind(profile?.genderFind ?? "all");
     setPurposeValue(profile?.purposeValue ?? "friends");
-  }, [profile])
+    setAgeRange(profile?.ageRange ?? [18, 30]);
+    setFilterDistance(profile?.filterDistance ?? 10);
+  }, [profile]);
 
-  const CustomThumb = () => {
-    return (
-      <View className={cn(
+  const CustomThumb = () => (
+    <View
+      className={cn(
         "!size-6 rounded-full shadow-2xl shadow-pri-color border-3",
         "border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-white"
-      )} />
-    );
-  };
+      )}
+    />
+  );
 
   return (
     <>
@@ -92,13 +94,13 @@ export default function FilterScreen() {
             <View className="flex flex-row justify-between">
               <Text className="text-lg font-bold">Độ tuổi</Text>
               <Text className="text-lg text-zinc-800 dark:text-zinc-300">
-                {rangeAge[0]} - {rangeAge[1]}
+                {ageRange[0]} - {ageRange[1]}
               </Text>
             </View>
             <View className="mx-2">
               <RangeSlider
-                range={rangeAge}
-                onValueChange={setRangeAge}
+                range={ageRange}
+                onValueChange={setAgeRange}
                 step={1}
                 minimumValue={18}
                 maximumValue={80}
@@ -113,13 +115,13 @@ export default function FilterScreen() {
             <View className="flex flex-row justify-between">
               <Text className="text-lg font-bold">Khoảng cách tối đa (km)</Text>
               <Text className="text-lg text-zinc-800 dark:text-zinc-300">
-                {valueDistance} km
+                {filterDistance} km
               </Text>
             </View>
             <View className="mx-2">
               <Slider
-                onValueChange={setValueDistance}
-                value={valueDistance}
+                onValueChange={setFilterDistance}
+                value={filterDistance}
                 step={1}
                 minimumValue={1}
                 maximumValue={50}
@@ -145,9 +147,7 @@ export default function FilterScreen() {
                   <Text className="text-2xl">
                     {purpose === "friends" ? "👋" : "❤️"}
                   </Text>
-                  <Text className="">
-                    {purpose === "friends" ? "Tìm bạn" : "Tìm người yêu"}
-                  </Text>
+                  <Text className="">{purpose === "friends" ? "Tìm bạn" : "Tìm người yêu"}</Text>
                 </Pressable>
               ))}
             </View>
