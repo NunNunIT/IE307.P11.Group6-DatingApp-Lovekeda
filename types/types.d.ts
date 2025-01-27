@@ -16,3 +16,11 @@ type TProfile = {
   filterDistance: number | null;
   distance: number | null;
 };
+
+type TNotification = {
+  id: string;
+  user_id: string;
+  img: string;
+  title: string;
+  desc: string;
+}

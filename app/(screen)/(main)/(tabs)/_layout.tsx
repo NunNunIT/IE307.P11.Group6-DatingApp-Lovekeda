@@ -63,7 +63,7 @@ export default function TabLayout() {
               <Button
                 size="icon"
                 variant="ghost"
-                onPress={() => router.push("/noti")}
+                onPress={() => router.push("/notifications")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>
@@ -92,7 +92,7 @@ export default function TabLayout() {
               <Button
                 size="icon"
                 variant="ghost"
-                onPress={() => router.push("/noti")}
+                onPress={() => router.push("/notifications")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>

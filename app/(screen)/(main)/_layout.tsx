@@ -6,7 +6,6 @@ import { LocationProvider } from "@/providers/LocationProvider";
 export default function NotesLayoutScreen() {
   const { isFetching, user, profile } = useAuth();
   if (!user) return <Redirect href="/(screen)/auth" />;
-
   if (!isFetching && !profile?.is_complete_profile)
     return <Redirect href="/(screen)/set-up-profile" />;
 
@@ -18,8 +17,8 @@ export default function NotesLayoutScreen() {
           options={{ headerShown: false, title: "" }}
         />
         <Stack.Screen name="settings" options={{ title: "Cài đặt" }} />
-        <Stack.Screen name="noti" options={{ title: "Thông báo" }} />
-        <Stack.Screen name="noti-detail/[id]" options={{ title: "" }} />
+        <Stack.Screen name="notifications" options={{ title: "Thông báo" }} />
+        <Stack.Screen name="notification-detail/[id]" options={{ title: "" }} />
         <Stack.Screen name="profile-detail/[id]" />
         <Stack.Screen
           name="chat-detail/[id]"
