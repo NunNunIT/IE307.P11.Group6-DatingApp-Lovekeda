@@ -27,7 +27,7 @@ export default function SetUpProfileScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { isFetching, signOut, profile, getProfile } = useAuth();
-  const user_id = profile!.user_id;
+  const user_id = profile?.user_id;
 
   useEffect(() => {
     if (profile?.name) setName(profile.name);
@@ -294,7 +294,7 @@ function renderSetUpProfileStepOne(
       previousBtnText={"Trở về"}
       nextBtnStyle={{ paddingInline: 0 }}
     >
-      <View className="w-full h-full flex flex-col justify-start items-center p-4">
+      <View className="w-full h-full flex flex-col justify-start items-start p-4">
         <TextField
           label="Tên của bạn"
           labelStyle={{

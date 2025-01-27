@@ -44,7 +44,7 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView
-      className={cn(Platform.OS === "android" ? "pt-16" : "pt-0", "flex-1")}
+      className={cn(Platform.OS === "android" ? "pt-16" : "pt-0", "flex-1 justify-center")}
     >
       <View className="px-6">
         <Form {...form}>
@@ -64,7 +64,7 @@ export default function RegisterScreen() {
 
           <FormController
             name="password"
-            label="Password:"
+            label="Mật khẩu"
             render={({ field }) => (
               <PasswordInput
                 childLeft={<Lock className="ml-1 size-6 text-zinc-500" />}
@@ -77,7 +77,7 @@ export default function RegisterScreen() {
 
           <FormController
             name="passwordConfirm"
-            label="Password Confimation:"
+            label="Nhập lại mật khẩu:"
             render={({ field }) => (
               <PasswordInput
                 childLeft={<Lock className="ml-1 size-6 text-zinc-500" />}
