@@ -6,6 +6,7 @@ import { LocationProvider } from "@/providers/LocationProvider";
 export default function NotesLayoutScreen() {
   const { isFetching, user, profile } = useAuth();
   if (!user) return <Redirect href="/(screen)/auth" />;
+  if (isFetching) return null;
   if (!isFetching && !profile?.is_complete_profile)
     return <Redirect href="/(screen)/set-up-profile" />;
 

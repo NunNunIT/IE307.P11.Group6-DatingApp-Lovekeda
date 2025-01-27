@@ -25,24 +25,10 @@ import { database } from "@/utils/firebase";
 import colors from "@/config/colors";
 import { DATE_DATA } from "@/constants/data";
 import { customizeFetch } from "@/lib/functions";
+import useSWR from "swr";
 
 const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await customizeFetch(`/users/${other}`);
-        setData(data);
-      } catch (err) {
-        setError("Đã xảy ra lỗi.");
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, [item.id]);
+  const { data, isLoading, error } = useSWR(`/users/${other}`, customizeFetch);
 
   if (isLoading) {
     return (
@@ -65,25 +51,17 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
       onPress={onPress}
       className="w-full py-2 items-center flex-row border-b border-zinc-300 dark:border-zinc-600 px-4"
     >
-      {/* Avatar */}
       <View
         className="w-[17%] justify-center"
-        style={{
-          width: hp(7),
-          height: hp(7),
-        }}
+        style={{ width: hp(7), height: hp(7) }}
       >
         <Image
-          source={{ uri: data?.imgs?.[0] || "https://via.placeholder.com/150" }}
-          style={{
-            width: "90%",
-            height: "90%",
-          }}
+          source={{ uri: data?.imgs?.[0] }}
+          style={{ width: "90%", height: "90%" }}
           className="rounded-full"
         />
       </View>
 
-      {/* Information */}
       <View className="w-[82%]" style={{ height: hp(6) }}>
         <View className="flex-row justify-between items-center">
           <View className="flex-row justify-center">
@@ -93,9 +71,6 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
               </Text>
             </View>
           </View>
-          {/* <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
-            {item.timeSent}
-          </Text> */}
         </View>
         <View>
           <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
