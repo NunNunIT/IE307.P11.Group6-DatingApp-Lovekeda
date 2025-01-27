@@ -25,7 +25,7 @@ export default function NotesLayoutScreen() {
           name="chat-detail/[id]"
           options={{ title: "", headerShown: false }}
         />
-        <Stack.Screen name="filter" options={{ title: "" }} />
+        <Stack.Screen name="filter" options={{ title: "Tùy chỉnh tìm kiếm" }} />
         <Stack.Screen name="edit-profile" options={{ title: "Sửa hồ sơ" }} />
         <Stack.Screen
           name="permission-error"

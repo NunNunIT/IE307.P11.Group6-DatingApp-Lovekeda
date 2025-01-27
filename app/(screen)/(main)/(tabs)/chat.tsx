@@ -74,7 +74,7 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
         </View>
         <View>
           <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
-            {!!item.text ? item.text : "No messages yet."}
+            {item?.text ?? "No messages yet."}
           </Text>
         </View>
       </View>

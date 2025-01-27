@@ -131,7 +131,7 @@ export default function Tinder() {
   const topCardRef = useRef<TinderCardRef | null>(null);
 
   const { profile } = useAuth();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [isFetchingData, setIsFetchingData] = useState(false);
   const [hasMoreData, setHasMoreData] = useState(true);
   const [likeQueue, setLikeQueue] = useState<
@@ -142,7 +142,7 @@ export default function Tinder() {
     if (!profile) return;
 
     dispatch({ type: "SET_CHARACTERS", payload: [] });
-    setPage(0);
+    setPage(1);
     setHasMoreData(true);
   }, [
     profile?.genderFind,

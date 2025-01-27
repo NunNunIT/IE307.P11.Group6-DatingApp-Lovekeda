@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import { useRouter, useLocalSearchParams, Stack } from "expo-router";
+import { View, ScrollView, ActivityIndicator, Image } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { doc, getDoc } from "firebase/firestore";
@@ -60,14 +60,19 @@ export default function NotiDetail() {
   }
 
   return (
-    <ScrollView className="flex-1 p-3">
-      <Text className="text-4xl font-semibold text-zinc-950 dark:text-zinc-50 mb-6">
-        {detail.title}
-      </Text>
-      <Text className="text-base text-zinc-800 dark:text-zinc-200">
-        {detail.desc}
-      </Text>
-    </ScrollView>
+    <>
+      <Stack.Screen options={{ title: detail.title || "" }} />
+      <ScrollView className="flex-1 p-3">
+        <Text className="text-base text-zinc-800 dark:text-zinc-200">
+          {detail.desc}
+        </Text>
+        <Image
+          source={{ uri: detail.img }}
+          resizeMode="cover"
+          className="rounded-lg w-full aspect-square"
+        />
+      </ScrollView>
+    </>
   );
 }
 

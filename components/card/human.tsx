@@ -86,12 +86,12 @@ export default function Tinder({ item }: { item: TProfile }) {
           </Button>
         </View>
 
-        <Text className="text-white text-xl mb-2">
+        <Text className="text-white text-xl mb-2 line-clamp-2">
           <Text className="text-xl">❝ </Text>
           {item?.bio}
         </Text>
         <View className="flex flex-row flex-wrap gap-2">
-          {(item?.hobbies ?? []).map((hobby, index) => (
+          {(item?.hobbies ?? []).slice(0, 2).map((hobby, index) => (
             <Text
               key={hobby + index}
               className="bg-zinc-500 text-white rounded-full p-1 px-3"
@@ -99,6 +99,11 @@ export default function Tinder({ item }: { item: TProfile }) {
               {hobby}
             </Text>
           ))}
+          {item?.hobbies?.length > 2 && (
+            <Text className="bg-zinc-500 text-white rounded-full p-1 px-3">
+              {item.hobbies.length - 2}+
+            </Text>
+          )}
         </View>
       </Pressable>
     </View>

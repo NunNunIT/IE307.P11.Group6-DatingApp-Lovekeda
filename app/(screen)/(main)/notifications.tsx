@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
 import { useNotifications } from "@/hooks/useNotifications";
 
-export default function NotiScreen() {
+export default function NotificationsScreen() {
   const { profile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const { data: notifications, error } = useNotifications(profile!.user_id);
@@ -30,7 +30,7 @@ export default function NotiScreen() {
   }
 
   return (
-    <View className="flex flex-1 p-4 bg-zinc-100 dark:bg-black">
+    <View className="flex flex-1 px-4 bg-zinc-100 dark:bg-black">
       {isLoading ? (
         <View className="flex flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#fe183c" />

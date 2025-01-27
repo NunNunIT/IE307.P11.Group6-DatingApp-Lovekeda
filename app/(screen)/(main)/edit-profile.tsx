@@ -291,13 +291,12 @@ export default function FilterScreen() {
           />
 
           <View className="flex flex-row justify-between">
-            <Text className="font-bold">Sở thích</Text>
             <MultiChoicePicker
               values={hobbies}
               onChange={(value) =>
                 setHobbies(value.map((item) => item.toString()))
               }
-              // title="Sở thích"
+              title="Sở thích"
               placeholder="Chọn nhiều giá trị"
               options={[...HOBBY_OPTIONS]}
               showSearch
