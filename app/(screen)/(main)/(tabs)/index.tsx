@@ -128,7 +128,7 @@ export default function Tinder() {
     isLoading: true,
   });
 
-  const topCardRef = useRef<TinderCardRef | null>(null); // Single ref for the top card
+  const topCardRef = useRef<TinderCardRef | null>(null);
 
   const { profile } = useAuth();
   const [page, setPage] = useState(0);
@@ -183,7 +183,9 @@ export default function Tinder() {
       setIsFetchingData(true);
       const data: TProfile[] = await customizeFetch(url);
       const filteredData = data.filter(
-        (item) => item.user_id !== profile.user_id
+        (item) =>
+          item.user_id !== profile.user_id &&
+          !state.characters.some((char) => char.user_id === item.user_id)
       );
 
       if (filteredData.length === 0) {
@@ -198,7 +200,7 @@ export default function Tinder() {
     } finally {
       setIsFetchingData(false);
     }
-  }, [profile, page, hasMoreData, isFetchingData, state.characters.length]);
+  }, [profile, page, hasMoreData, isFetchingData, state.characters]);
 
   useEffect(() => {
     if (state.characters.length < 2) {
