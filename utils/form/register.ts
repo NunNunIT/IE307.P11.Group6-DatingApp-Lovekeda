@@ -1,7 +1,4 @@
-// import libs
 import { z } from 'zod';
-
-// import utils
 
 export const DEFAULT_REGISTER_FORM_VALUES = {
   email: '',

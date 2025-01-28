@@ -1,12 +1,10 @@
-import { LOCATION_API_URL_UNFORMATTED } from '@/constant';
+import { LOCATION_API_URL_UNFORMATTED } from '@/constants/data';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-
 
 export async function getRelativeLocation(
   coordinates: [number, number],

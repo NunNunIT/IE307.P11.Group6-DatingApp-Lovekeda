@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -9,7 +9,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Actions, GiftedChat, InputToolbar, Send } from "react-native-gifted-chat";
+import {
+  Actions,
+  GiftedChat,
+  IMessage,
+  InputToolbar,
+  Send,
+} from "react-native-gifted-chat";
 import {
   collection,
   addDoc,
@@ -18,96 +24,80 @@ import {
   where,
   onSnapshot,
 } from "firebase/firestore";
-import { signOut } from "firebase/auth";
-import { auth, database } from "@/config/firebase";
-import { useNavigation } from "@react-navigation/native";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
-import colors from "@/config/colors";
-import { useAuth } from "@/provider/AuthProvider";
+import { database } from "@/utils/firebase";
+import { FontAwesome } from "@expo/vector-icons";
+import { useAuth } from "@/providers/AuthProvider";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageUploadType1 from "@/components/imageUpload/type1";
 import { Button } from "@/components/ui/button";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-import {
-  User,
-  Home,
-  MessageCircle,
-  Heart,
-  Bell,
-  Settings,
-  Settings2,
-  ImageIcon,
-  // ChevronLeftIcon
-} from "@/lib/icons";
+import { ImageIcon } from "@/lib/icons";
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
 } from "react-native-heroicons/solid";
-import { supabase } from "@/utils/supabase";
+import { customizeFetch } from "@/lib/functions";
+import useSWRSubscription from "swr/subscription";
+import useSWR from "swr";
 
 const isAndroid = Platform.OS === "android";
 
 export default function Chat() {
-  const { session, profile } = useAuth();
+  const { profile } = useAuth();
   const { id: other } = useLocalSearchParams();
-  const [data, setData] = useState<any>(null);
-  useEffect(() => {
-    (async () => {
+  const { data: otherProfile } = useSWR<TProfile>(
+    `/users/${other}`,
+    customizeFetch
+  );
 
-      const {data, error} = await supabase.from("profiles").select("*").eq("user_id", other);
-      if (error) {return}
-      setData(data[0]);
-    })()
-  }, []);
-  console.log("EEEEE", data)
-
-  const [messages, setMessages] = useState([]);
-  // const navigation = useNavigation();
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [imgs, setImgs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const me = session?.user?.id; // Current user id
+  const me = profile!.user_id;
 
-  // Fetch messages
-  useLayoutEffect(() => {
-    const collectionRef = collection(database, "chats");
+  const { data: realTimeMessages } = useSWRSubscription(
+    ["chats", me, other],
+    (key, { next }) => {
+      const collectionRef = collection(database, "chats");
+      const q = query(
+        collectionRef,
+        where("sender", "in", [me, other]),
+        where("receiver", "in", [me, other]),
+        orderBy("createdAt", "desc")
+      );
 
-    const q = query(
-      collectionRef,
-      where("sender", "in", [me, other]),
-      where("receiver", "in", [me, other]),
-      orderBy("createdAt", "desc")
-    );
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      setMessages(
-        querySnapshot.docs.map((doc) => ({
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const messages = querySnapshot.docs.map((doc) => ({
           _id: doc.data()._id,
           createdAt: doc.data().createdAt.toDate(),
           text: doc.data().text,
-          image: doc.data().image || null, // Handle image messages
+          image: doc.data().image || null,
           sender: doc.data().sender,
           receiver: doc.data().receiver,
           user: doc.data().user,
-        }))
-      );
-      setIsLoading(false); // Ngừng trạng thái tải khi dữ liệu đã sẵn sàng
-    });
+        }));
+        next(null, messages);
+        setIsLoading(false);
+      });
 
-    return unsubscribe;
-  }, [me, other]);
+      return () => unsubscribe();
+    }
+  );
 
-  // Handle sending messages
+  useEffect(() => {
+    if (realTimeMessages) {
+      setMessages(realTimeMessages);
+    }
+  }, [realTimeMessages]);
+
   const onSend = useCallback(
-    async (messages = []) => {
+    async (messages: IMessage[] = []) => {
       try {
         setMessages((previousMessages) =>
           GiftedChat.append(previousMessages, messages)
         );
 
         const { _id, createdAt, text, user } = messages[0];
-        const validAvatar =
-          profile?.imgs?.[0] ?? "https://example.com/default-avatar.png";
-
         await addDoc(collection(database, "chats"), {
           _id,
           text,
@@ -119,16 +109,14 @@ export default function Chat() {
           createdAt,
         });
 
-        // Clear images after successful send
-
         setImgs([]);
       } catch (error) {
         console.error("Failed to send message:", error);
-        // Revert optimistic update
-        setMessages((previousMessages) =>
-          previousMessages.filter((msg) => msg._id !== messages[0]._id)
+        setMessages((previousMessages: IMessage[]) =>
+          previousMessages.filter(
+            (msg: IMessage) => msg._id !== messages[0]._id
+          )
         );
-        // Show error to user
         Alert.alert("Error", "Failed to send message. Please try again.");
       }
     },
@@ -173,14 +161,10 @@ export default function Chat() {
     </Send>
   );
 
-  console.log("AAAAA", messages);
-
   return (
     <SafeAreaView
       className="justify-center items-center relative bg-white dark:bg-black"
-      style={{
-        paddingTop: isAndroid ? hp(4) : 0,
-      }}
+      style={{ paddingTop: isAndroid ? hp(4) : 0 }}
     >
       <View className="justify-between items-center flex-row w-full px-4 pb-2 border-b border-zinc-400 dark:border-zinc-700">
         <View className="w-2/3 flex flex-row justify-start items-center">
@@ -189,22 +173,19 @@ export default function Chat() {
           </TouchableOpacity>
           <TouchableOpacity
             className="w-2/3 flex-row items-center"
-            onPress={() => router.push(`/profileDetail/${other}`)}
+            onPress={moveToProfileDetail(other)}
           >
             <View className="border-2 rounded-full border-red-400 mr-2 ml-4">
               <Image
-                source={{ uri: data?.imgs[0] }}
-                style={{
-                  width: hp(4.5),
-                  height: hp(4.5),
-                }}
+                source={{ uri: otherProfile?.imgs[0] }}
+                style={{ width: hp(4.5), height: hp(4.5) }}
                 className="rounded-full"
               />
             </View>
             <View className="justify-center items-start">
               <Text className="font-bold text-base text-zinc-800 dark:text-zinc-200">
-                {data?.name}, {data?.age}
-              </Text> 
+                {otherProfile?.name}, {otherProfile?.age}
+              </Text>
               <Text className="text-xs text-neutral-400">
                 You matched today
               </Text>
@@ -237,27 +218,39 @@ export default function Chat() {
               messages={messages}
               showAvatarForEveryMessage={false}
               showUserAvatar={false}
-              onSend={(messages) => onSend(messages)}
-              messagesContainerStyle={{
-              backgroundColor: "#fff",
+              onSend={(messages) => {
+                const customMessages = messages.map((msg) => ({
+                  ...msg,
+                  sender: me,
+                  receiver: other,
+                }));
+                onSend(customMessages as IMessage[]);
               }}
-              textInputStyle={{
+              messagesContainerStyle={{
                 backgroundColor: "#fff",
-                borderRadius: 20,
+              }}
+              textInputProps={{
+                style: {
+                  backgroundColor: "#fff",
+                  borderRadius: 20,
+                },
               }}
               renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
               renderActions={(props) => <CustomActions {...props} />}
               renderSend={(props) => <CustomSend {...props} />}
               user={{
                 _id: me,
-                avatar: "https://i.pravatar.cc/500",
+                name: profile!.name,
+                avatar: profile!.imgs[0],
               }}
             />
-
-        
           </View>
         )}
       </View>
     </SafeAreaView>
   );
+}
+
+function moveToProfileDetail(other: string | string[]) {
+  return () => router.push(`/profile-detail/${other}`);
 }

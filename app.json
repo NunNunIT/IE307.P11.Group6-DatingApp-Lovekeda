@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "lovedeka",
+    "slug": "lovedeka",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
-    "scheme": "my-app",
+    "scheme": "lovedeka",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -60,7 +60,6 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
-      // ["@react-native-google-signin/google-signin"]
     ],
     "experiments": {
       "typedRoutes": true
@@ -70,8 +69,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "734771bb-7b13-4007-819b-3a6ac3cf2b02"
+        "projectId": "30e9117a-56d8-400e-a150-9974d44ae52e"
       }
-    }
+    },
+    "owner": "fredle09"
   }
 }

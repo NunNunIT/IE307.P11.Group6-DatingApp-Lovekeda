@@ -1,192 +1,3 @@
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-// import { CHAT_DATA } from "@/constant";
-// import { Input } from "@/components/ui/input";
-// import { Search } from "@/lib/icons";
-// import { router } from "expo-router";
-// import Matches from "@/components/card/matches";
-
-// import React, {
-//   useState,
-//   useLayoutEffect,
-//   useEffect,
-//   useCallback,
-// } from "react";
-// import {
-//   ActivityIndicator,
-//   Image,
-//   Platform,
-//   Text,
-//   TouchableOpacity,
-//   View,
-//   ScrollView,
-// } from "react-native";
-// import { GiftedChat } from "react-native-gifted-chat";
-// import {
-//   collection,
-//   addDoc,
-//   orderBy,
-//   query,
-//   where,
-//   onSnapshot,
-// } from "firebase/firestore";
-// import { signOut } from "firebase/auth";
-// import { auth, database } from "@/config/firebase";
-// import { useNavigation } from "@react-navigation/native";
-// import { AntDesign } from "@expo/vector-icons";
-// import colors from "@/config/colors";
-// import { useAuth } from "@/provider/AuthProvider";
-// import { useLocalSearchParams } from "expo-router";
-// import ImageUploadType1 from "@/components/imageUpload/type1";
-// import { Button } from "@/components/ui/button";
-
-// const ChatItem = ({ item, onPress }: { item: any; onPress: any }) => (
-//   <TouchableOpacity
-//     onPress={onPress}
-//     className="w-full py-2 items-center flex-row border-b border-zinc-300 dark:border-zinc-600 px-4"
-//   >
-//     {/* Avatar */}
-//     <View
-//       className="w-[17%] justify-center"
-//       style={{
-//         width: hp(7),
-//         height: hp(7),
-//       }}
-//     >
-//       <Image
-//         source={item.imgUrl}
-//         style={{
-//           width: "90%",
-//           height: "90%",
-//         }}
-//         className="rounded-full"
-//       />
-//     </View>
-
-//     {/* Information */}
-//     <View className="w-[82%]" style={{ height: hp(6) }}>
-//       <View className="flex-row justify-between items-center">
-//         <View className="flex-row justify-center">
-//           <View className="flex-row">
-//             <Text className="font-bold text-base text-black dark:text-white">
-//               {item.name}
-//             </Text>
-//           </View>
-//           {item.isOnline && (
-//             <View className="justify-center items-center">
-//               <View className="w-2 h-2 bg-teal-500 rounded-full ml-1 justify-center items-center"></View>
-//             </View>
-//           )}
-//         </View>
-//         <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
-//           {item.timeSent}
-//         </Text>
-//       </View>
-//       <View>
-//         <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
-//           {item.lastMessage.length > 45
-//             ? item.lastMessage.slice(0, 45) + "..."
-//             : item.lastMessage}
-//         </Text>
-//       </View>
-//     </View>
-//   </TouchableOpacity>
-// );
-
-// export default function ChatScreen() {
-//   const [isLoading, setIsLoading] = useState<boolean>(true); // Trạng thái tải dữ liệu
-//   const { session } = useAuth();
-//   const [chatRoom, setChatRoom] = useState([]);
-//   const me = session?.user?.id; // Current user id
-
-//   useEffect(() => {
-//     // Giả lập thời gian tải dữ liệu
-//     const timeout = setTimeout(() => {
-//       setIsLoading(false);
-//     }, 2000); // 2 giây
-
-//     return () => clearTimeout(timeout); // Xóa timeout khi component unmount
-//   }, []);
-
-//   // Fetch messages
-//   useLayoutEffect(() => {
-//     const collectionRef = collection(database, "chats");
-
-//     const q = query(
-//       collectionRef,
-//       where("sender", "==", me),
-//       where("receiver", "==", me),
-//       orderBy("createdAt", "desc")
-//     );
-
-//     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-//       return setChatRoom(
-//         querySnapshot.docs.map((doc) => ({
-//           _id: doc.data()._id,
-//           createdAt: doc.data().createdAt.toDate(),
-//           text: doc.data().text,
-//           image: doc.data().image || null, // Handle image messages
-//           sender: doc.data().sender,
-//           receiver: doc.data().receiver,
-//           user: doc.data().user,
-//         }))
-//       );
-//       setIsLoading(false); // Ngừng trạng thái tải khi dữ liệu đã sẵn sàng
-//     });
-
-//     return unsubscribe;
-//   }, [me]);
-
-//   return (
-//     <View className="flex-1 bg-white dark:bg-black py-4">
-//       {/* Matches Component */}
-//       <Matches />
-
-//       {/* Search Bar */}
-//       <View className="my-2 px-4">
-//         <Input
-//           placeholder="Search"
-//           placeholderTextColor={"gray"}
-//           className="rounded-full"
-//           startIcon={
-//             <Search className="size-6 ml-2 text-zinc-500 dark:text-zinc-600" />
-//           }
-//         />
-//       </View>
-
-//       {/* Chat List */}
-//       <Text className="uppercase font-semibold text-zinc-500 tracking-wider py-2 px-4">
-//         Trò chuyện
-//       </Text>
-//       {isLoading ? (
-//         <View className="flex-1 justify-center items-center px-4">
-//           <ActivityIndicator size="large" color="#fe183c" />
-//           <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-//             Đang tải danh sách...
-//           </Text>
-//         </View>
-//       ) : (
-//         <ScrollView
-//           className="flex-1"
-//           contentContainerStyle={{
-//             paddingBottom: hp(5),
-//           }}
-//         >
-//           <View>
-//             {chatRoom.map((item) => (
-//               <ChatItem
-//                 key={item.id}
-//                 item={item}
-//                 onPress={() => router.push(`/chatDetail/${reciever != me ? reciever : sender }`)}
-//               />
-//             ))}
-//           </View>
-//         </ScrollView>
-//       )}
-//     </View>
-//   );
-// }
-
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   View,
@@ -202,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "@/lib/icons";
 import { router } from "expo-router";
 import Matches from "@/components/card/matches";
-import { useAuth } from "@/provider/AuthProvider";
+import { useAuth } from "@/providers/AuthProvider";
 import {
   collection,
   query,
@@ -210,44 +21,16 @@ import {
   orderBy,
   onSnapshot,
 } from "firebase/firestore";
-import { database } from "@/config/firebase";
+import { database } from "@/utils/firebase";
 import colors from "@/config/colors";
-import { DATE_DATA } from "@/constant";
-import { supabase } from "@/utils/supabase";
+import { DATE_DATA } from "@/constants/data";
+import { customizeFetch } from "@/lib/functions";
+import useSWR from "swr";
 
 const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, isLoading, error } = useSWR(`/users/${other}`, customizeFetch);
 
-  console.log("ITEM", item);
-  console.log("OTHER", other);
-
-  useEffect(() => {
-    (async () => {
-      try {22
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("user_id", other);
-
-        if (error) {
-          setError("Lỗi khi tải dữ liệu.");
-          return;
-        }
-
-        setData(data?.[0] || null);
-      } catch (err) {
-        setError("Đã xảy ra lỗi.");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [item.id]);
-  console.log("ATA222222", data);
-
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-row items-center justify-center py-4">
         <Text className="text-gray-500 dark:text-gray-400">Đang tải...</Text>
@@ -268,25 +51,17 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
       onPress={onPress}
       className="w-full py-2 items-center flex-row border-b border-zinc-300 dark:border-zinc-600 px-4"
     >
-      {/* Avatar */}
       <View
         className="w-[17%] justify-center"
-        style={{
-          width: hp(7),
-          height: hp(7),
-        }}
+        style={{ width: hp(7), height: hp(7) }}
       >
         <Image
-          source={{ uri: data?.imgs?.[0] || "https://via.placeholder.com/150" }}
-          style={{
-            width: "90%",
-            height: "90%",
-          }}
+          source={{ uri: data?.imgs?.[0] }}
+          style={{ width: "90%", height: "90%" }}
           className="rounded-full"
         />
       </View>
 
-      {/* Information */}
       <View className="w-[82%]" style={{ height: hp(6) }}>
         <View className="flex-row justify-between items-center">
           <View className="flex-row justify-center">
@@ -296,13 +71,10 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
               </Text>
             </View>
           </View>
-          {/* <Text className="text-sm text-zinc-800 dark:text-zinc-300 tracking-tight">
-            {item.timeSent}
-          </Text> */}
         </View>
         <View>
           <Text className="font-semibold text-xs text-zinc-500 dark:text-zinc-400">
-            {!!item.text ? item.text : "No messages yet."}
+            {item?.text ?? "No messages yet."}
           </Text>
         </View>
       </View>
@@ -311,42 +83,67 @@ const ChatItem: React.FC<any> = ({ item, other, onPress }) => {
 };
 
 export default function ChatScreen() {
+  const { profile } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const [chatRoom, setChatRoom] = useState([]);
-  const { session } = useAuth();
-  const me = session?.user?.id;
+  const [chatRoom, setChatRoom] = useState<
+    Array<{
+      id: string;
+      participants: string[];
+      createdAt: any;
+      receiver: string;
+      sender: string;
+      text?: string;
+    }>
+  >([]);
+  const me = profile!.user_id;
 
   useLayoutEffect(() => {
     const collectionRef = collection(database, "chats");
     const q = query(
       collectionRef,
-      where("participants", "array-contains", me), // Fetch all chats involving the current user
+      where("participants", "array-contains", me),
       orderBy("createdAt", "desc")
     );
-  
+
     const unsubscribe = onSnapshot(
       q,
       (querySnapshot) => {
-        const chats = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-  
-        // Loại bỏ các bản ghi trùng lặp
-        const uniqueChats = [];
+        const chats: Array<{
+          id: string;
+          participants: string[];
+          createdAt: any;
+          receiver: string;
+          sender: string;
+          text?: string;
+        }> = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            } as any)
+        );
+
+        const uniqueChats: React.SetStateAction<
+          {
+            id: string;
+            participants: string[];
+            createdAt: any;
+            receiver: string;
+            sender: string;
+            text?: string;
+          }[]
+        > = [];
         const seenParticipants = new Set();
-  
+
         chats.forEach((chat) => {
-          const participantsKey = chat.participants
-            .sort() // Chuẩn hóa danh sách người tham gia
-            .join(","); // Tạo chuỗi khóa duy nhất cho mỗi danh sách người tham gia
-  
+          const participantsKey = chat.participants.sort().join(",");
+
           if (!seenParticipants.has(participantsKey)) {
             seenParticipants.add(participantsKey);
             uniqueChats.push(chat);
           }
         });
-  
+
         setChatRoom(uniqueChats);
         setIsLoading(false);
       },
@@ -355,71 +152,95 @@ export default function ChatScreen() {
         setIsLoading(false);
       }
     );
-  
+
     return () => unsubscribe();
   }, [me]);
 
   console.log(chatRoom);
 
-  // Filter out the current user
   const filteredData = DATE_DATA.filter(
-    (item) => item.user_id !== session?.user?.id
+    (item) => item.user_id !== profile!.user_id
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-black py-4">
-      {/* Matches Component */}
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
       <Matches />
 
-      {/* Search Bar */}
       <View className="my-2 px-4">
         <Input
           placeholder="Search"
           placeholderTextColor={"gray"}
           className="rounded-full"
           startIcon={
-            <Search className="size-6 ml-2 text-zinc-500 dark:text-zinc-600" />
+            <Search className="size-6 ml-1 text-zinc-500 dark:text-zinc-600" />
           }
         />
       </View>
 
-      {/* Chat List Header */}
       <Text className="uppercase font-semibold text-zinc-500 tracking-wider py-2 px-4">
         Trò chuyện
       </Text>
 
-      {/* Loading State */}
-      {isLoading ? (
-        <View className="flex-1 justify-center items-center px-4">
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Đang tải danh sách...
-          </Text>
-        </View>
-      ) : (
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{
-            paddingBottom: hp(5),
-          }}
-        >
-          {chatRoom.slice(0, 3).map((item) => (
-            <ChatItem
-              key={item.id}
-              item={item}
-              other={item.receiver !== me ? item.receiver : item.sender}
-              onPress={() =>
-                router.push(
-                  `/chatDetail/${
-                    item.receiver !== me ? item.receiver : item.sender
-                  }`
-                )
-              }
-              // onPress={() => router.push(`/chatDetail/${item.id}`)}
-            />
-          ))}
-        </ScrollView>
-      )}
+      {renderContent(isLoading, chatRoom, me)}
     </SafeAreaView>
   );
+}
+
+function renderContent(
+  isLoading: boolean,
+  chatRoom: {
+    id: string;
+    participants: string[];
+    createdAt: any;
+    receiver: string;
+    sender: string;
+    text?: string;
+  }[],
+  me: string
+): React.ReactNode {
+  if (isLoading)
+    return (
+      <View className="flex-1 justify-center items-center px-4">
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+          Đang tải danh sách...
+        </Text>
+      </View>
+    );
+
+  return (
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={{ paddingBottom: hp(5) }}
+    >
+      {chatRoom.slice(0, 3).map((item) => (
+        <ChatItem
+          key={item.id}
+          item={item}
+          other={item.receiver !== me ? item.receiver : item.sender}
+          onPress={moveToProfileDetail(item, me)}
+        />
+      ))}
+    </ScrollView>
+  );
+}
+
+function moveToProfileDetail(
+  item: {
+    id: string;
+    participants: string[];
+    createdAt: any;
+    receiver: string;
+    sender: string;
+    text?: string;
+  },
+  me: string
+) {
+  return () =>
+    router.push({
+      pathname: "/chat-detail/[id]",
+      params: {
+        id: item.receiver !== me ? item.receiver : item.sender,
+      },
+    });
 }

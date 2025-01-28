@@ -1,245 +1,266 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import React, {
+  useReducer,
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { View, Image } from "react-native";
 import TinderCard from "react-tinder-card";
 import { HeartIcon, XMarkIcon } from "react-native-heroicons/solid";
 import { Button } from "@/components/ui/button";
 import DatesCard from "@/components/card/human";
 import Loading1 from "@/components/loading";
-import { useAuth } from "@/provider/AuthProvider";
-import { NEXTJS_SERVER } from '@/lib/constants';
-import { useDump } from "@/provider/DumpProvider";
-import { supabase } from "@/utils/supabase";
+import { useAuth } from "@/providers/AuthProvider";
+import { customizeFetch } from "@/lib/functions";
 
-const Tinder = () => {
-  const [characters, setCharacters] = useState<any[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastDirection, setLastDirection] = useState<string | undefined>();
-  const currentIndexRef = useRef(currentIndex);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isFetchingMore, setIsFetchingMore] = useState<boolean>(true);
-  const { value } = useDump();
+const BATCH_SIZE = 10;
+
+type State = {
+  characters: TProfile[];
+  currentIndex: number;
+  isLoading: boolean;
+};
+
+type Action =
+  | { type: "SET_CHARACTERS"; payload: TProfile[] }
+  | { type: "ADD_CHARACTERS"; payload: TProfile[] }
+  | { type: "SET_CURRENT_INDEX"; payload: number }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "REMOVE_CHARACTER"; payload: number };
+
+type TDirection = "left" | "right" | "up" | "down";
+
+interface TinderCardRef {
+  swipe: (dir?: TDirection) => Promise<void>;
+  restoreCard: () => Promise<void>;
+}
+
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "SET_CHARACTERS":
+      return {
+        ...state,
+        characters: action.payload,
+        currentIndex: action.payload.length - 1,
+      };
+    case "ADD_CHARACTERS":
+      return {
+        ...state,
+        characters: [...action.payload, ...state.characters],
+      };
+    case "SET_CURRENT_INDEX":
+      return { ...state, currentIndex: action.payload };
+    case "SET_LOADING":
+      return { ...state, isLoading: action.payload };
+    case "REMOVE_CHARACTER":
+      return {
+        ...state,
+        characters: state.characters.filter((_, i) => i !== action.payload),
+      };
+    default:
+      return state;
+  }
+};
+
+function Skeleton({ profileImage }: { profileImage?: string }) {
+  return (
+    <View className="w-full h-full flex justify-center items-center">
+      <Loading1 />
+      <View className="absolute items-center justify-center">
+        <Image
+          className="rounded-full size-28"
+          source={{ uri: profileImage }}
+        />
+      </View>
+    </View>
+  );
+}
+
+const SwipeButtons = ({
+  onSwipe,
+  disabled,
+}: {
+  onSwipe: (dir: TDirection) => Promise<void>;
+  disabled?: boolean;
+}) => (
+  <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
+    <Button
+      className="flex-1"
+      variant="secondary"
+      onPress={() => onSwipe("left")}
+      disabled={disabled}
+    >
+      <XMarkIcon size={32} color="#fe183c" />
+    </Button>
+    <Button
+      className="flex-1"
+      variant="red"
+      onPress={() => onSwipe("right")}
+      disabled={disabled}
+    >
+      <HeartIcon size={32} color="#fff" />
+    </Button>
+  </View>
+);
+
+const buildUrl = (currentPage: number, profile: TProfile | null) => {
+  if (!profile) return null;
+
+  const gender = profile.genderFind ?? "all";
+  const ageRange = profile.ageRange?.join("-") ?? "all";
+  const distance = profile.filterDistance;
+
+  const url = `/users/find?limit=${BATCH_SIZE}&page=${currentPage}&gender=${gender}&age=${ageRange}&distance=${distance}`;
+
+  if (profile.locate?.coordinates) {
+    const [long, lat] = profile.locate.coordinates;
+    return url + `&long=${long}&lat=${lat}`;
+  }
+
+  return url;
+};
+
+export default function Tinder() {
+  const [state, dispatch] = useReducer(reducer, {
+    characters: [],
+    currentIndex: -1,
+    isLoading: true,
+  });
+
+  const topCardRef = useRef<TinderCardRef | null>(null);
+
+  const { profile } = useAuth();
   const [page, setPage] = useState(1);
-  const { session, profile } = useAuth();
-  const swipedUsersRef = useRef<{ userId: string; direction: string }[]>([]);
+  const [isFetchingData, setIsFetchingData] = useState(false);
+  const [hasMoreData, setHasMoreData] = useState(true);
+  const [likeQueue, setLikeQueue] = useState<
+    Array<{ target_user_id: string; emotion: string }>
+  >([]);
 
-  const postSwipeData = async () => {
+  useEffect(() => {
+    if (!profile) return;
+
+    dispatch({ type: "SET_CHARACTERS", payload: [] });
+    setPage(1);
+    setHasMoreData(true);
+  }, [
+    profile?.genderFind,
+    profile?.ageRange,
+    profile?.filterDistance,
+    profile?.locate?.coordinates,
+  ]);
+
+  const postLikes = useCallback(async () => {
+    if (!profile?.user_id || likeQueue.length === 0) return;
+
+    const { user_id } = profile;
+
     try {
-      // console.log(swipedUsersRef.current);
-      const { data, error } = await supabase
-        .from('likes')
-        .insert(
-          swipedUsersRef.current
-            .filter(item => item.direction === 'right')
-            .map(s => ({
-              user_id: session?.user.id,
-              target_user_id: s.userId,
-            })));
-      // console.log("🚀 ~ postSwipeData ~ error:", error)
-      swipedUsersRef.current = [];
+      await customizeFetch("/users/swipe-batch", {
+        method: "POST",
+        body: JSON.stringify({ user_id, swipes: likeQueue }),
+      });
+      setLikeQueue([]);
     } catch (error) {
-      // console.error('Error posting swipe data:', error);
+      console.error("Error posting likes:", error);
     }
-  };
+  }, [profile?.user_id, likeQueue]);
 
-  const fetchMoreUsers = useCallback((page: number) => {
-    setIsLoading(true);
-    setIsFetchingMore(true);
-    (async () => {
-      const [
-        { data: profiles, error: errorProfile },
-        { data: locations, error: errorLocation }
-      ] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select("*"),
-        supabase
-          .from('locations')
-          .select("*")
-      ])
+  const fetchUsers = useCallback(async () => {
+    if (
+      !profile ||
+      !hasMoreData ||
+      isFetchingData ||
+      state.characters.length >= 2
+    )
+      return;
 
-      if (errorProfile || errorLocation) {
-        setIsLoading(false);
-        setIsFetchingMore(false);
+    const url = buildUrl(page, profile);
+    if (!url) return;
+
+    try {
+      setIsFetchingData(true);
+      const data: TProfile[] = await customizeFetch(url);
+      const filteredData = data.filter(
+        (item) =>
+          item.user_id !== profile.user_id &&
+          !state.characters.some((char) => char.user_id === item.user_id)
+      );
+
+      if (filteredData.length === 0) {
+        setHasMoreData(false);
         return;
       }
 
-      // console.log("🚀 ~ !value?.filter?.ageRange:", !value?.filter?.ageRange)
-
-      // Merge profiles and locations
-      const mergedProfiles = profiles?.map(profile => {
-        const location = locations?.find(l => l.user_id === profile.user_id);
-        return { ...profile, ...location };
-      }).filter(item => item.user_id !== session?.user.id).filter((item: any) => {
-
-        return !value?.filter?.ageRange || !item.age ? true :
-          item.age >= value.filter.ageRange[0] &&
-          item.age <= value.filter.ageRange[1]
-      })
-        .filter((item: any) =>
-          !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
-            item.gender === value?.filter?.genderFind
-        );
-
-      setCharacters(prevCharacters => [...(mergedProfiles ?? []), ...prevCharacters,]);
-      setIsLoading(false);
-      setIsFetchingMore(false);
-    })()
-    // fetch(NEXTJS_SERVER + '/api/users/find')
-    //   .then((res) => {
-    //     if (!res.ok) throw new Error("Network response was not ok");
-    //     return res.json();
-    //   })
-    //   .then((payload) => {
-    //     // Initialize or append data based on whether it's the first fetch
-    //     setCharacters(prevCharacters => {
-    //       if (prevCharacters.length === 0) {
-    //         setCurrentIndex(payload.data.length - 1);
-    //         return payload.data;
-    //       }
-    //       const result = [...prevCharacters, ...payload.data]
-    //       setCurrentIndex(result.length - 1);
-    //       return result;
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //     setIsFetchingMore(false);
-    //   });
-  }, [value]);
-
-  useEffect(() => {
-    if (!isFetchingMore) return;
-    fetchMoreUsers(page);
-  }, [fetchMoreUsers, isFetchingMore]);
-
-  useEffect(() => {
-    if (currentIndex < 0) {
-      setIsFetchingMore(true);
-      setPage(prev => prev + 1);
+      dispatch({ type: "ADD_CHARACTERS", payload: filteredData });
+      setPage((prev) => prev + 1);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsFetchingData(false);
     }
-  }, [currentIndex]);
+  }, [profile, page, hasMoreData, isFetchingData, state.characters]);
 
-  const childRefs = useMemo(
-    () =>
-      Array(characters.length)
-        .fill(0)
-        .map(() => React.createRef<React.ElementRef<typeof TinderCard>>()),
-    [characters.length]
+  useEffect(() => {
+    if (state.characters.length < 2) {
+      fetchUsers();
+    }
+  }, [state.characters.length, fetchUsers]);
+
+  const handleSwipe = useCallback(
+    async (direction: TDirection) => {
+      if (!profile || !topCardRef.current) return;
+
+      await topCardRef.current.swipe(direction);
+
+      const swipedUser = state.characters[state.characters.length - 1];
+      if (swipedUser && direction === "right") {
+        setLikeQueue((prev) => [
+          ...prev,
+          { target_user_id: swipedUser.user_id, emotion: "like" },
+        ]);
+      }
+
+      dispatch({
+        type: "REMOVE_CHARACTER",
+        payload: state.characters.length - 1,
+      });
+      dispatch({
+        type: "SET_CURRENT_INDEX",
+        payload: state.characters.length - 2,
+      });
+    },
+    [state.characters, profile]
   );
 
-  const updateCurrentIndex = (val: number) => {
-    setCurrentIndex(val);
-    currentIndexRef.current = val;
-  };
-
-  // const canGoBack = currentIndex < characters.length - 1;
-  const canSwipe = currentIndex >= 0;
-
-  const swiped = (direction: string, nameToDelete: string, index: number) => {
-    setLastDirection(direction);
-    updateCurrentIndex(index - 1);
-
-    // Store the swipe data
-    const swipedUser = characters[index];
-    if (swipedUser) {
-      swipedUsersRef.current.push({
-        userId: swipedUser.user_id,
-        direction: direction
-      });
-    }
-
-    // If this was the last card, post the swipe data
-    if (index === 0 && swipedUsersRef.current.length > 0) {
-      postSwipeData();
-    }
-  };
-
-  const outOfFrame = (name: string, idx: number) => {
-    if (currentIndexRef.current >= idx) {
-      childRefs[idx].current?.restoreCard();
-    }
-  };
-
-  const swipe = async (dir: "left" | "right") => {
-    if (canSwipe && currentIndex < characters.length) {
-      childRefs[currentIndex].current?.swipe(dir);
-    }
-  };
-
-  // const goBack = async () => {
-  //   if (!canGoBack) return;
-  //   const newIndex = currentIndex + 1;
-  //   updateCurrentIndex(newIndex);
-  //   await childRefs[newIndex].current?.restoreCard();
-  // };
-
-  const data = useMemo(() => characters
-    .filter(item => item.user_id !== session?.user.id).filter((item: any) => {
-
-      return !value?.filter?.ageRange || !item.age ? true :
-        item.age >= value.filter.ageRange[0] &&
-        item.age <= value.filter.ageRange[1]
-    })
-    .filter((item: any) =>
-      !value?.filter?.genderFind || !item.gender || value?.filter?.genderFind === 'all' ? true :
-        item.gender === value?.filter?.genderFind
-    ), [characters, value]);
+  useEffect(() => {
+    if (likeQueue.length >= BATCH_SIZE) postLikes();
+  }, [likeQueue, postLikes]);
 
   return (
     <View className="relative flex-1 w-full h-full">
-      {isLoading || isFetchingMore || characters.length === 0 ? (
-        <View className="w-full h-full flex justify-center items-center">
-          <Loading1 />
-          <View className="absolute items-center justify-center">
-            <Image
-              source={{
-                uri: profile?.imgs?.[0] ??
-                  "https://cdn.aicschool.edu.vn/wp-content/uploads/2024/05/anh-gai-dep-cute.webp"
-              }}
-              className="rounded-full size-28"
-            />
-          </View>
-        </View>
+      {state.characters.length === 0 ? (
+        <Skeleton profileImage={profile?.imgs?.[0]} />
       ) : (
         <>
           <View className="flex-1 w-full h-full">
-              {data.map((character, index) => (
-                <TinderCard
-                  key={character.name + index}
-                  ref={childRefs[index]}
-                  onSwipe={(dir) => swiped(dir, character.name, index)}
-                  onCardLeftScreen={() => outOfFrame(character.name, index)}
-                >
-                  <View className="absolute bg-white w-full shadow-lg">
-                    <DatesCard item={character} />
-                  </View>
-                </TinderCard>
-              ))}
+            {state.characters.map((character, index) => (
+              <TinderCard
+                key={character.user_id}
+                ref={index === state.characters.length - 1 ? topCardRef : null}
+                onSwipe={(dir) => handleSwipe(dir)}
+                preventSwipe={["up", "down"]}
+              >
+                <View className="absolute bg-white w-full shadow-lg">
+                  <DatesCard item={character} />
+                </View>
+              </TinderCard>
+            ))}
           </View>
-
-          <View className="absolute bottom-0 flex flex-row items-center gap-6 m-5">
-            <Button
-              className="flex-1"
-              variant="secondary"
-              onPress={() => swipe("left")}
-            >
-              <XMarkIcon size={32} color={"#fe183c"} />
-            </Button>
-            <Button
-              className="flex-1"
-              variant="red"
-              onPress={() => swipe("right")}
-            >
-              <HeartIcon size={32} color={"#fff"} />
-            </Button>
-          </View>
+          <SwipeButtons onSwipe={handleSwipe} />
         </>
       )}
     </View>
   );
-};
-
-export default Tinder;
+}

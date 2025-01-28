@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
@@ -12,20 +12,14 @@ import {
   SegmentedControlItemProps,
   TextField,
 } from "react-native-ui-lib";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
 import SingleChoicePicker from "@/components/select/oneChoice";
 import { useColorScheme } from "nativewind";
-import { useAuth } from "@/provider/AuthProvider";
-import { supabase } from "@/utils/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 import { router } from "expo-router";
-import Spinner from "react-native-loading-spinner-overlay";
 import { bindAll } from "lodash";
-// import { fbApp, uploadToFireBase } from "@/firebase";
 import MultiChoicePicker from "@/components/select/multiChoice";
-import { GENDER_OPTIONS } from "../(set-up-profile)";
-
-// console.log(fbApp)
+import { GENDER_OPTIONS, HOBBY_OPTIONS } from "@/constants/common";
+import { customizeFetch } from "@/lib/functions";
 
 const { width } = Dimensions.get("window");
 
@@ -33,42 +27,9 @@ const segments: Record<string, Array<SegmentedControlItemProps>> = {
   first: [{ label: "Hình ảnh" }, { label: "Xem trước" }],
 };
 
-export const HOBBY_OPTIONS = [
-  { label: "Sở thích 1", value: "hobby 1" },
-  { label: "Sở thích 2", value: "hobby 2" },
-  { label: "Sở thích 3", value: "hobby 3" },
-  { label: "Sở thích 4", value: "hobby 4" },
-  { label: "Sở thích 5", value: "hobby 5" },
-  { label: "Sở thích 6", value: "hobby 6" },
-  { label: "Nấu ăn", value: "cook" },
-  { label: "Âm nhạc", value: "music" },
-  { label: "Mua sắm", value: "shopping" },
-  { label: "Ngủ", value: "sleep" },
-  { label: "Xem phim", value: "movie" },
-  { label: "Đọc sách", value: "reading" },
-  { label: "Chụp ảnh", value: "photography" },
-  { label: "Du lịch", value: "travel" },
-  { label: "Hội họa", value: "painting" },
-  { label: "Thể dục thể thao", value: "sports" },
-  { label: "Làm vườn", value: "gardening" },
-  { label: "Chơi game", value: "gaming" },
-  { label: "Viết lách", value: "writing" },
-  { label: "Học ngoại ngữ", value: "language learning" },
-  { label: "Chơi nhạc cụ", value: "instrument" },
-  { label: "Câu cá", value: "fishing" },
-  { label: "Leo núi", value: "hiking" },
-  { label: "Yoga", value: "yoga" },
-  { label: "Tập gym", value: "gym" },
-  { label: "Cắm trại", value: "camping" },
-  { label: "Thiền", value: "meditation" },
-  { label: "Khiêu vũ", value: "dancing" },
-  { label: "Sưu tầm đồ cổ", value: "antique collecting" },
-  { label: "Xếp hình", value: "puzzle" },
-];
-
 export default function FilterScreen() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
-  const { session, profile, getProfile } = useAuth();
+  const { colorScheme } = useColorScheme();
+  const { profile, getProfile } = useAuth();
   const [name, setName] = useState<string>(profile?.name ?? "");
   const [gender, setGender] = useState<string>(profile?.gender ?? "other");
   const [age, setAge] = useState<string>(profile?.age?.toString() ?? "");
@@ -91,7 +52,17 @@ export default function FilterScreen() {
         hobbies: profile?.hobbies,
       });
     setIsDirtyFields(isDirty);
-  }, [profile, setIsDirtyFields, name, gender, bio, age, bindAll, imgs]);
+  }, [
+    profile,
+    setIsDirtyFields,
+    name,
+    gender,
+    bio,
+    age,
+    bindAll,
+    imgs,
+    hobbies,
+  ]);
 
   useEffect(() => {
     if (!profile) return;
@@ -104,55 +75,40 @@ export default function FilterScreen() {
   }, [profile]);
 
   const onChangeIndex = useCallback((index: number) => {
-    console.warn(
-      "Index " + index + " of the second segmentedControl was pressed"
-    );
     setTab(index);
   }, []);
 
-  const [screenPreset, setScreenPreset] = useState(
+  const [screenPreset] = useState(
     SegmentedControl.presets.DEFAULT
   );
 
-  const submitHandler = async () => {
-    if (!session) return;
+  const submitHandler = useCallback(async () => {
+    if (!profile) return;
     setIsSubmitting(true);
     try {
-      // console.log("imgs", imgs)
-      // const imgsFirebase = await uploadToFireBase(imgs[0], "haha");
-      // console.log("imgsFirebase", imgsFirebase)
-
-      // 2. Chuẩn bị dữ liệu người dùng
       const userData = {
         name,
         age: Number(age),
         bio,
         gender,
-        imgs: imgs, // imgsFirebase
+        imgs,
         hobbies,
-        user_id: session.user.id,
       };
 
-      await supabase
-        .from("profiles")
-        .upsert(userData, { onConflict: "user_id" });
-      await getProfile?.();
+      await customizeFetch(`/users/${profile.user_id}`, {
+        method: "PATCH",
+        body: JSON.stringify(userData),
+      });
+
+      await getProfile();
       setIsSubmitting(false);
-      router.back();
+      router.replace("/(screen)/(main)/(tabs)/profile");
     } catch (error) {
       // console.error("Error submitting data:", error.message);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const CustomThumb = () => {
-    return (
-      <View className="!size-6 rounded-full shadow-2xl shadow-pri-color border-3 border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-white">
-        <Text></Text>
-      </View>
-    );
-  };
+  }, [profile, name, age, bio, gender, imgs, hobbies, getProfile]);
 
   const onDelete = (indexToRemove: number) => {
     setImgs((prevImgs) =>
@@ -335,15 +291,14 @@ export default function FilterScreen() {
           />
 
           <View className="flex flex-row justify-between">
-            <Text className="font-bold">Sở thích</Text>
             <MultiChoicePicker
               values={hobbies}
               onChange={(value) =>
                 setHobbies(value.map((item) => item.toString()))
-              } // Ensure this matches the correct type
-              // title="Sở thích"
+              }
+              title="Sở thích"
               placeholder="Chọn nhiều giá trị"
-              options={HOBBY_OPTIONS}
+              options={[...HOBBY_OPTIONS]}
               showSearch
               // useDialogDefault
             />

@@ -14,13 +14,12 @@ import {
   Settings2,
 } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "@/provider/LocationProvider";
+import { useLocation } from "@/providers/LocationProvider";
 
 export default function TabLayout() {
   const { permissionStatus } = useLocation();
-  if (permissionStatus === "denied") {
-    return <Redirect href="/(screen)/(main)/permissionError" />;
-  }
+  if (permissionStatus === "denied")
+    return <Redirect href="/(screen)/(main)/permission-error" />;
 
   return (
     <Tabs
@@ -64,7 +63,7 @@ export default function TabLayout() {
               <Button
                 size="icon"
                 variant="ghost"
-                onPress={() => router.push("/noti")}
+                onPress={() => router.push("/notifications")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>
@@ -93,7 +92,7 @@ export default function TabLayout() {
               <Button
                 size="icon"
                 variant="ghost"
-                onPress={() => router.push("/noti")}
+                onPress={() => router.push("/notifications")}
               >
                 <Bell className="size-6 text-black dark:text-white" />
               </Button>

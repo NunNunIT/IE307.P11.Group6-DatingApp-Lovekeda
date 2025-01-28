@@ -14,7 +14,7 @@ import { supabase } from "@/utils/supabase";
 
 const { width, height } = Dimensions.get("screen");
 
-const decorate = [
+const DECORATES = [
   { img: require("~/assets/images/decorate/1.png") },
   { img: require("~/assets/images/decorate/9.png") },
   { img: require("~/assets/images/decorate/3.png") },
@@ -52,7 +52,7 @@ const handleLoginGoogle = async () => {
 //   webClientId: process.env.EXPO_PUBLIC_WEB_GOOGLE_CLIENT_ID,
 // })
 
-export default function Login() {
+export default function AuthScreen() {
   return (
     <View className="flex-1 relative w-screen h-screen">
       <Carousel
@@ -64,7 +64,7 @@ export default function Login() {
         containerStyle={{ height: height, position: "absolute" }}
         allowAccessibleLayout
       >
-        {decorate.map((item, index) => (
+        {DECORATES.map((item, index) => (
           <Image
             key={index}
             source={item.img}

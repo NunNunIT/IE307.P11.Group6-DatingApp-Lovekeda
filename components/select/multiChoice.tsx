@@ -138,7 +138,7 @@ export default function MultiChoicePicker({
         return (
           <View className="w-full flex flex-row justify-between items-center py-4">
             <View className="w-2/5">
-              <Text className="text-wrap">{title}</Text>
+              <Text className="text-wrap font-bold">{title}</Text>
             </View>
             <View className="w-2/5 flex flex-row justify-end items-center">
               <Text className="line-clamp-1">{label}</Text>
