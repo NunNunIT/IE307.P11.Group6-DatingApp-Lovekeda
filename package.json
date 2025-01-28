@@ -93,8 +93,6 @@
     "react-native-webview": "13.12.5",
     "react-range": "^1.10.0",
     "react-tinder-card": "^1.6.4",
-    "rn-swiper-list": "^2.1.0",
-    "sonner-native": "^0.16.2",
     "swr": "^2.3.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.15",
@@ -110,6 +108,7 @@
     "@types/react-test-renderer": "^18.3.0",
     "jest": "^29.2.1",
     "jest-expo": "~52.0.3",
+    "metro": "^0.81.0",
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },
