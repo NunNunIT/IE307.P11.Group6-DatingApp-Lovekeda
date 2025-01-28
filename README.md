@@ -1,3 +1,14 @@
+# [IE307.P11] - ỨNG DỤNG TÌM BẠN, TÌM NGƯỜI YÊU LOVEKEDA
+
+Hiện nay, với sự phát triển mạnh mẽ của công nghệ số, mọi người đều dễ dàng kết nối với nhau mọi lúc mọi nơi. Tuy nhiên, mặt trái lại là việc giao tiếp trực tiếp giữa mọi người ngày càng trở nên hạn chế. Nhiều người dần ngại mở lòng hay tìm kiếm các mối quan hệ mới do áp lực công việc, cuộc sống bận rộn và sự chi phối của môi trường số. Trước thực trạng này, ứng dụng Lovekeda ra đời nhằm giúp người dùng vượt qua rào cản giao tiếp, mở rộng mối quan hệ và tìm kiếm những kết nối tình cảm ý nghĩa.
+
+## Giới thiệu
+
+| STT | Họ tên                | MSSV     | Chức vụ     |
+|:---:|:---------------------:|:--------:|:-----------:|
+| 1   | Nguyễn Thị Hồng Nhung | 21522436 | Nhóm trưởng |
+| 2   | Lê Trung Hiếu         | 21520850 | Thành viên  |
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
